@@ -2,6 +2,9 @@
 // 요청마다 페이지를 동적으로 생성·서빙하고, 상담 신청(/api/inquiry)을 처리합니다.
 // 배포:  npx wrangler deploy   (자세한 내용은 README.md / wrangler.toml 참고)
 
+// 상담 신청 시 이메일 알림 발송용 (Cloudflare Email Routing)
+import { EmailMessage } from "cloudflare:email";
+
 const HTML = `<!doctype html>
 <html lang="ko">
 <head>
@@ -570,9 +573,9 @@ const HTML = `<!doctype html>
           <p>학생의 현재 상황과 목표를 듣고, 어떤 과목을 어떻게 시작하면 좋을지 함께 정해드립니다. 부담 없이 남겨주세요.</p>
           <div class="contact-quick">
             <!-- ▼ 연락처를 실제 정보로 바꿔주세요 -->
-            <a class="qrow" href="tel:01000000000">
+            <a class="qrow" href="tel:01030388978">
               <span class="qic"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.7A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.7a2 2 0 0 1-.5 2.1L8 9.6a16 16 0 0 0 6 6l1.1-1.1a2 2 0 0 1 2.1-.5c.9.3 1.8.5 2.7.6a2 2 0 0 1 1.7 2Z"/></svg></span>
-              <span><span class="ql">전화 상담</span><span class="qv">010-0000-0000</span></span>
+              <span><span class="ql">전화 상담</span><span class="qv">010-3038-8978</span></span>
             </a>
             <a class="qrow" href="#" target="_blank" rel="noopener">
               <span class="qic"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3C6.5 3 2 6.6 2 11c0 2.8 1.9 5.3 4.7 6.7-.2.7-.7 2.5-.8 2.9 0 0 0 .3.2.4.2 0 .3 0 .4-.1.4-.3 2.6-1.8 3.6-2.5.6.1 1.2.1 1.9.1 5.5 0 10-3.6 10-8S17.5 3 12 3Z"/></svg></span>
@@ -588,8 +591,8 @@ const HTML = `<!doctype html>
         <div class="form-card">
           <form id="inquiryForm" novalidate>
             <div class="form-row">
-              <div class="field"><label for="name">이름 <span class="req">*</span></label><input id="name" name="name" type="text" placeholder="학생 또는 학부모님 성함" required /></div>
-              <div class="field"><label for="phone">연락처 <span class="req">*</span></label><input id="phone" name="phone" type="tel" placeholder="010-0000-0000" required /></div>
+              <div class="field"><label for="name">학생 이름 <span class="req">*</span></label><input id="name" name="name" type="text" placeholder="학생 성함" required /></div>
+              <div class="field"><label for="phone">학부모 연락처 <span class="req">*</span></label><input id="phone" name="phone" type="tel" placeholder="010-0000-0000" required /></div>
             </div>
             <div class="field">
               <label for="grade">학생 학년</label>
@@ -598,6 +601,7 @@ const HTML = `<!doctype html>
                 <optgroup label="초등"><option>초등 1~2학년</option><option>초등 3~4학년</option><option>초등 5~6학년</option></optgroup>
                 <optgroup label="중등"><option>중1</option><option>중2</option><option>중3</option></optgroup>
                 <optgroup label="고등"><option>고1</option><option>고2</option><option>고3</option><option>재수·N수</option></optgroup>
+                <optgroup label="기타"><option>성인</option></optgroup>
               </select>
             </div>
             <div class="field">
@@ -611,6 +615,7 @@ const HTML = `<!doctype html>
                 <label><input type="checkbox" name="subject" value="선택·탐구">선택·탐구</label>
               </div>
             </div>
+            <div class="field full"><label for="address">주소 <span class="req">*</span></label><input id="address" name="address" type="text" placeholder="수업 받을 지역·주소 (예: 서울시 강남구 …)" required /></div>
             <div class="field full"><label for="message">문의 내용</label><textarea id="message" name="message" placeholder="현재 성적, 고민, 원하는 수업 방식 등을 자유롭게 적어주세요."></textarea></div>
             <button type="submit" class="btn btn-primary">상담 신청하기</button>
             <p class="form-note">남겨주신 정보는 상담 안내 목적으로만 사용됩니다.</p>
@@ -642,7 +647,7 @@ const HTML = `<!doctype html>
         <div class="foot-col">
           <h4>상담 연락처</h4>
           <!-- ▼ 실제 정보로 바꿔주세요 -->
-          <span>전화 010-0000-0000</span><span>카카오톡 @leveluplesson</span><span>hello@level-up-lesson.com</span>
+          <span>전화 010-3038-8978</span><span>카카오톡 @leveluplesson</span><span>hello@level-up-lesson.com</span>
         </div>
       </div>
     </div>
@@ -687,10 +692,14 @@ const HTML = `<!doctype html>
   const success = document.getElementById('formSuccess');
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const name = form.name.value.trim(), phone = form.phone.value.trim();
-    if (!name || !phone){ (name ? form.phone : form.name).focus(); alert('이름과 연락처를 입력해주세요.'); return; }
+    const f = form.elements;
+    const name = f['name'].value.trim(), phone = f['phone'].value.trim(), address = f['address'].value.trim();
+    if (!name || !phone || !address){
+      const miss = !name ? f['name'] : (!phone ? f['phone'] : f['address']);
+      miss.focus(); alert('학생 이름, 학부모 연락처, 주소를 입력해주세요.'); return;
+    }
     const subjects = [...form.querySelectorAll('input[name="subject"]:checked')].map(c => c.value);
-    const payload = { name, phone, grade: form.grade.value, subjects, message: form.message.value.trim() };
+    const payload = { name, phone, grade: f['grade'].value, subjects, address, message: f['message'].value.trim() };
     const btn = form.querySelector('button[type="submit"]');
     const label = btn.textContent; btn.disabled = true; btn.textContent = '보내는 중...';
     try {
@@ -734,33 +743,138 @@ async function handleInquiry(request, env) {
 
   const name = (data.name || "").toString().trim();
   const phone = (data.phone || "").toString().trim();
-  if (!name || !phone) {
-    return json({ ok: false, error: "이름과 연락처를 입력해주세요." }, 400);
+  const address = (data.address || "").toString().trim();
+  if (!name || !phone || !address) {
+    return json({ ok: false, error: "학생 이름, 학부모 연락처, 주소를 입력해주세요." }, 400);
   }
+
+  const atDisplay = new Date().toLocaleString("ko-KR", {
+    timeZone: "Asia/Seoul",
+    year: "numeric", month: "long", day: "numeric",
+    hour: "2-digit", minute: "2-digit", hour12: true,
+  });
 
   const record = {
     name,
     phone,
+    address,
     grade: (data.grade || "").toString(),
     subjects: Array.isArray(data.subjects) ? data.subjects : [],
     message: (data.message || "").toString().trim(),
     at: new Date().toISOString(),
+    atDisplay,
   };
 
-  // ───────── 여기에서 실제 처리를 연결하세요 (택1 또는 병행) ─────────
-  // 1) Cloudflare KV에 저장 — wrangler.toml의 kv_namespaces 주석 해제 후:
-  //    await env.INQUIRIES.put("inquiry:" + Date.now(), JSON.stringify(record));
-  // 2) 디스코드/슬랙/텔레그램 등 웹훅으로 알림 — wrangler secret put WEBHOOK_URL 후:
-  //    await fetch(env.WEBHOOK_URL, {
-  //      method: "POST",
-  //      headers: { "content-type": "application/json" },
-  //      body: JSON.stringify({ content: "새 상담 신청: " + name + " / " + phone }),
-  //    });
-  // 3) D1 등 원하는 저장소에 기록
+  // ───────── 1) 이메일 알림 발송 (Cloudflare Email Routing) ─────────
+  // env.NOTIFY(send_email 바인딩) + env.NOTIFY_TO(받는 메일)가 설정돼 있으면
+  // 새 문의마다 HTML 카드형 알림 메일을 보냅니다. 없으면 건너뜁니다.
+  try {
+    if (env.NOTIFY && env.NOTIFY_TO) {
+      const to = env.NOTIFY_TO;
+      const from = env.NOTIFY_FROM || "noreply@level-up-lesson.com";
+      const subjLabel = record.subjects.length ? record.subjects.join("·") + " " : "";
+      const subject = "[레벨업과외] " + subjLabel + "상담 신청 - " + name;
+      const raw = buildMime({ from, fromName: "레벨업과외", to, subject, html: renderEmailHtml(record) });
+      await env.NOTIFY.send(new EmailMessage(from, to, raw));
+    }
+  } catch (e) {
+    console.log("상담 알림 메일 발송 실패:", e && e.message ? e.message : e);
+  }
+
+  // ───────── 2) 구글 시트 기록 (Apps Script 웹앱) ─────────
+  // env.SHEET_WEBHOOK_URL 이 설정돼 있으면 문의 한 건을 시트에 한 줄로 추가합니다.
+  try {
+    if (env.SHEET_WEBHOOK_URL) {
+      await fetch(env.SHEET_WEBHOOK_URL, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(record),
+      });
+    }
+  } catch (e) {
+    console.log("구글 시트 기록 실패:", e && e.message ? e.message : e);
+  }
+
   console.log("새 상담 신청:", JSON.stringify(record));
   // ──────────────────────────────────────────────────────────────
 
   return json({ ok: true });
+}
+
+// UTF-8 문자열을 RFC 2047 인코딩 워드(=?UTF-8?B?...?=)로 변환 — 한글 제목/이름용
+function encodeWord(s) {
+  const b64 = btoa(String.fromCharCode(...new TextEncoder().encode(s)));
+  return "=?UTF-8?B?" + b64 + "?=";
+}
+
+// 사용자 입력을 HTML에 안전하게 넣기 위한 이스케이프
+function escapeHtml(s) {
+  return String(s == null ? "" : s)
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+// 상담 신청 알림 메일 본문(HTML 카드) 생성
+function renderEmailHtml(r) {
+  const tel = String(r.phone).replace(/[^0-9+]/g, "");
+  const subjects = r.subjects.length ? r.subjects.join(", ") : "-";
+  const grade = r.grade || "-";
+  const message = r.message ? escapeHtml(r.message).replace(/\n/g, "<br>") : "-";
+  const sky = "#15A3E6", ink = "#0E3550", line = "#EAEFF3", soft = "#EAF7FE";
+
+  const cell = "padding:14px 0;font-size:14px;color:#7C8A99;width:104px;vertical-align:top;";
+  const val = "padding:14px 0;font-size:15px;font-weight:700;color:" + ink + ";border-bottom:1px solid " + line + ";";
+  let rows = [
+    ["학생 이름", escapeHtml(r.name)],
+    ["학년", escapeHtml(grade)],
+    ["희망 과목", escapeHtml(subjects)],
+  ].map(function (kv) {
+    return '<tr><td style="' + cell + '">' + kv[0] + '</td><td style="' + val + '">' + kv[1] + '</td></tr>';
+  }).join("");
+
+  rows += '<tr><td style="' + cell + '">📞 학부모 연락처</td>' +
+    '<td style="padding:14px 0;border-bottom:1px solid ' + line + ';">' +
+    '<a href="tel:' + tel + '" style="color:' + sky + ';font-size:17px;font-weight:800;text-decoration:none;">' + escapeHtml(r.phone) + '</a></td></tr>';
+
+  rows += '<tr><td style="' + cell + '">📍 주소</td>' +
+    '<td style="' + val + '">' + escapeHtml(r.address || "-") + '</td></tr>';
+
+  rows += '<tr><td style="' + cell + '">문의 내용</td>' +
+    '<td style="padding:14px 0;font-size:15px;line-height:1.6;color:' + ink + ';">' + message + '</td></tr>';
+
+  return '<!doctype html><html><body style="margin:0;padding:24px 12px;background:#F3F7FA;' +
+    'font-family:-apple-system,BlinkMacSystemFont,Apple SD Gothic Neo,Malgun Gothic,sans-serif;">' +
+    '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;margin:0 auto;' +
+    'background:#ffffff;border-radius:18px;overflow:hidden;box-shadow:0 10px 30px rgba(14,53,80,.10);">' +
+    '<tr><td style="background:' + sky + ';padding:30px 32px;">' +
+    '<div style="color:#CDEEFB;font-size:13px;font-weight:700;letter-spacing:.5px;margin-bottom:6px;">레벨업과외 · 새 문의</div>' +
+    '<div style="color:#ffffff;font-size:23px;font-weight:800;">📞 새 상담 신청이 도착했습니다</div></td></tr>' +
+    '<tr><td style="padding:8px 32px 4px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0">' + rows + '</table></td></tr>' +
+    '<tr><td style="padding:18px 32px 26px;">' +
+    '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:' + soft + ';border-left:4px solid ' + sky + ';border-radius:10px;">' +
+    '<tr><td style="padding:16px 18px;">' +
+    '<div style="color:' + ink + ';font-size:14px;font-weight:700;margin-bottom:12px;">⏰ 빠른 연락이 상담 성사율을 높여요</div>' +
+    '<a href="tel:' + tel + '" style="display:inline-block;background:' + sky + ';color:#ffffff;font-size:15px;font-weight:800;text-decoration:none;padding:11px 22px;border-radius:10px;">📞 전화 걸기</a>' +
+    '</td></tr></table></td></tr>' +
+    '<tr><td style="padding:16px 32px 26px;border-top:1px solid ' + line + ';text-align:center;">' +
+    '<span style="color:#9AA8B5;font-size:12px;">level-up-lesson.com · 신청 시각: ' + escapeHtml(r.atDisplay) + '</span>' +
+    '</td></tr></table></body></html>';
+}
+
+// 한글 HTML 메일이 안전하게 전달되도록 base64 인코딩한 MIME 메시지를 만듭니다.
+function buildMime({ from, fromName, to, subject, html }) {
+  const fromHeader = fromName ? encodeWord(fromName) + " <" + from + ">" : from;
+  const b64body = btoa(String.fromCharCode(...new TextEncoder().encode(html)));
+  const wrapped = (b64body.match(/.{1,76}/g) || [b64body]).join("\r\n");
+  const headers = [
+    "From: " + fromHeader,
+    "To: " + to,
+    "Subject: " + encodeWord(subject),
+    "MIME-Version: 1.0",
+    "Content-Type: text/html; charset=utf-8",
+    "Content-Transfer-Encoding: base64",
+  ];
+  return headers.join("\r\n") + "\r\n\r\n" + wrapped + "\r\n";
 }
 
 export default {
