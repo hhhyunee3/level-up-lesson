@@ -1,21 +1,13 @@
-name: Deploy to Cloudflare Workers
-
-on:
-  push:
-    branches:
-      - main
-  workflow_dispatch:        # 수동 실행 버튼도 추가
-
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    name: Deploy
-    steps:
-      - uses: actions/checkout@v4
-      - name: Deploy to Cloudflare Workers
-        uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          # 만약 배포 시 account id 관련 에러가 나면 아래 한 줄도 추가하고
-          # GitHub 시크릿에 CLOUDFLARE_ACCOUNT_ID 도 등록하세요.
-          # accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+{
+  "name": "level-up-lesson",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy"
+  },
+  "devDependencies": {
+    "wrangler": "^4"
+  }
+}
