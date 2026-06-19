@@ -303,6 +303,9 @@ const HTML = `<!doctype html>
   .subj-pick label{display:inline-flex; align-items:center; gap:7px; padding:10px 15px; border:1.5px solid var(--sky-edge); border-radius:999px; font-size:14.5px; font-weight:600; cursor:pointer; user-select:none; transition:.15s; margin:0; background:#F5FBFF;}
   .subj-pick input{position:absolute; opacity:0; width:0; height:0;}
   .subj-pick label:has(input:checked){border-color:transparent; color:#fff; background:linear-gradient(180deg,#54D2F8,#16A9E8); box-shadow:0 8px 14px -6px rgba(18,150,214,.5);}
+  .phone-3{display:flex; align-items:center; gap:8px;}
+  .phone-3 input{flex:1; text-align:center; padding-left:8px; padding-right:8px;}
+  .phone-sep{flex:0 0 auto; color:#9AA8B5; font-weight:800;}
   .addr-row{display:flex; gap:8px;}
   .addr-row #postcode{flex:1;}
   .addr-btn{flex:0 0 auto; width:auto; padding:0 18px; border:none; border-radius:14px; background:linear-gradient(180deg,#54D2F8,#16A9E8); color:#fff; font-weight:800; font-size:14.5px; cursor:pointer; white-space:nowrap; box-shadow:0 8px 14px -6px rgba(18,150,214,.5);}
@@ -593,7 +596,15 @@ const HTML = `<!doctype html>
           <form id="inquiryForm" novalidate>
             <div class="form-row">
               <div class="field"><label for="name">학생 이름 <span class="req">*</span></label><input id="name" name="name" type="text" placeholder="학생 이름" required /></div>
-              <div class="field"><label for="phone">학부모 연락처 <span class="req">*</span></label><input id="phone" name="phone" type="tel" inputmode="numeric" placeholder="010-0000-0000" maxlength="13" required /></div>
+              <div class="field"><label for="phone1">학부모 연락처 <span class="req">*</span></label>
+                <div class="phone-3">
+                  <input id="phone1" type="tel" inputmode="numeric" maxlength="3" placeholder="010" />
+                  <span class="phone-sep">-</span>
+                  <input id="phone2" type="tel" inputmode="numeric" maxlength="4" placeholder="0000" />
+                  <span class="phone-sep">-</span>
+                  <input id="phone3" type="tel" inputmode="numeric" maxlength="4" placeholder="0000" />
+                </div>
+              </div>
             </div>
             <div class="field">
               <label for="grade">학생 학년</label>
@@ -702,12 +713,16 @@ const HTML = `<!doctype html>
   const success = document.getElementById('formSuccess');
   const byId = (id) => document.getElementById(id);
 
-  // 전화번호: 숫자 8자리만, XXXX-XXXX 자동 포맷 (앞 010 고정)
-  const phoneEl = byId('phone');
-  phoneEl.addEventListener('input', () => {
-    const d = phoneEl.value.replace(/\D/g, '').slice(0, 11);
-    phoneEl.value = d.length > 7 ? d.slice(0,3) + '-' + d.slice(3,7) + '-' + d.slice(7)
-                  : d.length > 3 ? d.slice(0,3) + '-' + d.slice(3) : d;
+  // 전화번호: 3-4-4 세 칸, 다 채우면 다음 칸으로 자동 이동 (지우면 이전 칸으로)
+  const phoneParts = ['phone1', 'phone2', 'phone3'].map(byId);
+  phoneParts.forEach((el, i) => {
+    el.addEventListener('input', () => {
+      el.value = el.value.replace(/\D/g, '').slice(0, el.maxLength);
+      if (el.value.length >= el.maxLength && i < phoneParts.length - 1) phoneParts[i + 1].focus();
+    });
+    el.addEventListener('keydown', (e) => {
+      if (e.key === 'Backspace' && el.value === '' && i > 0) phoneParts[i - 1].focus();
+    });
   });
 
   // 주소 찾기 (다음 우편번호 → 도로명주소)
@@ -726,16 +741,19 @@ const HTML = `<!doctype html>
     e.preventDefault();
     const f = form.elements;
     const name = f['name'].value.trim();
-    const phoneDigits = phoneEl.value.replace(/\D/g, '');
+    const p1 = phoneParts[0].value, p2 = phoneParts[1].value, p3 = phoneParts[2].value;
     const road = byId('addrRoad').value.trim();
     const detail = byId('addrDetail').value.trim();
 
     if (!name){ f['name'].focus(); alert('학생 이름을 입력해주세요.'); return; }
-    if (phoneDigits.length !== 11){ phoneEl.focus(); alert('학부모 연락처를 정확히 입력해주세요. (예: 010-1234-5678)'); return; }
+    if (p1.length !== 3 || p2.length !== 4 || p3.length !== 4){
+      (p1.length !== 3 ? phoneParts[0] : p2.length !== 4 ? phoneParts[1] : phoneParts[2]).focus();
+      alert('학부모 연락처를 정확히 입력해주세요. (예: 010-1234-5678)'); return;
+    }
     if (!road){ byId('addrSearch').focus(); alert('주소 찾기로 도로명 주소를 선택해주세요.'); return; }
     if (!detail){ byId('addrDetail').focus(); alert('상세주소를 입력해주세요.'); return; }
 
-    const phone = phoneDigits.slice(0,3) + '-' + phoneDigits.slice(3,7) + '-' + phoneDigits.slice(7);
+    const phone = p1 + '-' + p2 + '-' + p3;
     const address = '[' + (byId('postcode').value.trim() || '-') + '] ' + road + ', ' + detail;
     const subjects = [...form.querySelectorAll('input[name="subject"]:checked')].map(c => c.value);
     const payload = { name, phone, grade: f['grade'].value, subjects, address, message: f['message'].value.trim() };
