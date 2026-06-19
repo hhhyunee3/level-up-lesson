@@ -755,6 +755,7 @@ async function handleInquiry(request, env) {
   });
 
   const record = {
+    site: env.SITE_NAME || "레벨업과외",
     name,
     phone,
     address,
