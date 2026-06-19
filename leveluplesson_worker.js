@@ -303,6 +303,14 @@ const HTML = `<!doctype html>
   .subj-pick label{display:inline-flex; align-items:center; gap:7px; padding:10px 15px; border:1.5px solid var(--sky-edge); border-radius:999px; font-size:14.5px; font-weight:600; cursor:pointer; user-select:none; transition:.15s; margin:0; background:#F5FBFF;}
   .subj-pick input{position:absolute; opacity:0; width:0; height:0;}
   .subj-pick label:has(input:checked){border-color:transparent; color:#fff; background:linear-gradient(180deg,#54D2F8,#16A9E8); box-shadow:0 8px 14px -6px rgba(18,150,214,.5);}
+  .phone-wrap{display:flex; align-items:stretch; gap:8px;}
+  .phone-pre{flex:0 0 auto; display:flex; align-items:center; padding:0 16px; border:1.5px solid var(--sky-edge); border-radius:14px; background:#EAF6FF; font-weight:800; font-size:15.5px; color:var(--ink);}
+  .phone-wrap input{flex:1;}
+  .addr-row{display:flex; gap:8px;}
+  .addr-row #postcode{flex:1;}
+  .addr-btn{flex:0 0 auto; width:auto; padding:0 18px; border:none; border-radius:14px; background:linear-gradient(180deg,#54D2F8,#16A9E8); color:#fff; font-weight:800; font-size:14.5px; cursor:pointer; white-space:nowrap; box-shadow:0 8px 14px -6px rgba(18,150,214,.5);}
+  .addr-btn:hover{filter:brightness(1.03);}
+  #addrRoad,#addrDetail{margin-top:10px;}
   .form-card .btn-primary{width:100%; margin-top:6px;}
   .form-note{font-size:13px; color:var(--muted); text-align:center; margin:14px 0 0;}
   .form-success{display:none; text-align:center; padding:42px 10px;}
@@ -581,24 +589,20 @@ const HTML = `<!doctype html>
               <span class="qic"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3C6.5 3 2 6.6 2 11c0 2.8 1.9 5.3 4.7 6.7-.2.7-.7 2.5-.8 2.9 0 0 0 .3.2.4.2 0 .3 0 .4-.1.4-.3 2.6-1.8 3.6-2.5.6.1 1.2.1 1.9.1 5.5 0 10-3.6 10-8S17.5 3 12 3Z"/></svg></span>
               <span><span class="ql">카카오톡</span><span class="qv">카톡으로 상담하기</span></span>
             </a>
-            <a class="qrow" href="mailto:hello@level-up-lesson.com">
-              <span class="qic"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"/><path d="m2 7 10 6 10-6"/></svg></span>
-              <span><span class="ql">이메일</span><span class="qv">hello@level-up-lesson.com</span></span>
-            </a>
           </div>
         </div>
 
         <div class="form-card">
           <form id="inquiryForm" novalidate>
             <div class="form-row">
-              <div class="field"><label for="name">학생 이름 <span class="req">*</span></label><input id="name" name="name" type="text" placeholder="학생 성함" required /></div>
-              <div class="field"><label for="phone">학부모 연락처 <span class="req">*</span></label><input id="phone" name="phone" type="tel" placeholder="010-0000-0000" required /></div>
+              <div class="field"><label for="name">학생 이름 <span class="req">*</span></label><input id="name" name="name" type="text" placeholder="학생 이름" required /></div>
+              <div class="field"><label for="phone">학부모 연락처 <span class="req">*</span></label><div class="phone-wrap"><span class="phone-pre">010</span><input id="phone" name="phone" type="tel" inputmode="numeric" placeholder="0000-0000" maxlength="9" required /></div></div>
             </div>
             <div class="field">
               <label for="grade">학생 학년</label>
               <select id="grade" name="grade">
                 <option value="">선택해주세요</option>
-                <optgroup label="초등"><option>초등 1~2학년</option><option>초등 3~4학년</option><option>초등 5~6학년</option></optgroup>
+                <optgroup label="초등"><option>초1</option><option>초2</option><option>초3</option><option>초4</option><option>초5</option><option>초6</option></optgroup>
                 <optgroup label="중등"><option>중1</option><option>중2</option><option>중3</option></optgroup>
                 <optgroup label="고등"><option>고1</option><option>고2</option><option>고3</option><option>재수·N수</option></optgroup>
                 <optgroup label="기타"><option>성인</option></optgroup>
@@ -615,7 +619,15 @@ const HTML = `<!doctype html>
                 <label><input type="checkbox" name="subject" value="선택·탐구">선택·탐구</label>
               </div>
             </div>
-            <div class="field full"><label for="address">주소 <span class="req">*</span></label><input id="address" name="address" type="text" placeholder="수업 받을 지역·주소 (예: 서울시 강남구 …)" required /></div>
+            <div class="field full">
+              <label for="postcode">주소 <span class="req">*</span></label>
+              <div class="addr-row">
+                <input id="postcode" name="postcode" type="text" placeholder="우편번호" readonly />
+                <button type="button" id="addrSearch" class="addr-btn">주소 찾기</button>
+              </div>
+              <input id="addrRoad" name="addrRoad" type="text" placeholder="도로명 주소" readonly />
+              <input id="addrDetail" name="addrDetail" type="text" placeholder="상세주소 (동·호수 등)" required />
+            </div>
             <div class="field full"><label for="message">문의 내용</label><textarea id="message" name="message" placeholder="현재 성적, 고민, 원하는 수업 방식 등을 자유롭게 적어주세요."></textarea></div>
             <button type="submit" class="btn btn-primary">상담 신청하기</button>
             <p class="form-note">남겨주신 정보는 상담 안내 목적으로만 사용됩니다.</p>
@@ -647,7 +659,7 @@ const HTML = `<!doctype html>
         <div class="foot-col">
           <h4>상담 연락처</h4>
           <!-- ▼ 실제 정보로 바꿔주세요 -->
-          <span>전화 010-3038-8978</span><span>카카오톡 @leveluplesson</span><span>hello@level-up-lesson.com</span>
+          <span>전화 010-3038-8978</span><span>카카오톡 @leveluplesson</span>
         </div>
       </div>
     </div>
@@ -658,6 +670,7 @@ const HTML = `<!doctype html>
   </div>
 </footer>
 
+<script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <script>
   const header = document.getElementById('top');
   const onScroll = () => header.classList.toggle('scrolled', window.scrollY > 8);
@@ -690,14 +703,42 @@ const HTML = `<!doctype html>
 
   const form = document.getElementById('inquiryForm');
   const success = document.getElementById('formSuccess');
+  const byId = (id) => document.getElementById(id);
+
+  // 전화번호: 숫자 8자리만, XXXX-XXXX 자동 포맷 (앞 010 고정)
+  const phoneEl = byId('phone');
+  phoneEl.addEventListener('input', () => {
+    const d = phoneEl.value.replace(/\D/g, '').slice(0, 8);
+    phoneEl.value = d.length > 4 ? d.slice(0, 4) + '-' + d.slice(4) : d;
+  });
+
+  // 주소 찾기 (다음 우편번호 → 도로명주소)
+  byId('addrSearch').addEventListener('click', () => {
+    if (typeof daum === 'undefined' || !daum.Postcode) { alert('주소 검색을 불러오지 못했어요. 잠시 후 다시 시도해주세요.'); return; }
+    new daum.Postcode({
+      oncomplete: (d) => {
+        byId('postcode').value = d.zonecode || '';
+        byId('addrRoad').value = d.roadAddress || d.address || '';
+        byId('addrDetail').focus();
+      }
+    }).open();
+  });
+
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const f = form.elements;
-    const name = f['name'].value.trim(), phone = f['phone'].value.trim(), address = f['address'].value.trim();
-    if (!name || !phone || !address){
-      const miss = !name ? f['name'] : (!phone ? f['phone'] : f['address']);
-      miss.focus(); alert('학생 이름, 학부모 연락처, 주소를 입력해주세요.'); return;
-    }
+    const name = f['name'].value.trim();
+    const phoneDigits = phoneEl.value.replace(/\D/g, '');
+    const road = byId('addrRoad').value.trim();
+    const detail = byId('addrDetail').value.trim();
+
+    if (!name){ f['name'].focus(); alert('학생 이름을 입력해주세요.'); return; }
+    if (phoneDigits.length !== 8){ phoneEl.focus(); alert('학부모 연락처 8자리를 정확히 입력해주세요. (앞 010 제외)'); return; }
+    if (!road){ byId('addrSearch').focus(); alert('주소 찾기로 도로명 주소를 선택해주세요.'); return; }
+    if (!detail){ byId('addrDetail').focus(); alert('상세주소를 입력해주세요.'); return; }
+
+    const phone = '010-' + phoneDigits.slice(0, 4) + '-' + phoneDigits.slice(4);
+    const address = '[' + (byId('postcode').value.trim() || '-') + '] ' + road + ', ' + detail;
     const subjects = [...form.querySelectorAll('input[name="subject"]:checked')].map(c => c.value);
     const payload = { name, phone, grade: f['grade'].value, subjects, address, message: f['message'].value.trim() };
     const btn = form.querySelector('button[type="submit"]');
