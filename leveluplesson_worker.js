@@ -12,6 +12,13 @@ const HTML = `<!doctype html>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>레벨업과외 · 초·중·고 전과목 1:1 과외</title>
 <meta name="description" content="국어·영어·수학·사회·과학, 고등 선택·탐구과목까지. 학생의 현재 레벨에서 시작하는 초·중·고 1:1 맞춤 과외." />
+<link rel="canonical" href="https://level-up-lesson.com/" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="레벨업과외 · 초·중·고 전과목 1:1 과외" />
+<meta property="og:description" content="국어·영어·수학·사회·과학, 고등 선택·탐구과목까지. 학생의 현재 레벨에서 시작하는 1:1 맞춤 과외." />
+<meta property="og:url" content="https://level-up-lesson.com/" />
+<meta property="og:locale" content="ko_KR" />
+{{VERIFY}}
 <link rel="icon" type="image/png" sizes="32x32" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAFlklEQVR4nMVXTWxcVxX+znk/M5kZZ8Z/gcRpbcWkbZKGtpDQqjYNQgLxIxBFQgKE2LBA6oodEjsk9o3YgWABGxaAYI/aitZQk1ilcciPJ67dOHEynp839njmvXnv3XsOi3GQa08cA6r7Lc87et93zj33nHsIfTAy+kntZ/9/Ua/N007bBwwfFvFeQvigyXdy8UGT7xTBj3L8sEEfRfTb4e71kYiEmEQVrCK8ZVRmEgWgVhlQAgBiFqKevQclFWWo7qr8fQkgIlVV7pEAACmgBFUSq842TyUmVRHWfkfKZCHb/fcjoEdOmaHhytFnzr7fvrNarC/eOtWLns3Hzp2/QsaieuWdZ42xropSaXJyYeTMmSoXSjaNEwrv3sm2rr17Mmp3hkAsUOlbb7tqgJhFVWnwxOTCj377iyMLmZGht8pVtH/+szebs3996duvvjo39uXPn/vTrQjhH34z2/zdr56Z+vFP3nnq5W9MLaaMIAWMBdIoRvj+UmPj1xdvBpdnp4hYtI+IXRkgJqtGvE989evV0eMjT/3+zdvh9ZUgN3DsyVJ+5NrasakL51bvbNiF5QpJduT05Le+f+l7r3zzwmvzgb52q2pt2DZeJkOHi0WnmysNe995ZWpg7f7VzZXbZ4nJ6o7j2CVAtXfm2dEjmb+vqq60YxfNJtJ2x7Lr2mvNTVmP1XHSBK21AJ2nT50oV8T+sVyh6vx11zFwkc8DJxn5gVzaUNcb/PR0hJXb6HfddqVEtdee3YHCoZZRiuMEmlq4cdSNg2DYJEmXmWGtBdLE0dT6K11yok4IDhMUr/7trfy1S7Ol4iAmSnlO466GheJx33WSfsW4uzC2rps/UMzHaYrUpCAFnLCdJEmSsZ0wBDsgVUDhiBEvNgbsZ9j1M4bmXv9s/sY/xs6f/DieyLnaTVKy1mbJc+M+Ceh/CzzP73K+UOgkKcQKSBUcdyAAbBRFVHIAKBTgRMQ1CuRzWTWTE27huz+cmfzMc6Xni3jsz3cjsu2WOmG7bZJ0bN8CHN9NreN5YWIgCiJVUBIxAJgkTkAARJWIVEQgCgwXDqEwkIf/qR9MP1n0MLPcxNvvVcRr1h0/WLsbWnkcRAaq7iMFqCjb1EjiKhxmEBHIGgaThap4RFCxgAgUQCyC2Fg0NjeRrqwmt1WxsbHJcv+uN2o2rdycH0avZdLOQuwrwMTdbNJuB2m2BNdzFJksrJM1EHXyg4Ml2BTGCkGMIeY4tor1doT6jRvQoOZncnkMSIpCvF7juZn3OtXqCyAS1d1FuFsAs1gRJ6rcq+uR8eO+75NXzAFfenli/Iufm3n2icenLy+tadKNCYlJXNe1qSiSJFV0IxrbrC7k7jcraVB3oqXFU1Gn8wKIBKp9O+HuRtQbKNycm235z02T4zo0emwYR09PjJ85NjKetFqYudNQBE114rCedcGJVZjU2MyhHNOtf9Vr5ZsXtv3Qok/kDxWgIg6I9N7rfzk7+YWvBZIdGkq7cdporvMbtUBqGx1uLZatJ+xng5VVLzM9FiZpry+IVWFWYjYgMiqS2Ysc6NcHVIkIErU3h9Z+eXGp1FyLw0bTWy4vO0vXF7xO+YYz6LA/Vi1f9hffPT9QKByubLRtdz0wSGIia1lFXKi4jxrFfTPQy4I6RCy1q1fOHb7405tHn3+pEReHHhOrnpuEDSyXG61/XnrRGuMlb78xl774lQt+a+NQqVML0sq9EwCpKvaM/AH2fBFtn2Ce56bsumkcdXPbHJQBPXz66VkqFNOofH2i2wzGQaT7if6RAv4jglS39XHdmmoPecxsPVz2iT2fZACgKrw1xhREgCrtIFditj1f5Yddt/9ZwDYQtG+ySEX+m/98ANxvXToo1Gvz9JHvBfxAyUETP+DknYaDJAd2bMcPcJDr+b8B3nk1lmsJdSoAAAAASUVORK5CYII=" />
 <link rel="icon" href="favicon.ico" sizes="any" />
 <link rel="apple-touch-icon" href="apple-touch-icon.png" />
@@ -953,10 +960,32 @@ export default {
         headers: { "content-type": "image/png", "cache-control": "public, max-age=604800" },
       });
     }
+    if (path === "/robots.txt") {
+      let body = "User-agent: *\nAllow: /\n\nSitemap: https://level-up-lesson.com/sitemap.xml\n";
+      if (env.DAUM_VERIFY) body += "\n" + env.DAUM_VERIFY + "\n"; // 다음 웹마스터도구 PIN 코드 줄
+      return new Response(body, {
+        headers: { "content-type": "text/plain; charset=utf-8", "cache-control": "public, max-age=86400" },
+      });
+    }
+    if (path === "/sitemap.xml") {
+      const lastmod = new Date().toISOString().slice(0, 10);
+      const body = '<?xml version="1.0" encoding="UTF-8"?>\n' +
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
+        '<url><loc>https://level-up-lesson.com/</loc><lastmod>' + lastmod + '</lastmod><changefreq>weekly</changefreq><priority>1.0</priority></url>\n' +
+        '</urlset>\n';
+      return new Response(body, {
+        headers: { "content-type": "application/xml; charset=utf-8", "cache-control": "public, max-age=86400" },
+      });
+    }
     if (path === "/" || path === "/index.html") {
       // 동적 생성: 요청 시점 기준 값 주입 (예: 연도). 필요한 값을 여기서 더 끼워 넣으면 됩니다.
       const year = new Date().getFullYear();
-      const page = HTML.replaceAll("{{YEAR}}", String(year));
+      const verify = [
+        env.GOOGLE_SITE_VERIFICATION ? '<meta name="google-site-verification" content="' + env.GOOGLE_SITE_VERIFICATION + '" />' : '',
+        env.NAVER_SITE_VERIFICATION ? '<meta name="naver-site-verification" content="' + env.NAVER_SITE_VERIFICATION + '" />' : '',
+        env.BING_SITE_VERIFICATION ? '<meta name="msvalidate.01" content="' + env.BING_SITE_VERIFICATION + '" />' : '',
+      ].filter(Boolean).join("\n");
+      const page = HTML.replaceAll("{{YEAR}}", String(year)).replace("{{VERIFY}}", verify);
       return new Response(page, {
         headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-cache" },
       });
