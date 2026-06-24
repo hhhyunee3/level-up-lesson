@@ -375,6 +375,19 @@ const HTML = `<!doctype html>
     .lu-block{transform:scaleY(1);} .lu-topper{opacity:1; transform:translateX(-50%);}
     html{scroll-behavior:auto;}
   }
+.hdd{position:relative}
+.hdd>summary{list-style:none;cursor:pointer;font-size:15.5px;font-weight:600;color:var(--body-ink);display:inline-flex;align-items:center;gap:5px;transition:color .15s ease}
+.hdd>summary::-webkit-details-marker{display:none}
+.hdd>summary::after{content:"▾";font-size:.78em;opacity:.7}
+.hdd[open]>summary,.hdd>summary:hover{color:var(--sky-deep)}
+.hsub{position:absolute;top:180%;left:50%;transform:translateX(-50%);background:#fff;border:1px solid var(--sky-edge);border-radius:14px;padding:8px;min-width:148px;box-shadow:0 16px 34px -14px rgba(18,150,214,.45);z-index:90;display:flex;flex-direction:column;gap:2px}
+.hsub a{padding:9px 16px;border-radius:10px;font-size:15px;font-weight:600;color:var(--ink);white-space:nowrap}
+.hsub a:hover{background:var(--sky-tint);color:var(--sky-deep)}
+.m-cta{display:none;}
+.nav-links.open .m-cta{display:block;}
+.nav-links.open .hdd{width:100%}
+.nav-links.open .hdd>summary{padding:13px 6px;font-size:17px}
+.nav-links.open .hsub{position:static;transform:none;box-shadow:none;border:none;padding:2px 0 2px 14px;min-width:0}
 </style>
 </head>
 <body>
@@ -388,10 +401,9 @@ const HTML = `<!doctype html>
     </a>
     <nav>
       <ul class="nav-links" id="navLinks">
-        <li><a href="#subjects">수업 과목</a></li>
+        <li class="has-dd"><details class="hdd"><summary>수업 과목</summary><div class="hsub"><a href="/korean">국어</a><a href="/english">영어</a><a href="/math">수학</a><a href="/social">사회</a><a href="/science">과학</a></div></details></li>
         <li><a href="#how">수업 방식</a></li>
         <li><a href="#reviews">수강 후기</a></li>
-        <li><a href="#contact">상담 문의</a></li>
         <li class="m-cta"><a class="btn btn-primary" href="#contact">무료 상담 신청</a></li>
       </ul>
     </nav>
@@ -968,11 +980,29 @@ export default {
         headers: { "content-type": "text/plain; charset=utf-8", "cache-control": "public, max-age=86400" },
       });
     }
+    const SM_CHUNK = 45000;
     if (path === "/sitemap.xml") {
-      const lastmod = new Date().toISOString().slice(0, 10);
-      let urls = '<url><loc>https://level-up-lesson.com/</loc><lastmod>' + lastmod + '</lastmod><changefreq>weekly</changefreq><priority>1.0</priority></url>\n';
-      for (const p of seoSitemapPaths()) {
-        urls += '<url><loc>https://level-up-lesson.com' + p + '</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>\n';
+      const total = seoSitemapPaths().length + 1;
+      const n = Math.ceil(total / SM_CHUNK);
+      let body = '<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
+      for (let i = 1; i <= n; i++) body += '<sitemap><loc>https://level-up-lesson.com/sitemap-' + i + '.xml</loc></sitemap>\n';
+      body += '</sitemapindex>\n';
+      return new Response(body, {
+        headers: { "content-type": "application/xml; charset=utf-8", "cache-control": "public, max-age=86400" },
+      });
+    }
+    if (path.startsWith("/sitemap-") && path.endsWith(".xml")) {
+      const i = parseInt(path.slice(9, -4), 10);
+      const all = ["/"].concat(seoSitemapPaths());
+      if (!i || i < 1 || (i - 1) * SM_CHUNK >= all.length) {
+        return new Response("Not Found", { status: 404 });
+      }
+      const slice = all.slice((i - 1) * SM_CHUNK, i * SM_CHUNK);
+      let urls = "";
+      for (const p of slice) {
+        const loc = p === "/" ? "https://level-up-lesson.com/" : "https://level-up-lesson.com" + p;
+        const pr = p === "/" ? "1.0" : "0.7";
+        urls += '<url><loc>' + loc + '</loc><changefreq>monthly</changefreq><priority>' + pr + '</priority></url>\n';
       }
       const body = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + urls + '</urlset>\n';
       return new Response(body, {
