@@ -35,8 +35,8 @@ const sgIndex=new Map();
 for(const sg of DATA.sigungu) sgIndex.set(sg.sido_slug+"|"+sg.ko, sg.slug);
 const ROUTES=new Map(); const REGION_SM=[];
 for(const sk of SUBJ_KEYS.concat(ALIAS_KEYS)){const p="/"+sk; ROUTES.set(p,{type:"hub",subj:sk}); REGION_SM.push(p);}
-for(const sd of DATA.sido) for(const sk of SUBJ_KEYS){const p="/"+sd.slug+"-"+sk; ROUTES.set(p,{type:"sido",r:sd,subj:sk}); REGION_SM.push(p);}
-for(const sg of DATA.sigungu) for(const sk of SUBJ_KEYS){const p="/"+sg.slug+"-"+sk; ROUTES.set(p,{type:"sg",r:sg,subj:sk}); REGION_SM.push(p);}
+for(const sd of DATA.sido) for(const sk of SUBJ_KEYS.concat(ALIAS_KEYS)){const p="/"+sd.slug+"-"+sk; ROUTES.set(p,{type:"sido",r:sd,subj:sk}); REGION_SM.push(p);}
+for(const sg of DATA.sigungu) for(const sk of SUBJ_KEYS.concat(ALIAS_KEYS)){const p="/"+sg.slug+"-"+sk; ROUTES.set(p,{type:"sg",r:sg,subj:sk}); REGION_SM.push(p);}
 const dongIndex=new Map(); const DONG_SM=[];
 for(const g of DONG) for(const d of g.d){const key=g.sgs+"-"+d[1]; dongIndex.set(key,{g:g,ko:d[0],rom:d[1]}); for(const sk of SUBJ_KEYS) DONG_SM.push("/"+key+"-"+sk);}
 
@@ -68,7 +68,7 @@ function linksBlock(lT,lC,rT,rC){
   return `<div class="wrap links"><h2>다른 지역·과목도 찾고 있다면</h2><div class="col2"><div class="linkbox"><h3>${esc(lT)}</h3><p class="sub">과목만 바꿔서 보기</p><div class="chips">${ch(lC)}</div></div><div class="linkbox"><h3>${esc(rT)}</h3><p class="sub">근처 페이지</p><div class="chips">${ch(rC)}</div></div></div></div>`;
 }
 function relatedRegion(desc){
-  const J=SUBJECTS[desc.subj].ko; let lT,lC=[],rT,rC=[];
+  const J=subKo(desc.subj); let lT,lC=[],rT,rC=[];
   if(desc.type==="sg"){const r=desc.r; lT=`${r.ko} 다른 과목 과외`;
     for(const sk of SUBJ_KEYS) if(sk!==desc.subj) lC.push([`${r.ko} ${SUBJECTS[sk].ko} 과외`,`/${r.slug}-${sk}`]);
     rT=`${r.sido_s} 인근 지역 ${J} 과외`;
