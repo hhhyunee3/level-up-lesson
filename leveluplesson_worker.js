@@ -4,6 +4,7 @@
 
 // 상담 신청 시 이메일 알림 발송용 (Cloudflare Email Routing)
 import { EmailMessage } from "cloudflare:email";
+import { tryRenderSeoPage, seoSitemapPaths } from "./seo_pages.js";
 
 const HTML = `<!doctype html>
 <html lang="ko">
@@ -969,10 +970,11 @@ export default {
     }
     if (path === "/sitemap.xml") {
       const lastmod = new Date().toISOString().slice(0, 10);
-      const body = '<?xml version="1.0" encoding="UTF-8"?>\n' +
-        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
-        '<url><loc>https://level-up-lesson.com/</loc><lastmod>' + lastmod + '</lastmod><changefreq>weekly</changefreq><priority>1.0</priority></url>\n' +
-        '</urlset>\n';
+      let urls = '<url><loc>https://level-up-lesson.com/</loc><lastmod>' + lastmod + '</lastmod><changefreq>weekly</changefreq><priority>1.0</priority></url>\n';
+      for (const p of seoSitemapPaths()) {
+        urls += '<url><loc>https://level-up-lesson.com' + p + '</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>\n';
+      }
+      const body = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + urls + '</urlset>\n';
       return new Response(body, {
         headers: { "content-type": "application/xml; charset=utf-8", "cache-control": "public, max-age=86400" },
       });
@@ -988,6 +990,12 @@ export default {
       const page = HTML.replaceAll("{{YEAR}}", String(year)).replace("{{VERIFY}}", verify);
       return new Response(page, {
         headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-cache" },
+      });
+    }
+    const seoPage = tryRenderSeoPage(path);
+    if (seoPage) {
+      return new Response(seoPage, {
+        headers: { "content-type": "text/html; charset=utf-8", "cache-control": "public, max-age=3600" },
       });
     }
     return new Response("Not Found", { status: 404 });
