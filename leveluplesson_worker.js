@@ -242,7 +242,7 @@ const HTML = `<!doctype html>
   .tier.t3 .grade{color:#fff;} .tier.t3 .desc{color:rgba(255,255,255,.82);}
   .tier.t3 .lvchip{background:rgba(255,255,255,.22); box-shadow:inset 0 1px 0 rgba(255,255,255,.4);}
   .tier.t3 .chip{background:rgba(255,255,255,.14); border-color:rgba(255,255,255,.22); color:#fff; box-shadow:inset 0 1px 0 rgba(255,255,255,.2);}
-  .tier.t3 .chip.hl{background:linear-gradient(180deg,#FFE07A,#FFCE3A); border-color:transparent; color:#5A4500; box-shadow:0 6px 12px -5px rgba(220,170,20,.5), inset 0 1px 0 rgba(255,255,255,.5);}
+  .tier.t3 .chip.hl{background:linear-gradient(180deg,#FFE07A,#FFCE3A); border-color:transparent; color:#5A4500; box-shadow:0 6px 12px -5px rgba(220,170,20,.5), inset 0 1px 0 rgba(255,255,255,.5);}a.chip{text-decoration:none;cursor:pointer;transition:transform .12s ease, box-shadow .12s ease;} a.chip:hover{transform:translateY(-2px); box-shadow:0 9px 18px -6px rgba(18,150,214,.5);}
   .grp{margin-bottom:16px;} .grp:last-child{margin-bottom:0;}
   .grp-label{font-size:12.5px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; color:var(--muted); margin-bottom:10px;}
   .tier.t3 .grp-label{color:rgba(255,255,255,.65);}
@@ -489,8 +489,8 @@ const HTML = `<!doctype html>
           <span class="desc">개념과 학습 습관 다지기</span>
         </div>
         <div class="chips">
-          <span class="chip">국어</span><span class="chip">영어</span><span class="chip">수학</span>
-          <span class="chip">사회</span><span class="chip">과학</span>
+          <a class="chip" href="/korean">국어</a><a class="chip" href="/english">영어</a><a class="chip" href="/math">수학</a>
+          <a class="chip" href="/social">사회</a><a class="chip" href="/science">과학</a>
         </div>
       </div>
       <!-- 중등 -->
@@ -501,8 +501,8 @@ const HTML = `<!doctype html>
           <span class="desc">내신·서술형 대비</span>
         </div>
         <div class="chips">
-          <span class="chip">국어</span><span class="chip">영어</span><span class="chip">수학</span>
-          <span class="chip">사회</span><span class="chip">과학</span>
+          <a class="chip" href="/korean">국어</a><a class="chip" href="/english">영어</a><a class="chip" href="/math">수학</a>
+          <a class="chip" href="/social">사회</a><a class="chip" href="/science">과학</a>
         </div>
       </div>
       <!-- 고등 (정상) -->
@@ -515,15 +515,15 @@ const HTML = `<!doctype html>
         <div>
           <div class="grp">
             <div class="grp-label">공통 · 기본 과목</div>
-            <div class="chips"><span class="chip">국어</span><span class="chip">영어</span><span class="chip">수학</span></div>
+            <div class="chips"><a class="chip" href="/korean">국어</a><a class="chip" href="/english">영어</a><a class="chip" href="/math">수학</a></div>
           </div>
           <div class="grp">
             <div class="grp-label">선택과목</div>
-            <div class="chips"><span class="chip hl">미적분</span><span class="chip hl">기하</span><span class="chip hl">확률과 통계</span><span class="chip hl">언어와 매체</span><span class="chip hl">문학·독서</span></div>
+            <div class="chips"><a class="chip hl" href="/math">미적분</a><a class="chip hl" href="/math">기하</a><a class="chip hl" href="/math">확률과 통계</a><a class="chip hl" href="/korean">언어와 매체</a><a class="chip hl" href="/korean">문학·독서</a></div>
           </div>
           <div class="grp">
             <div class="grp-label">탐구과목 (사탐 · 과탐)</div>
-            <div class="chips"><span class="chip">생활과 윤리</span><span class="chip">사회·문화</span><span class="chip">한국지리</span><span class="chip">물리학</span><span class="chip">화학</span><span class="chip">생명과학</span><span class="chip">지구과학</span></div>
+            <div class="chips"><a class="chip" href="/social">생활과 윤리</a><a class="chip" href="/social">사회·문화</a><a class="chip" href="/social">한국지리</a><a class="chip" href="/science">물리학</a><a class="chip" href="/science">화학</a><a class="chip" href="/science">생명과학</a><a class="chip" href="/science">지구과학</a></div>
           </div>
         </div>
       </div>
@@ -593,7 +593,7 @@ const HTML = `<!doctype html>
               <span class="qic"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.7A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.7a2 2 0 0 1-.5 2.1L8 9.6a16 16 0 0 0 6 6l1.1-1.1a2 2 0 0 1 2.1-.5c.9.3 1.8.5 2.7.6a2 2 0 0 1 1.7 2Z"/></svg></span>
               <span><span class="ql">전화 상담</span><span class="qv">010-3038-8978</span></span>
             </a>
-            <a class="qrow" href="#" target="_blank" rel="noopener">
+            <a class="qrow" href="http://pf.kakao.com/_hzCPG/chat" target="_blank" rel="noopener">
               <span class="qic"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3C6.5 3 2 6.6 2 11c0 2.8 1.9 5.3 4.7 6.7-.2.7-.7 2.5-.8 2.9 0 0 0 .3.2.4.2 0 .3 0 .4-.1.4-.3 2.6-1.8 3.6-2.5.6.1 1.2.1 1.9.1 5.5 0 10-3.6 10-8S17.5 3 12 3Z"/></svg></span>
               <span><span class="ql">카카오톡</span><span class="qv">카톡으로 상담하기</span></span>
             </a>
@@ -675,7 +675,7 @@ const HTML = `<!doctype html>
         <div class="foot-col">
           <h4>상담 연락처</h4>
           <!-- ▼ 실제 정보로 바꿔주세요 -->
-          <span>전화 010-3038-8978</span><span>카카오톡 @leveluplesson</span>
+          <span>전화 010-3038-8978</span><span><a href="http://pf.kakao.com/_hzCPG/chat" target="_blank" rel="noopener" style="color:inherit">카카오톡 @leveluplesson</a></span>
         </div>
       </div>
     </div>
