@@ -519,11 +519,11 @@ const HTML = `<!doctype html>
           </div>
           <div class="grp">
             <div class="grp-label">선택과목</div>
-            <div class="chips"><a class="chip hl" href="/math">미적분</a><a class="chip hl" href="/math">기하</a><a class="chip hl" href="/math">확률과 통계</a><a class="chip hl" href="/korean">언어와 매체</a><a class="chip hl" href="/korean">문학·독서</a></div>
+            <div class="chips"><a class="chip hl" href="/calculus">미적분</a><a class="chip hl" href="/geometry">기하</a><a class="chip hl" href="/statistics">확률과 통계</a><a class="chip hl" href="/language-media">언어와 매체</a><a class="chip hl" href="/literature">문학·독서</a></div>
           </div>
           <div class="grp">
             <div class="grp-label">탐구과목 (사탐 · 과탐)</div>
-            <div class="chips"><a class="chip" href="/social">생활과 윤리</a><a class="chip" href="/social">사회·문화</a><a class="chip" href="/social">한국지리</a><a class="chip" href="/science">물리학</a><a class="chip" href="/science">화학</a><a class="chip" href="/science">생명과학</a><a class="chip" href="/science">지구과학</a></div>
+            <div class="chips"><a class="chip" href="/ethics">생활과 윤리</a><a class="chip" href="/society-culture">사회·문화</a><a class="chip" href="/korea-geography">한국지리</a><a class="chip" href="/physics">물리학</a><a class="chip" href="/chemistry">화학</a><a class="chip" href="/biology">생명과학</a><a class="chip" href="/earth-science">지구과학</a></div>
           </div>
         </div>
       </div>
