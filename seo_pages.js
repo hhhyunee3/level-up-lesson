@@ -96,14 +96,14 @@ function idxShell(o){
 <link rel="preconnect" href="https://fonts.googleapis.com" /><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&display=swap" />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
-<style>${CSS}</style></head><body>
+<style>${CSS}body{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;}input,textarea,select,[contenteditable]{-webkit-user-select:text;-moz-user-select:text;-ms-user-select:text;user-select:text;}</style></head><body>
 <header><div class="wrap bar"><a class="brand" href="${BASE}"><img src="${LOGO}" alt="레벨업과외" />레벨업 과외</a>
 <nav class="nav">${navMenu()}<a href="${BASE}">홈</a><a href="${BASE}/#contact">상담</a></nav>
 <a class="btn btn-pri" href="${BASE}/#contact">무료 상담 신청</a></div></header>
 <section class="hero"><div class="wrap"><div class="crumb">${o.crumb}</div><h1>${esc(o.h1)}</h1><p class="lede">${esc(o.sub)}</p></div></section>
 <div class="wrap" style="padding:30px 24px 56px">${o.body}</div>
 <footer><div class="wrap foot"><span>© 2026 레벨업과외 · 전국 1:1 맞춤 과외</span><span><a href="/regions" style="color:inherit;text-decoration:underline">전국 지역</a></span><span>전화 010-3038-8978 · <a href="${KAKAO}" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline">카카오톡 상담</a></span></div></footer>
-</body></html>`;
+<script>(function(){var ok=function(e){var t=e.target;return t&&/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName);};document.addEventListener('contextmenu',function(e){if(!ok(e))e.preventDefault();});document.addEventListener('dragstart',function(e){if(!ok(e))e.preventDefault();});document.addEventListener('copy',function(e){if(!ok(e))e.preventDefault();});document.addEventListener('keydown',function(e){var k=(e.key||'').toLowerCase();if(e.key==='F12'){e.preventDefault();return;}if(e.ctrlKey&&e.shiftKey&&['i','j','c'].indexOf(k)>-1){e.preventDefault();return;}if(e.ctrlKey&&!ok(e)&&['u','s'].indexOf(k)>-1){e.preventDefault();return;}});})();</script></body></html>`;
 }
 function regionsPage(){
   const totSg=DATA.sigungu.length; let totD=0; for(const g of DONG) totD+=g.d.length;
@@ -192,7 +192,7 @@ function renderCore(o){
 <link rel="preconnect" href="https://fonts.googleapis.com" /><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&display=swap" />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
-<style>${CSS}</style></head><body>
+<style>${CSS}body{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;}input,textarea,select,[contenteditable]{-webkit-user-select:text;-moz-user-select:text;-ms-user-select:text;user-select:text;}</style></head><body>
 <header><div class="wrap bar"><a class="brand" href="${BASE}"><img src="${LOGO}" alt="레벨업과외" />레벨업 과외</a>
 <nav class="nav">${navMenu()}<a href="${BASE}">홈</a><a href="#faq">FAQ</a><a href="#contact">상담</a></nav>
 <a class="btn btn-pri" href="${BASE}/#contact">무료 상담 신청</a></div></header>
@@ -212,7 +212,7 @@ ${o.related}
 <script type="application/ld+json">${JSON.stringify(ld1)}</script>
 <script type="application/ld+json">${JSON.stringify(ld2)}</script>
 <script type="application/ld+json">${JSON.stringify(ld3)}</script>
-</body></html>`;
+<script>(function(){var ok=function(e){var t=e.target;return t&&/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName);};document.addEventListener('contextmenu',function(e){if(!ok(e))e.preventDefault();});document.addEventListener('dragstart',function(e){if(!ok(e))e.preventDefault();});document.addEventListener('copy',function(e){if(!ok(e))e.preventDefault();});document.addEventListener('keydown',function(e){var k=(e.key||'').toLowerCase();if(e.key==='F12'){e.preventDefault();return;}if(e.ctrlKey&&e.shiftKey&&['i','j','c'].indexOf(k)>-1){e.preventDefault();return;}if(e.ctrlKey&&!ok(e)&&['u','s'].indexOf(k)>-1){e.preventDefault();return;}});})();</script></body></html>`;
 }
 function renderDong(rec,subj){
   const g=rec.g, J=SUBJECTS[subj].ko;

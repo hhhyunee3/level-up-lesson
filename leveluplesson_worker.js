@@ -396,7 +396,7 @@ const HTML = `<!doctype html>
 .foot-links a{color:rgba(255,255,255,.72);}
 .foot-links a:hover{color:var(--sky);}
 .foot-copy{color:rgba(255,255,255,.42); font-size:12.5px;}
-</style>
+body{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;}input,textarea,select,[contenteditable]{-webkit-user-select:text;-moz-user-select:text;-ms-user-select:text;user-select:text;}</style>
 </head>
 <body>
 
@@ -788,6 +788,7 @@ const HTML = `<!doctype html>
     }
   });
 </script>
+<script>(function(){var ok=function(e){var t=e.target;return t&&/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName);};document.addEventListener('contextmenu',function(e){if(!ok(e))e.preventDefault();});document.addEventListener('dragstart',function(e){if(!ok(e))e.preventDefault();});document.addEventListener('copy',function(e){if(!ok(e))e.preventDefault();});document.addEventListener('keydown',function(e){var k=(e.key||'').toLowerCase();if(e.key==='F12'){e.preventDefault();return;}if(e.ctrlKey&&e.shiftKey&&['i','j','c'].indexOf(k)>-1){e.preventDefault();return;}if(e.ctrlKey&&!ok(e)&&['u','s'].indexOf(k)>-1){e.preventDefault();return;}});})();</script>
 </body>
 </html>
 `;
