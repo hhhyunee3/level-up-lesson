@@ -49,6 +49,8 @@ for(const sd of DATA.sido) for(const sk of SUBJ_KEYS){const p="/"+sd.slug+"-"+sk
 for(const sg of DATA.sigungu) for(const sk of SUBJ_KEYS){const p="/"+sg.slug+"-"+sk; ROUTES.set(p,{type:"sg",r:sg,subj:sk}); REGION_SM.push(p);}
 for(const sd of DATA.sido) for(const sk of BASE_KEYS) for(const g of GRADES){const p="/"+sd.slug+"-"+g.slug+"-"+sk; ROUTES.set(p,{type:"sido_g",r:sd,subj:sk,g}); REGION_SM.push(p);}
 for(const sg of DATA.sigungu) for(const sk of BASE_KEYS) for(const g of GRADES){const p="/"+sg.slug+"-"+g.slug+"-"+sk; ROUTES.set(p,{type:"sg_g",r:sg,subj:sk,g}); REGION_SM.push(p);}
+ROUTES.set("/regions",{type:"regions"}); REGION_SM.push("/regions");
+for(const sd of DATA.sido){ROUTES.set("/regions-"+sd.slug,{type:"sido_index",sd}); REGION_SM.push("/regions-"+sd.slug);}
 const dongIndex=new Map(); const DONG_SM=[];
 for(const g of DONG) for(const d of g.d){const key=g.sgs+"-"+d[1]; dongIndex.set(key,{g:g,ko:d[0],rom:d[1]}); for(const sk of SUBJ_KEYS) DONG_SM.push("/"+key+"-"+sk);}
 
@@ -81,6 +83,46 @@ function bc(items){
   for(let i=0;i<items.length;i++){const lab=items[i][0],href=items[i][1],last=i===items.length-1;
     out.push((href&&!last)?`<a href="${href}">${esc(lab)}</a>`:`<span class="cur">${esc(lab)}</span>`);}
   return out.join('<span class="sep"> \u203A </span>');
+}
+function idxShell(o){
+  return `<!doctype html><html lang="ko"><head>
+<meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>${esc(o.title)}</title><meta name="description" content="${esc(o.desc)}" />
+<link rel="canonical" href="${BASE+o.path}" />
+<link rel="icon" type="image/png" sizes="32x32" href="${FAVICON}" />
+<link rel="icon" href="/favicon.ico" sizes="any" /><link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+<meta property="og:title" content="${esc(o.title)}" /><meta property="og:description" content="${esc(o.desc)}" />
+<meta property="og:type" content="website" /><meta property="og:url" content="${BASE+o.path}" />
+<link rel="preconnect" href="https://fonts.googleapis.com" /><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&display=swap" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+<style>${CSS}</style></head><body>
+<header><div class="wrap bar"><a class="brand" href="${BASE}"><img src="${LOGO}" alt="레벨업과외" />레벨업 과외</a>
+<nav class="nav">${navMenu()}<a href="${BASE}">홈</a><a href="${BASE}/#contact">상담</a></nav>
+<a class="btn btn-pri" href="${BASE}/#contact">무료 상담 신청</a></div></header>
+<section class="hero"><div class="wrap"><div class="crumb">${o.crumb}</div><h1>${esc(o.h1)}</h1><p class="lede">${esc(o.sub)}</p></div></section>
+<div class="wrap" style="padding:30px 24px 56px">${o.body}</div>
+<footer><div class="wrap foot"><span>© 2026 레벨업과외 · 전국 1:1 맞춤 과외</span><span><a href="/regions" style="color:inherit;text-decoration:underline">전국 지역</a></span><span>전화 010-3038-8978 · <a href="${KAKAO}" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline">카카오톡 상담</a></span></div></footer>
+</body></html>`;
+}
+function regionsPage(){
+  const totSg=DATA.sigungu.length; let totD=0; for(const g of DONG) totD+=g.d.length;
+  let cards="";
+  for(const sd of DATA.sido){
+    const gs=DONG.filter(g=>g.s===sd.s); let dc=0; for(const g of gs) dc+=g.d.length;
+    cards+=`<a href="/regions-${sd.slug}" style="display:block;background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px 18px;box-shadow:var(--sh);text-decoration:none"><div style="font-weight:800;font-size:17px;color:var(--ink)">${esc(sd.ko)}</div><div style="color:var(--muted);font-size:13px;margin-top:4px">${gs.length}개 시·군·구 · ${dc}개 동·읍·면</div></a>`;
+  }
+  return idxShell({title:"전국 지역 안내 | 레벨업과외", desc:`전국 17개 시·도, ${totSg}개 시·군·구, ${totD}개 동·읍·면의 1:1 맞춤 과외 가능 지역 안내.`, path:"/regions", h1:"전국 지역 안내", sub:`17개 광역 · ${totSg}개 시·군·구 · ${totD}개 동·읍·면 과외 가능 지역`, crumb:bc([["홈",BASE],["전국 지역",null]]), body:`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px">${cards}</div>`});
+}
+function sidoPage(sd){
+  const gs=DONG.filter(g=>g.s===sd.s); let totD=0; for(const g of gs) totD+=g.d.length;
+  let blocks="";
+  for(const g of gs){
+    let dongs="";
+    for(const d of g.d) dongs+=`<a href="/${g.sgs}-${d[1]}-math" style="color:var(--ink);text-decoration:none;font-size:14.5px">${esc(d[0])}</a>`;
+    blocks+=`<div style="padding:15px 0;border-top:1px solid var(--line)"><h3 style="margin:0 0 9px;font-size:16px"><a href="/${g.sgs}-math" style="color:var(--sky-deep);text-decoration:none">${esc(g.sgk)}</a> <span style="color:var(--muted);font-weight:600;font-size:13px">${g.d.length}개</span></h3><div style="display:flex;flex-wrap:wrap;gap:9px 18px">${dongs}</div></div>`;
+  }
+  return idxShell({title:`${sd.ko} 지역 과외 안내 | 레벨업과외`, desc:`${sd.ko}의 ${gs.length}개 시·군·구, ${totD}개 동·읍·면별 1:1 맞춤 과외 안내.`, path:"/regions-"+sd.slug, h1:`${sd.ko} 지역 안내`, sub:`${gs.length}개 시·군·구 · ${totD}개 동·읍·면`, crumb:bc([["홈",BASE],["전국 지역","/regions"],[sd.s,null]]), body:`<div style="background:#0E2A40;color:#fff;border-radius:14px;padding:15px 20px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:4px"><span style="font-weight:800;font-size:18px">${esc(sd.ko)}</span><span style="opacity:.85;font-size:14px">${gs.length}개 시·군·구 · ${totD}개 동·읍·면</span></div>${blocks}`});
 }
 function linksBlock(lT,lC,rT,rC){
   const ch=a=>a.map(c=>`<a class="chip" href="${c[1]}">${esc(c[0])}</a>`).join("");
@@ -165,7 +207,7 @@ function renderCore(o){
 <div class="side-cta"><b>무료 상담 신청</b><p>학생 상황만 남겨주시면 빠르게 연락드려요.</p><a class="btn" href="${BASE}/#contact">신청하기 →</a></div></aside></div>
 ${o.related}
 <div class="wrap final" id="contact"><div class="box"><h2>${esc(R)} ${J}, 지금 무료 상담부터</h2><p>부담 없이 현재 상황만 남겨주세요. 맞는 방법을 함께 찾아드립니다.</p><a class="btn" href="${BASE}/#contact">무료 상담 신청하기 →</a></div></div>
-<footer><div class="wrap foot"><span>© 2026 레벨업과외 · ${esc(R)} ${J} 과외</span><span>최종 업데이트 ${YM}</span><span>전화 010-3038-8978 · <a href="${KAKAO}" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline">카카오톡 상담</a></span></div></footer>
+<footer><div class="wrap foot"><span>© 2026 레벨업과외 · ${esc(R)} ${J} 과외</span><span>최종 업데이트 ${YM}</span><span><a href="/regions" style="color:inherit;text-decoration:underline">전국 지역</a></span><span>전화 010-3038-8978 · <a href="${KAKAO}" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline">카카오톡 상담</a></span></div></footer>
 <div class="mcta"><a class="btn btn-ghost" href="tel:01030388978">전화</a><a class="btn" href="${KAKAO}" target="_blank" rel="noopener" style="background:#FEE500;color:#3C1E1E;border:1px solid #f3d900">카톡</a><a class="btn btn-pri" href="${BASE}/#contact">무료 상담</a></div>
 <script type="application/ld+json">${JSON.stringify(ld1)}</script>
 <script type="application/ld+json">${JSON.stringify(ld2)}</script>
@@ -180,6 +222,8 @@ function renderDong(rec,subj){
     related:relatedDong(rec,subj)});
 }
 function renderCoreRegion(desc){
+  if(desc.type==="regions") return regionsPage();
+  if(desc.type==="sido_index") return sidoPage(desc.sd);
   const J=subKo(desc.subj);
   if(desc.type==="hub"){
     return renderCore({R:"전국",S:"전국",subj:desc.subj,path:"/"+desc.subj,
