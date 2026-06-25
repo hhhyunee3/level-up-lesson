@@ -613,10 +613,6 @@ body{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-se
               <span class="qic"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.7A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.7a2 2 0 0 1-.5 2.1L8 9.6a16 16 0 0 0 6 6l1.1-1.1a2 2 0 0 1 2.1-.5c.9.3 1.8.5 2.7.6a2 2 0 0 1 1.7 2Z"/></svg></span>
               <span><span class="ql">전화 상담</span><span class="qv">010-3038-8978</span></span>
             </a>
-            <a class="qrow" href="http://pf.kakao.com/_hzCPG/chat" target="_blank" rel="noopener">
-              <span class="qic"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3C6.5 3 2 6.6 2 11c0 2.8 1.9 5.3 4.7 6.7-.2.7-.7 2.5-.8 2.9 0 0 0 .3.2.4.2 0 .3 0 .4-.1.4-.3 2.6-1.8 3.6-2.5.6.1 1.2.1 1.9.1 5.5 0 10-3.6 10-8S17.5 3 12 3Z"/></svg></span>
-              <span><span class="ql">카카오톡</span><span class="qv">카톡으로 상담하기</span></span>
-            </a>
           </div>
         </div>
 
@@ -687,8 +683,8 @@ body{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-se
       <a href="#subjects">수업 과목</a>
       <a href="#how">수업 방식</a>
       <a href="#contact">상담 문의</a>
+      <a href="/regions">전국 지역 안내</a>
       <a href="tel:01030388978">010-3038-8978</a>
-      <a href="http://pf.kakao.com/_hzCPG/chat" target="_blank" rel="noopener">카카오톡</a>
     </nav>
     <div class="foot-copy">© {{YEAR}} 레벨업과외 · level-up-lesson.com</div>
   </div>
