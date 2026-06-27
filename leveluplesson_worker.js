@@ -847,6 +847,9 @@ async function handleInquiry(request, env) {
       const subject = "[레벨업과외] " + subjLabel + "상담 신청 - " + name;
       const raw = buildMime({ from, fromName: "레벨업과외", to, subject, html: renderEmailHtml(record) });
       await env.NOTIFY.send(new EmailMessage(from, to, raw));
+      console.log("상담 알림 메일 발송 성공 →", to);
+    } else {
+      console.log("상담 알림 메일 건너뜀 (설정 누락) - NOTIFY바인딩:", !!env.NOTIFY, "/ NOTIFY_TO:", !!env.NOTIFY_TO);
     }
   } catch (e) {
     console.log("상담 알림 메일 발송 실패:", e && e.message ? e.message : e);
