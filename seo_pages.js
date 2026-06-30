@@ -126,6 +126,18 @@ function sidoPage(sd){
   const sjc=SUBJ_KEYS.map(k=>`<a href="/${sd.slug}-${k}" style="display:inline-block;padding:8px 14px;background:var(--sky-tint);border:1px solid var(--sky-edge);border-radius:999px;color:var(--sky-deep);text-decoration:none;font-size:14px;font-weight:700">${esc(sd.s)} ${esc(subKo(k))} 과외</a>`).join("");
   return idxShell({title:`${sd.ko} 지역 과외 안내 | 레벨업과외`, desc:`${sd.ko}의 ${gs.length}개 시·군·구, ${totD}개 동·읍·면별 1:1 맞춤 과외 안내.`, path:"/regions-"+sd.slug, h1:`${sd.ko} 지역 안내`, sub:`${gs.length}개 시·군·구 · ${totD}개 동·읍·면`, crumb:bc([["홈",BASE],["전국 지역","/regions"],[sd.s,null]]), body:`<div style="background:#0E2A40;color:#fff;border-radius:14px;padding:15px 20px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:4px"><span style="font-weight:800;font-size:18px">${esc(sd.ko)}</span><span style="opacity:.85;font-size:14px">${gs.length}개 시·군·구 · ${totD}개 동·읍·면</span></div><div style="margin:18px 0 8px"><div style="font-weight:800;font-size:15.5px;color:var(--ink);margin-bottom:11px">${esc(sd.s)} 과목별 과외</div><div style="display:flex;flex-wrap:wrap;gap:9px">${sjc}</div></div>${blocks}`});
 }
+function dongListBlock(r, subj, J){
+  const dg = DONG.find(g=>g.sgs===r.slug);
+  if(!dg || !dg.d.length) return "";
+  const chips = dg.d.map(d=>`<a href="/${r.slug}-${d[1]}-${subj}" style="display:inline-block;padding:7px 13px;background:var(--sky-tint);border:1px solid var(--sky-edge);border-radius:999px;color:var(--sky-deep);text-decoration:none;font-size:14px;font-weight:600">${esc(d[0])}</a>`).join("");
+  return `<div class="wrap" style="margin-top:10px"><div style="background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px 24px;box-shadow:var(--sh)"><h2 style="margin:0 0 4px;font-size:18px">${esc(r.ko)} 동네별 ${esc(J)} 과외</h2><p style="color:var(--muted);font-size:13.5px;margin:0 0 14px">우리 동네를 선택하세요 · 총 ${dg.d.length}개 동</p><div style="display:flex;flex-wrap:wrap;gap:9px 10px">${chips}</div></div></div>`;
+}
+function sigunguListBlock(sd, subj, J){
+  const gs = DONG.filter(g=>g.s===sd.s);
+  if(!gs.length) return "";
+  const chips = gs.map(g=>`<a href="/${g.sgs}-${subj}" style="display:inline-block;padding:7px 13px;background:var(--sky-tint);border:1px solid var(--sky-edge);border-radius:999px;color:var(--sky-deep);text-decoration:none;font-size:14px;font-weight:600">${esc(g.sgk)}</a>`).join("");
+  return `<div class="wrap" style="margin-top:10px"><div style="background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px 24px;box-shadow:var(--sh)"><h2 style="margin:0 0 4px;font-size:18px">${esc(sd.s)} 시·군·구별 ${esc(J)} 과외</h2><p style="color:var(--muted);font-size:13.5px;margin:0 0 14px">시·군·구를 선택하세요 · 총 ${gs.length}곳</p><div style="display:flex;flex-wrap:wrap;gap:9px 10px">${chips}</div></div></div>`;
+}
 function linksBlock(lT,lC,rT,rC){
   const ch=a=>a.map(c=>`<a class="chip" href="${c[1]}">${esc(c[0])}</a>`).join("");
   return `<div class="wrap links"><h2>다른 지역·과목도 찾고 있다면</h2><div class="col2"><div class="linkbox"><h3>${esc(lT)}</h3><p class="sub">과목만 바꿔서 보기</p><div class="chips">${ch(lC)}</div></div><div class="linkbox"><h3>${esc(rT)}</h3><p class="sub">근처 페이지</p><div class="chips">${ch(rC)}</div></div></div></div>`;
@@ -207,6 +219,7 @@ function renderCore(o){
 <div class="wrap layout"><article>${tldr}${thumb}${art.html}</article>
 <aside><div class="toc"><h4>목차</h4><a href="#s1">개요</a><a href="#s2">커리큘럼</a><a href="#faq">자주 묻는 질문</a><a href="#close">상담</a></div>
 <div class="side-cta"><b>무료 상담 신청</b><p>학생 상황만 남겨주시면 빠르게 연락드려요.</p><a class="btn" href="${BASE}/#contact">신청하기 →</a></div></aside></div>
+${o.extra||""}
 ${o.related}
 <div class="wrap final" id="contact"><div class="box"><h2>${esc(R)} ${J}, 지금 무료 상담부터</h2><p>부담 없이 현재 상황만 남겨주세요. 맞는 방법을 함께 찾아드립니다.</p><a class="btn" href="${BASE}/#contact">무료 상담 신청하기 →</a></div></div>
 <footer><div class="wrap foot"><span>© 2026 레벨업과외 · ${esc(R)} ${J} 과외</span><span>최종 업데이트 ${YM}</span><span><a href="/regions" style="color:inherit;text-decoration:underline">전국 지역</a></span><span>전화 010-3038-8978</span></div></footer>
@@ -235,7 +248,7 @@ function renderCoreRegion(desc){
   } else if(desc.type==="sg"){const r=desc.r;
     return renderCore({R:r.ko,S:r.sido_s,subj:desc.subj,path:"/"+r.slug+"-"+desc.subj,
       crumb:bc([["홈",BASE],[J+" 과외","/"+desc.subj],[r.sido_s,"/"+r.sido_slug+"-"+desc.subj],[r.ko,null]]),
-      tag:`${r.sido_s} · ${r.ko} · ${J}`,titleSub:r.sido_s,areaServed:r.sido_s+" "+r.ko,related:relatedRegion(desc)});
+      tag:`${r.sido_s} · ${r.ko} · ${J}`,titleSub:r.sido_s,areaServed:r.sido_s+" "+r.ko,related:relatedRegion(desc),extra:dongListBlock(r,desc.subj,J)});
   } else if(desc.type==="sido_g"){const sd=desc.r, g=desc.g, JG=g.ko+" "+J;
     return renderCore({R:sd.s,S:sd.s,subj:desc.subj,jOver:JG,g,path:"/"+sd.slug+"-"+g.slug+"-"+desc.subj,
       crumb:bc([["홈",BASE],[J+" 과외","/"+desc.subj],[sd.s,"/"+sd.slug+"-"+desc.subj],[g.ko,null]]),
@@ -247,7 +260,7 @@ function renderCoreRegion(desc){
   } else {const sd=desc.r;
     return renderCore({R:sd.s,S:sd.s,subj:desc.subj,path:"/"+sd.slug+"-"+desc.subj,
       crumb:bc([["홈",BASE],[J+" 과외","/"+desc.subj],[sd.s,null]]),
-      tag:`${sd.s} · ${J}`,titleSub:sd.s,areaServed:sd.s,related:relatedRegion(desc)});
+      tag:`${sd.s} · ${J}`,titleSub:sd.s,areaServed:sd.s,related:relatedRegion(desc),extra:sigunguListBlock(sd,desc.subj,J)});
   }
 }
 export function tryRenderSeoPage(path){
