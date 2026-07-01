@@ -102,11 +102,10 @@ const HTML = `<!doctype html>
   .nav{display:flex; align-items:center; justify-content:space-between; height:76px;}
   .brand{font-family:var(--font); font-weight:800; font-size:21px; letter-spacing:-.01em; color:var(--ink); display:flex; align-items:center; gap:11px;}
   .brand .mark{
-    width:40px; height:40px; border-radius:13px; flex:none; display:grid; place-items:center; overflow:hidden;
-    background:linear-gradient(165deg,#1C4E73,#0C3450);
-    box-shadow:0 8px 18px -8px rgba(12,80,130,.7), inset 0 2px 2px rgba(255,255,255,.18), inset 0 -3px 6px rgba(0,0,0,.25);
+    height:36px; flex:none; display:flex; align-items:center; overflow:visible;
+    background:transparent; box-shadow:none;
   }
-  .brand .mark img{width:80%; height:80%; object-fit:contain; display:block;}
+  .brand .mark img{height:36px; width:auto; object-fit:contain; display:block;}
   .nav-links{display:flex; align-items:center; gap:34px; list-style:none; margin:0; padding:0;}
   .nav-links a{font-size:15.5px; font-weight:600; color:var(--body-ink); transition:color .15s ease;}
   .nav-links a:hover{color:var(--sky-deep);}
