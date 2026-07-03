@@ -969,7 +969,7 @@ export default {
       });
     }
     if (path === "/robots.txt") {
-      let body = "User-agent: GPTBot\nAllow: /\n\nUser-agent: OAI-SearchBot\nAllow: /\n\nUser-agent: ChatGPT-User\nAllow: /\n\nUser-agent: PerplexityBot\nAllow: /\n\nUser-agent: Perplexity-User\nAllow: /\n\nUser-agent: ClaudeBot\nAllow: /\n\nUser-agent: anthropic-ai\nAllow: /\n\nUser-agent: Claude-Web\nAllow: /\n\nUser-agent: Google-Extended\nAllow: /\n\nUser-agent: Applebot-Extended\nAllow: /\n\nUser-agent: Amazonbot\nAllow: /\n\nUser-agent: CCBot\nAllow: /\n\nUser-agent: Bytespider\nAllow: /\n\nUser-agent: *\nAllow: /\n\nSitemap: https://level-up-lesson.com/sitemap.xml\n";
+      let body = "User-agent: GPTBot\nAllow: /\n\nUser-agent: OAI-SearchBot\nAllow: /\n\nUser-agent: ChatGPT-User\nAllow: /\n\nUser-agent: PerplexityBot\nAllow: /\n\nUser-agent: Perplexity-User\nAllow: /\n\nUser-agent: ClaudeBot\nAllow: /\n\nUser-agent: anthropic-ai\nAllow: /\n\nUser-agent: Claude-Web\nAllow: /\n\nUser-agent: Google-Extended\nAllow: /\n\nUser-agent: Applebot-Extended\nAllow: /\n\nUser-agent: Amazonbot\nAllow: /\n\nUser-agent: CCBot\nAllow: /\n\nUser-agent: Bytespider\nAllow: /\n\nUser-agent: Yeti\nAllow: /\n\nUser-agent: NaverBot\nAllow: /\n\nUser-agent: *\nAllow: /\n\nSitemap: https://level-up-lesson.com/sitemap.xml\n";
       if (env.DAUM_VERIFY) body += "\n" + env.DAUM_VERIFY + "\n"; // 다음 웹마스터도구 PIN 코드 줄
       return new Response(body, {
         headers: { "content-type": "text/plain; charset=utf-8", "cache-control": "public, max-age=86400" },
