@@ -1009,7 +1009,7 @@ export default {
       const year = new Date().getFullYear();
       const verify = [
         env.GOOGLE_SITE_VERIFICATION ? '<meta name="google-site-verification" content="' + env.GOOGLE_SITE_VERIFICATION + '" />' : '',
-        env.NAVER_SITE_VERIFICATION ? '<meta name="naver-site-verification" content="' + env.NAVER_SITE_VERIFICATION + '" />' : '',
+        '<meta name="naver-site-verification" content="273ef2347501449d16495e2308567e31fd2d43cb" />',
         env.BING_SITE_VERIFICATION ? '<meta name="msvalidate.01" content="' + env.BING_SITE_VERIFICATION + '" />' : '',
       ].filter(Boolean).join("\n");
       const page = HTML.replaceAll("{{YEAR}}", String(year)).replace("{{VERIFY}}", verify);
