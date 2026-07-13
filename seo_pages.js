@@ -332,3 +332,4 @@ export function tryRenderSeoPage(path){
   return null;
 }
 export function seoSitemapPaths(){ return REGION_SM.concat(DONG_SM); }
+export function seoCoreSitemapPaths(){ return REGION_SM; }

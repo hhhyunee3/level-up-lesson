@@ -4,7 +4,7 @@
 
 // 상담 신청 시 이메일 알림 발송용 (Cloudflare Email Routing)
 import { EmailMessage } from "cloudflare:email";
-import { tryRenderSeoPage, seoSitemapPaths } from "./seo_pages.js";
+import { tryRenderSeoPage, seoSitemapPaths, seoCoreSitemapPaths } from "./seo_pages.js";
 
 const HTML = `<!doctype html>
 <html lang="ko">
@@ -980,11 +980,24 @@ export default {
       const total = seoSitemapPaths().length + 1;
       const n = Math.ceil(total / SM_CHUNK);
       let body = '<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
+      body += '<sitemap><loc>https://level-up-lesson.com/sitemap-core.xml</loc></sitemap>\n';
       for (let i = 1; i <= n; i++) body += '<sitemap><loc>https://level-up-lesson.com/sitemap-' + i + '.xml</loc></sitemap>\n';
       body += '</sitemapindex>\n';
       return new Response(body, {
         headers: { "content-type": "application/xml; charset=utf-8", "cache-control": "public, max-age=86400" },
       });
+    }
+    if (path === "/sitemap-core.xml") {
+      const lm = new Date().toISOString().slice(0,10);
+      const core = ["/"].concat(seoCoreSitemapPaths());
+      let urls = "";
+      for (const p of core) {
+        const loc = p === "/" ? "https://level-up-lesson.com/" : "https://level-up-lesson.com" + p;
+        const pr = p === "/" ? "1.0" : "0.8";
+        urls += '<url><loc>' + loc + '</loc><lastmod>' + lm + '</lastmod><changefreq>weekly</changefreq><priority>' + pr + '</priority></url>\n';
+      }
+      const body = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + urls + '</urlset>\n';
+      return new Response(body, { headers: { "content-type": "application/xml; charset=utf-8", "cache-control": "public, max-age=86400" } });
     }
     if (path.startsWith("/sitemap-") && path.endsWith(".xml")) {
       const i = parseInt(path.slice(9, -4), 10);
@@ -993,11 +1006,12 @@ export default {
         return new Response("Not Found", { status: 404 });
       }
       const slice = all.slice((i - 1) * SM_CHUNK, i * SM_CHUNK);
+      const lm = new Date().toISOString().slice(0,10);
       let urls = "";
       for (const p of slice) {
         const loc = p === "/" ? "https://level-up-lesson.com/" : "https://level-up-lesson.com" + p;
         const pr = p === "/" ? "1.0" : "0.7";
-        urls += '<url><loc>' + loc + '</loc><changefreq>monthly</changefreq><priority>' + pr + '</priority></url>\n';
+        urls += '<url><loc>' + loc + '</loc><lastmod>' + lm + '</lastmod><changefreq>monthly</changefreq><priority>' + pr + '</priority></url>\n';
       }
       const body = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + urls + '</urlset>\n';
       return new Response(body, {
