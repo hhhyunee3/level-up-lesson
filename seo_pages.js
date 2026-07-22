@@ -77,7 +77,7 @@ for(const sg of DATA.sigungu) for(const sk of BASE_KEYS) for(const g of GRADES){
 ROUTES.set("/regions",{type:"regions"}); REGION_SM.push("/regions");
 for(const sd of DATA.sido){ROUTES.set("/regions-"+sd.slug,{type:"sido_index",sd}); REGION_SM.push("/regions-"+sd.slug);}
 const dongIndex=new Map(); const DONG_SM=[];
-for(const g of DONG) for(const d of g.d){const key=g.sgs+"-"+d[1]; dongIndex.set(key,{g:g,ko:d[0],rom:d[1]}); for(const sk of SUBJ_KEYS) DONG_SM.push("/"+key+"-"+sk); for(const sk of BASE_KEYS) for(const gr of GRADES) DONG_SM.push("/"+key+"-"+gr.slug+"-"+sk);}
+for(const g of DONG) for(const d of g.d){const key=g.sgs+"-"+d[1]; dongIndex.set(key,{g:g,ko:d[0],rom:d[1]}); for(const sk of SUBJ_KEYS) DONG_SM.push("/"+key+"-"+sk);}
 
 const HEAD={study:["{J} 공부법, 이렇게 하세요","{R} 학생을 위한 {J} 공부법","{J} 성적을 올리는 학습 전략","혼자서도 되는 {J} 공부법"],s1:["{R} {J} 과외, 왜 1:1 맞춤일까요?","{R}에서 {J} 과외를 시작하기 전에","{R} {J} 과외, 이렇게 다릅니다"],curri:["학년별 {J} 커리큘럼","{R} {J}, 학년별 학습 로드맵","{J} 학년별 수업 설계"],trait:["{J} 학습의 핵심","{J}, 이렇게 접근합니다","{J} 점수를 가르는 포인트"],stuck:["{R} 학생들이 {J}에서 자주 막히는 지점","{J} 성적이 정체되는 이유","이런 학생일수록 1:1이 필요합니다"],method:["레벨업과외 {J} 학습 4단계","수업은 이렇게 진행돼요","{J} 과외 진행 4단계"],why:["학원 대신 1:1 과외를 선택하는 이유","{R}에서 학원과 1:1 과외, 무엇이 다를까","왜 1:1 과외일까요?"],faq:["{R} {J} 과외 자주 묻는 질문","자주 묻는 질문 (FAQ)"],close:["{R}에서 {J} 성적, 지금부터 바꿔보세요","{R} {J}, 무료 상담부터 시작하세요"]};
 
@@ -277,7 +277,7 @@ function renderDong(rec,subj,grade){
       tag:`${g.sgk} · ${rec.ko} · ${grade.ko} · ${J}`,titleSub:g.sgk,areaServed:g.s+" "+g.sgk+" "+rec.ko,
       related:relatedDong(rec,subj,grade)});
   }
-  const extra=BASE_KEYS.includes(subj)?gradeLinkBlock(g.sgs+"-"+rec.rom,subj,rec.ko,J):"";
+  const extra=BASE_KEYS.includes(subj)?gradeLinkBlock(g.sgs,subj,g.sgk,J):"";
   return renderCore({R:rec.ko,S:g.s,subj:subj,path:dongBase,extra:extra,
     crumb:bc([["홈",BASE],[J+" 과외","/"+subj],[g.s,"/"+g.sgs.split("-")[0]+"-"+subj],[g.sgk,"/"+g.sgs+"-"+subj],[rec.ko,null]]),
     tag:`${g.sgk} · ${rec.ko} · ${J}`,titleSub:g.sgk,areaServed:g.s+" "+g.sgk+" "+rec.ko,
@@ -316,15 +316,6 @@ export function tryRenderSeoPage(path){
   for(const sk of SUBJ_BY_LEN){
     if(path.endsWith("-"+sk)){
       const key=path.slice(1, path.length-sk.length-1);
-      if(BASE_KEYS.includes(sk)){
-        for(const gr of GRADES){
-          if(key.endsWith("-"+gr.slug)){
-            const dk=key.slice(0, key.length-gr.slug.length-1);
-            const recg=dongIndex.get(dk);
-            if(recg) return renderDong(recg,sk,gr);
-          }
-        }
-      }
       const rec=dongIndex.get(key);
       if(rec) return renderDong(rec,sk);
     }
