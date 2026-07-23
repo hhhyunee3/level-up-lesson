@@ -986,8 +986,9 @@ export default {
       const total = seoSitemapPaths().length + 1;
       const n = Math.ceil(total / SM_CHUNK);
       let body = '<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
-      body += '<sitemap><loc>https://level-up-lesson.com/sitemap-core.xml</loc></sitemap>\n';
-      for (let i = 1; i <= n; i++) body += '<sitemap><loc>https://level-up-lesson.com/sitemap-' + i + '.xml</loc></sitemap>\n';
+      const smLm = new Date().toISOString().slice(0,10);
+      body += '<sitemap><loc>https://level-up-lesson.com/sitemap-core.xml</loc><lastmod>' + smLm + '</lastmod></sitemap>\n';
+      for (let i = 1; i <= n; i++) body += '<sitemap><loc>https://level-up-lesson.com/sitemap-' + i + '.xml</loc><lastmod>' + smLm + '</lastmod></sitemap>\n';
       body += '</sitemapindex>\n';
       return new Response(body, {
         headers: { "content-type": "application/xml; charset=utf-8", "cache-control": "public, max-age=86400" },
