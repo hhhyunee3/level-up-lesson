@@ -4,7 +4,10 @@
 
 // 상담 신청 시 이메일 알림 발송용 (Cloudflare Email Routing)
 import { EmailMessage } from "cloudflare:email";
-import { tryRenderSeoPage, seoSitemapPaths, seoCoreSitemapPaths } from "./seo_pages.js";
+import { tryRenderSeoPage, seoSitemapPaths, seoCoreSitemapPaths, seoLastmod } from "./seo_pages.js";
+
+// IndexNow 키 (네이버·빙 자동 색인 제출용). 이 값은 /키.txt 로도 응답해야 합니다.
+const INDEXNOW_KEY = "7c3f9a2e5b8d416cbf0e93b7d5a2c81f";
 
 const HTML = `<!doctype html>
 <html lang="ko">
@@ -968,6 +971,9 @@ export default {
         headers: { "content-type": "image/png", "cache-control": "public, max-age=604800" },
       });
     }
+    if (path === "/" + INDEXNOW_KEY + ".txt") {
+      return new Response(INDEXNOW_KEY, { headers: { "content-type": "text/plain; charset=utf-8" } });
+    }
     if (path === "/robots.txt") {
       let body = "User-agent: GPTBot\nAllow: /\n\nUser-agent: OAI-SearchBot\nAllow: /\n\nUser-agent: ChatGPT-User\nAllow: /\n\nUser-agent: PerplexityBot\nAllow: /\n\nUser-agent: Perplexity-User\nAllow: /\n\nUser-agent: ClaudeBot\nAllow: /\n\nUser-agent: anthropic-ai\nAllow: /\n\nUser-agent: Claude-Web\nAllow: /\n\nUser-agent: Google-Extended\nAllow: /\n\nUser-agent: Applebot-Extended\nAllow: /\n\nUser-agent: Amazonbot\nAllow: /\n\nUser-agent: CCBot\nAllow: /\n\nUser-agent: Bytespider\nAllow: /\n\nUser-agent: Yeti\nAllow: /\n\nUser-agent: NaverBot\nAllow: /\n\nUser-agent: *\nAllow: /\n\nSitemap: https://level-up-lesson.com/sitemap.xml\n";
       if (env.DAUM_VERIFY) body += "\n" + env.DAUM_VERIFY + "\n"; // 다음 웹마스터도구 PIN 코드 줄
@@ -988,10 +994,10 @@ export default {
       });
     }
     if (path === "/sitemap-core.xml") {
-      const lm = new Date().toISOString().slice(0,10);
       const core = ["/"].concat(seoCoreSitemapPaths());
       let urls = "";
       for (const p of core) {
+        const lm = p === "/" ? new Date().toISOString().slice(0,10) : seoLastmod(p);
         const loc = p === "/" ? "https://level-up-lesson.com/" : "https://level-up-lesson.com" + p;
         const pr = p === "/" ? "1.0" : "0.8";
         urls += '<url><loc>' + loc + '</loc><lastmod>' + lm + '</lastmod><changefreq>weekly</changefreq><priority>' + pr + '</priority></url>\n';
@@ -1006,9 +1012,9 @@ export default {
         return new Response("Not Found", { status: 404 });
       }
       const slice = all.slice((i - 1) * SM_CHUNK, i * SM_CHUNK);
-      const lm = new Date().toISOString().slice(0,10);
       let urls = "";
       for (const p of slice) {
+        const lm = p === "/" ? new Date().toISOString().slice(0,10) : seoLastmod(p);
         const loc = p === "/" ? "https://level-up-lesson.com/" : "https://level-up-lesson.com" + p;
         const pr = p === "/" ? "1.0" : "0.7";
         urls += '<url><loc>' + loc + '</loc><lastmod>' + lm + '</lastmod><changefreq>monthly</changefreq><priority>' + pr + '</priority></url>\n';
@@ -1038,5 +1044,38 @@ export default {
       });
     }
     return new Response("Not Found", { status: 404 });
+  },
+
+  // ───────── 매일 자동 색인 제출 (IndexNow: 네이버·빙·Yandex) ─────────
+  // wrangler.toml 의 [triggers] crons 설정에 따라 하루 1회 실행됩니다.
+  // 전체 URL을 매일 BATCH 개씩 순환 제출하여 며칠에 걸쳐 전 페이지를 알립니다.
+  async scheduled(event, env, ctx) {
+    const HOST = "level-up-lesson.com";
+    const BATCH = 1000;
+    const all = ["/"].concat(seoSitemapPaths());
+    const day = Math.floor(Date.now() / 86400000);
+    const start = (day * BATCH) % all.length;
+    let slice = all.slice(start, start + BATCH);
+    if (slice.length < BATCH) slice = slice.concat(all.slice(0, BATCH - slice.length));
+    const urlList = slice.map((p) => (p === "/" ? "https://" + HOST + "/" : "https://" + HOST + p));
+    const body = JSON.stringify({
+      host: HOST,
+      key: INDEXNOW_KEY,
+      keyLocation: "https://" + HOST + "/" + INDEXNOW_KEY + ".txt",
+      urlList: urlList,
+    });
+    const endpoints = ["https://api.indexnow.org/indexnow", "https://searchadvisor.naver.com/indexnow"];
+    for (const ep of endpoints) {
+      try {
+        const r = await fetch(ep, {
+          method: "POST",
+          headers: { "content-type": "application/json; charset=utf-8" },
+          body: body,
+        });
+        console.log("IndexNow 제출:", ep, "상태", r.status, "URL", urlList.length + "개", "시작 인덱스", start);
+      } catch (e) {
+        console.log("IndexNow 실패:", ep, e && e.message ? e.message : e);
+      }
+    }
   },
 };
