@@ -411,7 +411,7 @@ body{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-se
     </a>
     <nav>
       <ul class="nav-links" id="navLinks">
-        <li class="has-dd"><details class="hdd"><summary>수업 과목</summary><div class="hsub"><a href="/korean">국어</a><a href="/english">영어</a><a href="/math">수학</a><a href="/social">사회</a><a href="/science">과학</a></div></details></li>
+        <li class="has-dd"><details class="hdd"><summary>수업 과목</summary><div class="hsub"><a href="/korean">국어</a><a href="/english">영어</a><a href="/math">수학</a><a href="/social">사회</a><a href="/science">과학</a><a href="/integrated-social">통합사회</a><a href="/integrated-science">통합과학</a><a href="/essay">논술</a><a href="/coding">코딩</a><a href="/ged">검정고시</a><a href="/guides">학습 가이드</a></div></details></li>
         <li><a href="#how">수업 방식</a></li>
         <li><a href="#reviews">수강 후기</a></li>
         <li class="m-cta"><a class="btn btn-primary" href="#contact">무료 상담 신청</a></li>
@@ -499,8 +499,8 @@ body{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-se
   <div class="wrap">
     <div class="section-head center reveal">
       <span class="eyebrow">Subjects · 수업 과목</span>
-      <h2>학년이 오를수록, 함께 레벨업</h2>
-      <p>초등 기초 개념부터 고등 입시까지. 각 단계에 꼭 필요한 과목을 빠짐없이 다룹니다.</p>
+      <h2>과목별 전문 매칭, 23개 과목</h2>
+      <p>국·영·수부터 미적분·확률과 통계·물리학 같은 수능 선택과목, 2022 개정 통합사회·통합과학, 검정고시·논술·코딩까지. 과목별로 특화된 1:1 수업을 제공합니다.</p>
     </div>
     <div class="tiers">
       <!-- 초등 -->
@@ -546,6 +546,14 @@ body{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-se
           <div class="grp">
             <div class="grp-label">탐구과목 (사탐 · 과탐)</div>
             <div class="chips"><a class="chip" href="/ethics">생활과 윤리</a><a class="chip" href="/society-culture">사회·문화</a><a class="chip" href="/korea-geography">한국지리</a><a class="chip" href="/physics">물리학</a><a class="chip" href="/chemistry">화학</a><a class="chip" href="/biology">생명과학</a><a class="chip" href="/earth-science">지구과학</a></div>
+          </div>
+          <div class="grp">
+            <div class="grp-label">2022 개정 신과목</div>
+            <div class="chips"><a class="chip hl" href="/integrated-social">통합사회</a><a class="chip hl" href="/integrated-science">통합과학</a><a class="chip hl" href="/algebra">대수</a></div>
+          </div>
+          <div class="grp">
+            <div class="grp-label">특화 과정</div>
+            <div class="chips"><a class="chip" href="/essay">논술</a><a class="chip" href="/coding">코딩</a><a class="chip" href="/ged">검정고시</a></div>
           </div>
         </div>
       </div>
