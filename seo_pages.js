@@ -246,10 +246,10 @@ function renderCore(o){
   const b2=o.g?(o.g.short==="초등"?"개념 이해와 올바른 학습 습관을 잡는 데 집중합니다.":o.g.short==="중등"?"학교 내신과 서술형, 고등 대비를 함께 준비합니다.":"학교 내신과 수능·모의고사를 함께 대비합니다."):"내신과 수능을 함께 대비하며 학년·학교별로 커리큘럼을 설계합니다.";
   const tldr='<div class="tldr" style="background:var(--sky-tint);border:1px solid var(--sky-edge);border-radius:14px;padding:15px 18px;margin:0 0 22px"><div style="font-weight:700;color:var(--sky-deep);margin-bottom:7px">'+esc(R+" "+J+" 과외 한눈에 보기")+'</div><ul style="margin:0;padding-left:18px;line-height:1.9;color:var(--ink-2)"><li>'+esc(pick1(GENERIC.tldrRun,h+20).split("{R}").join(R).split("{J}").join(J))+'</li><li>'+esc(b2)+'</li><li>'+esc(pick1(GENERIC.tldrMode,h+21))+'</li><li>'+esc(pick1(GENERIC.tldrFee,h+22))+'</li><li>첫 상담과 무료 체험수업이 가능합니다.</li><li>상담은 전화 010-3038-8978로 문의 가능합니다.</li></ul></div>';
   const title=o.title || `${R} ${J} 과외 | ${o.titleSub} 1:1 맞춤 - 레벨업과외`;
-  const d1= o.d1 || `${R} ${J} 과외 — 무료 체험수업으로 시작하는 1:1 맞춤 수업. 레벨 진단 후 내신·수능 동시 대비, 방문·화상 모두 가능합니다.`;
+  const d1= o.d1 || `${R} ${J} 과외를 찾으신다면. 레벨 진단부터 시작하는 1:1 맞춤 수업으로 ${R} 학생의 내신과 수능을 함께 대비합니다. 방문·화상 모두 가능하고 무료 체험수업으로 먼저 확인하세요.`;
   const art=buildArticle(R,o.S,o.subj,h,o.g,J,o.nearby);
   const thumb = STUDY.length ? `<img class="thumb" src="${esc(pick1(STUDY,h))}" alt="${esc(R+" "+J+" 학습")}" loading="lazy" />` : "";
-  const ld1={"@context":"https://schema.org","@type":"Service","description":d1,"speakable":{"@type":"SpeakableSpecification","cssSelector":["h1",".tldr"]},"serviceType":J+" 과외","name":R+" "+J+" 과외","areaServed":{"@type":"Place","name":o.areaServed},"dateModified":MODISO,"provider":{"@type":"EducationalOrganization","name":"레벨업과외","url":BASE,"telephone":"+82-10-3038-8978"}};
+  const ld1={"@context":"https://schema.org","@type":"Service","description":d1,"speakable":{"@type":"SpeakableSpecification","cssSelector":["h1",".tldr"]},"serviceType":J+" 과외","name":R+" "+J+" 과외","areaServed":{"@type":"Place","name":o.areaServed},"dateModified":MODISO,"provider":{"@type":"EducationalOrganization","name":"레벨업과외","url":BASE,"telephone":"+82-10-3038-8978","image":ogImg,"areaServed":{"@type":"Place","name":o.areaServed},"address":{"@type":"PostalAddress","addressCountry":"KR","addressRegion":o.S},"availableLanguage":"ko","priceRange":"₩₩","sameAs":[BASE]},"offers":{"@type":"Offer","name":"무료 체험수업","price":"0","priceCurrency":"KRW","description":R+" "+J+" 무료 체험수업"},"url":url,"areaServed":{"@type":"Place","name":o.areaServed}};
   const ld2={"@context":"https://schema.org","@type":"FAQPage","mainEntity":art.faqs.map(q=>({"@type":"Question","name":inj(q[0],R,o.S),"acceptedAnswer":{"@type":"Answer","text":inj(q[1],R,o.S)}}))};
   const ld3={"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"홈","item":BASE},{"@type":"ListItem","position":2,"name":Jb+" 과외","item":BASE+"/"+o.subj},{"@type":"ListItem","position":3,"name":R+" "+J+" 과외","item":url}]};
   return `<!doctype html><html lang="ko"><head>
@@ -305,7 +305,7 @@ function renderDong(rec,subj,grade){
   }
   const extra=BASE_KEYS.includes(subj)?gradeLinkBlock(g.sgs,subj,g.sgk,J):"";
   const nearby=nbDong(g,rec.ko,hashStr(dongBase),4);
-  return renderCore({R:rec.ko,S:g.s,subj:subj,path:dongBase,extra:extra,nearby:nearby,h1:g.sgk+" "+rec.ko+" "+J+" 과외",d1:g.s+" "+g.sgk+" "+rec.ko+" "+J+" 과외 — 무료 체험수업으로 시작하는 1:1 맞춤 수업입니다.",
+  return renderCore({R:rec.ko,S:g.s,subj:subj,path:dongBase,extra:extra,nearby:nearby,h1:g.sgk+" "+rec.ko+" "+J+" 과외",d1:g.s+" "+g.sgk+" "+rec.ko+" "+J+" 과외를 찾으신다면. "+g.sgk+" "+rec.ko+" 학생을 위한 1:1 맞춤 수업으로 레벨 진단 후 내신·수능을 함께 대비합니다. 방문·화상 가능, 무료 체험수업으로 확인하세요.",
     crumb:bc([["홈",BASE],[J+" 과외","/"+subj],[g.s,"/"+g.sgs.split("-")[0]+"-"+subj],[g.sgk,"/"+g.sgs+"-"+subj],[rec.ko,null]]),
     tag:`${g.sgk} · ${rec.ko} · ${J}`,titleSub:g.sgk,areaServed:g.s+" "+g.sgk+" "+rec.ko,
     related:relatedDong(rec,subj)});
@@ -324,7 +324,7 @@ function renderCoreRegion(desc){
   } else if(desc.type==="sg"){const r=desc.r;
     return renderCore({R:r.ko,S:r.sido_s,subj:desc.subj,path:"/"+r.slug+"-"+desc.subj,
       crumb:bc([["홈",BASE],[J+" 과외","/"+desc.subj],[r.sido_s,"/"+r.sido_slug+"-"+desc.subj],[r.ko,null]]),
-      h1:r.sido_s+" "+r.ko+" "+J+" 과외",d1:r.sido_s+" "+r.ko+" "+J+" 과외 — 무료 체험수업으로 시작하는 1:1 맞춤 수업입니다.",
+      h1:r.sido_s+" "+r.ko+" "+J+" 과외",d1:r.sido_s+" "+r.ko+" "+J+" 과외를 찾으신다면. "+r.ko+" 학생을 위한 1:1 맞춤 수업으로 레벨 진단 후 내신·수능을 함께 대비합니다. 방문·화상 가능, 무료 체험수업으로 확인하세요.",
       tag:`${r.sido_s} · ${r.ko} · ${J}`,titleSub:r.sido_s,areaServed:r.sido_s+" "+r.ko,related:relatedRegion(desc),extra:dongListBlock(r,desc.subj,J),nearby:(function(){const dg=DONG.find(x=>x.sgs===r.slug);return dg?nbPick(dg.d.map(d=>d[0]),hashStr(r.slug),4):nbPick(r.sib,hashStr(r.slug),4);})()});
   } else if(desc.type==="sido_g"){const sd=desc.r, g=desc.g, JG=g.ko+" "+J;
     return renderCore({R:sd.s,S:sd.s,subj:desc.subj,jOver:JG,g,path:"/"+sd.slug+"-"+g.slug+"-"+desc.subj,
