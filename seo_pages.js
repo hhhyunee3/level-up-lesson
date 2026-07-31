@@ -98,12 +98,12 @@ function buildArticle(R,S,subjKey,h,g,jOver,nb){
   const stuck=sec("s4",hd("stuck",4),ps(pickN(sj.stuck,h+5,3)));
   const stepset=pick1(GENERIC.stepsets,h+7);
   const method=sec("s5",hd("method",6),`<p>${esc(inj(pick1(GENERIC.method,h+8),R,S))}</p><ol>${stepset.map(s=>`<li><strong>${esc(s[0])}</strong> — ${esc(s[1])}</li>`).join("")}</ol>`);
-  const why=sec("s6",hd("why",9),ps(pickN(GENERIC.why,h+10,6)));
+  const why=sec("s6",hd("why",9),ps(pickN(GENERIC.why,h+10,5)));
   const study=sec("s7",hd("study",16),`<p>${esc(inj(pick1(GENERIC.studyIntro,h+18),R,S))}</p>`+ps(pickN(sj.study,h+17,4)));
   const envTxt=pickN(GENERIC.localEnv,h+27,2).map(x=>inj(x,R,S).replace(/\{J\}/g,J).replace(/\{N\}/g,NB));
   const localenv=sec("s8",hd("localenv",28),envTxt.map(x=>`<p>${esc(x)}</p>`).join(""));
-  const worries=sec("s9",hd("worries",30),ps(pickN(GENERIC.worries,h+31,4).map(x=>x.replace(/\{J\}/g,J))));
-  const hpick=pickN(GENERIC.helps,h+33,6);
+  const worries=sec("s9",hd("worries",30),ps(pickN(GENERIC.worries,h+31,3).map(x=>x.replace(/\{J\}/g,J))));
+  const hpick=pickN(GENERIC.helps,h+33,4);
   const helps=sec("s10",hd("helps",34),`<ul>${hpick.map(x=>`<li><strong>${esc(x[0].replace(/\{J\}/g,J))}</strong> — ${esc(inj(x[1],R,S).replace(/\{J\}/g,J))}</li>`).join("")}</ul>`);
   const mids=[trait,stuck,method,why,study,localenv,worries,helps];
   const orders=[[6,0,1,7,2,3,4,5],[0,6,2,7,4,1,5,3],[6,1,0,3,7,5,2,4],[1,6,3,0,7,4,5,2],[6,2,1,4,7,0,3,5],[0,1,6,2,7,3,4,5]];
@@ -136,7 +136,7 @@ function idxShell(o){
   return `<!doctype html><html lang="ko"><head>
 <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>${esc(o.title)}</title><meta name="description" content="${esc(o.desc)}" />
-<link rel="canonical" href="${BASE+o.path}" />
+<link rel="canonical" href="${BASE+o.path}" />\n<script type="application/ld+json">${JSON.stringify({"@context":"https://schema.org","@type":"Article","headline":o.h1,"description":o.desc,"inLanguage":"ko","author":{"@type":"Organization","name":"레벨업과외"},"publisher":{"@type":"Organization","name":"레벨업과외","url":BASE},"mainEntityOfPage":BASE+o.path,"speakable":{"@type":"SpeakableSpecification","cssSelector":["h1","h2"]}})}</script>
 <link rel="icon" type="image/png" sizes="32x32" href="${FAVICON}" />
 <link rel="icon" href="/favicon.ico" sizes="any" /><link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 <meta property="og:title" content="${esc(o.title)}" /><meta property="og:description" content="${esc(o.desc)}" />
@@ -244,7 +244,7 @@ function renderCore(o){
   const TODAY=new Date().toISOString().slice(0,10);
   const _off=7+Math.abs(h)%54; const _md=new Date(Date.now()-_off*86400000); const MODISO=_md.toISOString().slice(0,10); const YM=_md.getFullYear()+"년 "+(_md.getMonth()+1)+"월 "+_md.getDate()+"일";
   const b2=o.g?(o.g.short==="초등"?"개념 이해와 올바른 학습 습관을 잡는 데 집중합니다.":o.g.short==="중등"?"학교 내신과 서술형, 고등 대비를 함께 준비합니다.":"학교 내신과 수능·모의고사를 함께 대비합니다."):"내신과 수능을 함께 대비하며 학년·학교별로 커리큘럼을 설계합니다.";
-  const tldr='<div class="tldr" style="background:var(--sky-tint);border:1px solid var(--sky-edge);border-radius:14px;padding:15px 18px;margin:0 0 22px"><div style="font-weight:700;color:var(--sky-deep);margin-bottom:7px">'+esc(R+" "+J+" 과외 한눈에 보기")+'</div><ul style="margin:0;padding-left:18px;line-height:1.9;color:var(--ink-2)"><li>'+esc(pick1(GENERIC.tldrRun,h+20).split("{R}").join(R).split("{J}").join(J))+'</li><li>'+esc(b2)+'</li><li>'+esc(pick1(GENERIC.tldrMode,h+21))+'</li><li>'+esc(pick1(GENERIC.tldrFee,h+22))+'</li><li>첫 상담과 무료 체험수업이 가능합니다.</li><li>상담은 전화 010-3038-8978로 문의 가능합니다.</li></ul></div>';
+  const tldr='<div class="tldr" style="background:var(--sky-tint);border:1px solid var(--sky-edge);border-radius:14px;padding:15px 18px;margin:0 0 22px"><div style="font-weight:700;color:var(--sky-deep);margin-bottom:7px">'+esc(R+" "+J+" 과외 한눈에 보기")+'</div><p style="margin:0 0 10px;line-height:1.8;color:var(--ink)">'+esc(R+" "+J+" 과외는 학생의 현재 실력을 진단한 뒤 1:1로 맞춤 수업을 제공합니다. 방문 수업과 화상 수업 중 선택할 수 있고, 무료 체험수업으로 먼저 확인한 뒤 시작할 수 있습니다.")+'</p><ul style="margin:0;padding-left:18px;line-height:1.9;color:var(--ink-2)"><li>'+esc(pick1(GENERIC.tldrRun,h+20).split("{R}").join(R).split("{J}").join(J))+'</li><li>'+esc(b2)+'</li><li>'+esc(pick1(GENERIC.tldrMode,h+21))+'</li><li>'+esc(pick1(GENERIC.tldrFee,h+22))+'</li><li>첫 상담과 무료 체험수업이 가능합니다.</li><li>상담은 전화 010-3038-8978로 문의 가능합니다.</li></ul></div>';
   const title=o.title || `${R} ${J} 과외 | ${o.titleSub} 1:1 맞춤 - 레벨업과외`;
   const d1= o.d1 || `${R} ${J} 과외를 찾으신다면. 레벨 진단부터 시작하는 1:1 맞춤 수업으로 ${R} 학생의 내신과 수능을 함께 대비합니다. 방문·화상 모두 가능하고 무료 체험수업으로 먼저 확인하세요.`;
   const art=buildArticle(R,o.S,o.subj,h,o.g,J,o.nearby);
