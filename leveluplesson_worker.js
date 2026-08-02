@@ -1002,6 +1002,30 @@ export default {
         headers: { "content-type": "application/xml; charset=utf-8", "cache-control": "public, max-age=86400" },
       });
     }
+    if (path === "/feed.xml" || path === "/rss.xml") {
+      const HOST = "https://level-up-lesson.com";
+      // 가치 높은 코어 페이지만 (가이드 우선 + 과목 허브 + 시도)
+      const core = seoCoreSitemapPaths();
+      const guides = core.filter((p) => p.indexOf("/guides") === 0);
+      const hubs = core.filter((p) => p.split("-").length === 1 && p.indexOf("/guides") !== 0 && p !== "/regions");
+      const sido = core.filter((p) => p.split("-").length === 2);
+      const picked = guides.concat(hubs).concat(sido).slice(0, 300);
+      // 최신 날짜순 정렬 (lastmod 기준)
+      const items = picked.map((p) => ({ loc: HOST + p, lm: seoLastmod(p) }));
+      items.sort((a, b) => (a.lm < b.lm ? 1 : -1));
+      const now = new Date().toUTCString();
+      let body = '<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0"><channel>';
+      body += '<title>레벨업과외 — 과목별 1:1 맞춤 과외</title>';
+      body += '<link>' + HOST + '/</link>';
+      body += '<description>과목별 전문 매칭, 23개 과목. 검정고시·코딩·논술·2022 개정 통합사회·통합과학까지.</description>';
+      body += '<language>ko</language><lastBuildDate>' + now + '</lastBuildDate>';
+      for (const it of items) {
+        const d = new Date(it.lm + "T09:00:00+09:00").toUTCString();
+        body += '<item><link>' + it.loc + '</link><guid>' + it.loc + '</guid><pubDate>' + d + '</pubDate></item>';
+      }
+      body += '</channel></rss>';
+      return new Response(body, { headers: { "content-type": "application/rss+xml; charset=utf-8", "cache-control": "public, max-age=3600" } });
+    }
     if (path === "/sitemap-core.xml") {
       const core = ["/"].concat(seoCoreSitemapPaths());
       let urls = "";
