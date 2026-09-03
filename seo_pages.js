@@ -448,7 +448,10 @@ function inlineForm(x){
   const gradePre={"초등학생":"초등","중학생":"중등","고등학생":"고등"}[gradeRaw]||gradeRaw;
   const subjOnly=gm?subject.slice(gm[0].length).trim():subject;
   const preG={"초등":"초4","중등":"중1","고등":"고1"}[gradePre]||"";
-  const msg=`${x.region||area} ${subject} 과외 문의드립니다.`;
+  // 학교 종합 페이지는 과목 자리에 학교급(중등)만 온다. 그대로 쓰면
+  // "휘문중학교 중등 과외" 가 되므로 학교급은 문장에서 빼고 학년 선택에만 쓴다.
+  const msgSubj=subjOnly?(" "+subjOnly):"";
+  const msg=`${x.region||area}${msgSubj} 과외 문의드립니다.`;
   // 메인 폼과 같은 6개 묶음. 페이지 과목이 그 안에 있으면 미리 체크한다.
   const PICK=["국어","영어","수학","사회","과학","선택·탐구"];
   // 이 사이트는 과목이 18개라 6개 묶음에 안 담기는 과목이 많다(미적분·확통·생윤 등).
@@ -458,7 +461,7 @@ function inlineForm(x){
   const preEtc=(!inPick&&subjOnly)?subjOnly:"";
   const GRP=[["초등",["초1","초2","초3","초4","초5","초6"]],["중등",["중1","중2","중3"]],["고등",["고1","고2","고3","재수·N수"]],["기타",["성인"]]];
   return `<div class="lf-panel">
-<h3>${esc(x.region||area)} ${esc(subject)}, 무료 상담부터</h3>
+<h3>${esc(x.region||area)}${esc(msgSubj)}, 무료 상담부터</h3>
 <p class="lf-lede">학생의 현재 상황과 목표를 듣고, 어떻게 시작하면 좋을지 함께 정해드립니다.</p>
 <div class="lf-chips"><span class="lf-chip">${esc(area)}</span>${subjOnly?`<span class="lf-chip">${esc(subjOnly)}</span>`:""}${gradePre?`<span class="lf-chip">${esc(gradePre)}</span>`:""}</div>
 <div class="form-card">
@@ -588,7 +591,7 @@ const ld3={"@context":"https://schema.org","@type":"BreadcrumbList","itemListEle
 <div class="side-cta"><b>무료 상담 · 체험수업</b><p>학생 상황만 남겨주시면 빠르게 연락드려요. 무료 체험수업 후 결정하셔도 됩니다.</p><a class="btn" href="${BASE}/#contact">신청하기 →</a></div></aside></div>
 ${o.extra||""}
 ${o.related}
-<div class="wrap final" id="contact"><div class="box"><h2>${esc(R)} ${J}, 지금 무료 상담부터</h2><p>${esc(pick1(GENERIC.finalCta,h+25))} 무료 체험수업 후 결정하셔도 됩니다.</p>${inlineForm({area:o.areaServed||R,subject:J,region:R})}</div></div>
+<div class="wrap final" id="contact"><div class="box"><h2>${esc(R)}${["초등","중등","고등"].indexOf(J)>=0?"":" "+esc(J)}, 지금 무료 상담부터</h2><p>${esc(pick1(GENERIC.finalCta,h+25))} 무료 체험수업 후 결정하셔도 됩니다.</p>${inlineForm({area:o.areaServed||R,subject:J,region:R})}</div></div>
 <footer><div class="wrap foot"><span>© 2026 레벨업과외 · ${esc(R)} ${J} 과외</span><span>최종 업데이트 ${YM}</span><span><a href="/guides" style="color:inherit;text-decoration:underline">학습 가이드</a> · <a href="/tools" style="color:inherit;text-decoration:underline">무료 도구</a> · <a href="/regions" style="color:inherit;text-decoration:underline">전국 지역</a></span><span>전화 010-3038-8978</span></div></footer>
 <div class="mcta"><a class="btn btn-ghost" href="tel:01030388978">전화</a><a class="btn btn-pri" href="${BASE}/#contact">무료 상담</a></div>
 <script type="application/ld+json">${JSON.stringify(ld1)}</script>
@@ -691,6 +694,26 @@ function schoolListBlock(sgs,areaKo,dongKo){
   if(!items.length) return "";
   return `<div class="wrap" style="margin-top:34px"><h2 style="font-size:20px;margin:0 0 12px">${esc(areaKo)} 학교별 과외</h2><div>${items.join("")}</div></div>`;
 }
+// 학교 페이지의 연계 블록. 지금까지 비어 있어 이 학교의 과목별 페이지와
+// 지역 페이지로 이어지는 통로가 본문 칩 하나뿐이었다.
+function relatedSchool(g,name,lv,dongKo,curSubj){
+  const schoolPath="/"+g.sgs+"-"+romanKo(name);
+  const drec=dongKo?g.d.find(d=>d[0]===dongKo):null;
+  const areaBase=drec?("/"+g.sgs+"-"+drec[1]):("/"+g.sgs);
+  const areaKo=dongKo||g.sgk;
+  const lC=[],rC=[];
+  for(const sk of SCHOOL_SUBJECT_KEYS){
+    if(!SUBJECTS[sk]||sk===curSubj) continue;
+    lC.push([`${name} ${SUBJECTS[sk].ko} 과외`,schoolPath+"-"+sk]);
+  }
+  if(curSubj) lC.push([`${name} 과외 (전체)`,schoolPath]);
+  for(const sk of SCHOOL_SUBJECT_KEYS){
+    if(!SUBJECTS[sk]) continue;
+    rC.push([`${areaKo} ${SUBJECTS[sk].ko} 과외`,areaBase+"-"+sk]);
+  }
+  return linksBlock(`${name} 과목별 과외`,lC,`${areaKo} 지역 과외`,rC);
+}
+
 function renderSchool(rt){
   const g=dongBySgs.get(rt.sgs); if(!g) return null;
   const rec=SCHOOL_PAGES[rt.sgs][rt.idx]; const name=rec[0], dongKo=rec[1], lv=rec[2];
@@ -733,7 +756,7 @@ function renderSchool(rt){
     title:name+" 과외 | "+g.sgk+" 1:1 맞춤 - 레벨업과외",
     h1:name+" 과외",d1:SG+" "+name+" 재학생을 위한 1:1 맞춤 과외. 학교 진도와 시험 범위에 맞춰 대비하고, 방문·화상 수업과 무료 체험수업이 가능합니다.",
     crumb:bc([["홈",BASE],[g.s,"/regions-"+sidoSlug],[name,null]]),
-    tag:`${g.sgk} · ${LVKO[lv]}`,titleSub:g.sgk,areaServed:SG,related:"",
+    tag:`${g.sgk} · ${LVKO[lv]}`,titleSub:g.sgk,areaServed:SG,related:relatedSchool(g,name,lv,dongKo,""),
     nearby:dongKo?nbDong(g,dongKo,h,4):nbPick(g.d.map(d=>d[0]),h,4)});
 }
 // 학교 + 과목 페이지. 학교 종합 페이지만 있어 "휘문중 수학과외" 같은 검색을
@@ -764,7 +787,7 @@ function renderSchoolSubject(rt,sk){
     h1:`${name} ${J} 과외`,
     d1:`${SG} ${name} 재학생을 위한 ${J} 1:1 과외. 학교 진도와 시험 범위에 맞춰 ${J} 내신을 대비하고, 방문·화상 수업과 무료 체험수업이 가능합니다.`,
     crumb:bc([["홈",BASE],[J+" 과외","/"+sk],[g.s,"/"+sidoSlug+"-"+sk],[name,schoolPath],[J,null]]),
-    tag:`${g.sgk} · ${name} · ${J}`, titleSub:g.sgk, areaServed:SG, related:"",
+    tag:`${g.sgk} · ${name} · ${J}`, titleSub:g.sgk, areaServed:SG, related:relatedSchool(g,name,lv,dongKo,sk),
     nearby:dongKo?nbDong(g,dongKo,h,4):nbPick(g.d.map(d=>d[0]),h,4)});
 }
 
