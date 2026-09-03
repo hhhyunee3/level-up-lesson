@@ -670,8 +670,13 @@ const SCHF=[
 ["학원과 병행해도 되나요?","가능합니다. 학원 진도와 겹치지 않게 약점 보강 위주로 맞춰 드립니다."],
 ["무료 체험수업이 가능한가요?","네, 30분 무료 체험수업이 가능합니다. 교육팀장 상담 후 안내받은 선생님과 체험수업을 해보고 실수업 진행 여부를 결정하시면 됩니다."],["수업은 보통 어떻게 진행하나요?","가장 많이 선택하는 구성은 주 2회, 회당 1시간~1시간 30분입니다. 학생의 일정에 맞춰 조정할 수 있습니다."],
 ["선생님은 어떻게 배정되나요?","{SG} 인근에서 이동 가능한 선생님 중 학생의 성향과 목표에 맞는 분으로 배정합니다."]];
-const SCHOOL_ROUTES=new Map(); const SCHOOL_SM=[];
-for(const sgs in SCHOOL_PAGES){for(let i=0;i<SCHOOL_PAGES[sgs].length;i++){const r=SCHOOL_PAGES[sgs][i];const slug="/"+sgs+"-"+romanKo(r[0]);SCHOOL_ROUTES.set(slug,{sgs:sgs,idx:i});SCHOOL_SM.push(slug);}}
+const SCHOOL_ROUTES=new Map(); const SCHOOL_SM=[]; const SCHOOL_SUBJ_SM=[];
+// 학교 페이지에 과목별 페이지를 붙인다. "휘문중 수학과외" 처럼 학교명과 과목을
+// 함께 검색하는 수요가 있는데 지금까지 학교 종합 페이지만 있어 통째로 놓쳤다.
+// 사이트맵 노출은 아래 상수로 조절한다(방금 사이트맵을 줄인 것과 충돌하지 않게).
+const SCHOOL_SUBJECT_KEYS=["korean","english","math","social","science"];
+const SITEMAP_SCHOOL_SUBJECT=false;  // 약 47,000개
+for(const sgs in SCHOOL_PAGES){for(let i=0;i<SCHOOL_PAGES[sgs].length;i++){const r=SCHOOL_PAGES[sgs][i];const slug="/"+sgs+"-"+romanKo(r[0]);SCHOOL_ROUTES.set(slug,{sgs:sgs,idx:i});SCHOOL_SM.push(slug);for(const sk of SCHOOL_SUBJECT_KEYS) SCHOOL_SUBJ_SM.push(slug+"-"+sk);}}
 function schoolChip(href,label){return `<a href="${href}" style="display:inline-block;padding:7px 13px;background:var(--sky-tint);border:1px solid var(--sky-edge);border-radius:999px;color:var(--sky-deep);text-decoration:none;font-size:13.5px;font-weight:600;margin:0 7px 8px 0">${esc(label)}</a>`;}
 function schoolListBlock(sgs,areaKo,dongKo){
   const lst=SCHOOL_PAGES[sgs]||[]; if(!lst.length) return "";
@@ -688,8 +693,11 @@ function renderSchool(rt){
   const drec=dongKo?g.d.find(d=>d[0]===dongKo):null;
   const areaBase=drec?("/"+g.sgs+"-"+drec[1]):("/"+g.sgs);
   // 과목 링크 (동 페이지 우선, 없으면 시군구)
+  // 이 학교의 과목별 페이지로 먼저 보낸다. 없는 과목만 지역 페이지로 넘긴다.
+  // 링크가 없으면 학교+과목 페이지에 크롤러가 도달하지 못한다.
   const subjChips=LVSUBJ[lv].filter(k=>SUBJECTS[k]).map(k=>{
-    const hasDong=drec&&true; const href=(hasDong?("/"+g.sgs+"-"+drec[1]):("/"+g.sgs))+"-"+k;
+    if(SCHOOL_SUBJECT_KEYS.indexOf(k)>=0) return schoolChip(path+"-"+k, name+" "+subKo(k)+" 과외");
+    const href=(drec?("/"+g.sgs+"-"+drec[1]):("/"+g.sgs))+"-"+k;
     return schoolChip(href,(dongKo||g.sgk)+" "+subKo(k)+" 과외");
   }).join("");
   const s1=`<section class="sec"><h2 id="s1">${esc(name)} 과외, 이렇게 진행됩니다</h2><p>${esc(injS(pick1(SCHI,h+1)))}</p><p>${esc(injS(pick1(SCHI,h+2)))}</p></section>`;
@@ -721,6 +729,38 @@ function renderSchool(rt){
     tag:`${g.sgk} · ${LVKO[lv]}`,titleSub:g.sgk,areaServed:SG,related:"",
     nearby:dongKo?nbDong(g,dongKo,h,4):nbPick(g.d.map(d=>d[0]),h,4)});
 }
+// 학교 + 과목 페이지. 학교 종합 페이지만 있어 "휘문중 수학과외" 같은 검색을
+// 받지 못하던 것을 채운다. 본문은 과목별 콘텐츠를 그대로 쓰되 학교 맥락을 얹는다.
+function renderSchoolSubject(rt,sk){
+  const g=dongBySgs.get(rt.sgs); if(!g) return null;
+  const rec=SCHOOL_PAGES[rt.sgs][rt.idx]; const name=rec[0], dongKo=rec[1], lv=rec[2];
+  if(!SUBJECTS[sk]) return null;
+  const J=subKo(sk), LV=LVJ[lv], SG=g.s+" "+g.sgk;
+  const schoolPath="/"+rt.sgs+"-"+romanKo(name);
+  const path=schoolPath+"-"+sk;
+  const h=hashStr(path);
+  const sidoSlug=rt.sgs.split("-")[0];
+  const areaBase=dongKo?("/"+rt.sgs+"-"+(g.d.find(d=>d[0]===dongKo)||[])[1]):("/"+rt.sgs);
+  // 같은 학교의 다른 과목, 그리고 인근 학교의 같은 과목으로 이어준다.
+  const others=SCHOOL_SUBJECT_KEYS.filter(k=>k!==sk&&SUBJECTS[k])
+    .map(k=>schoolChip(schoolPath+"-"+k,name+" "+subKo(k)+" 과외")).join("");
+  const nearNames=SCHOOL_PAGES[rt.sgs].map((r2,i2)=>i2!==rt.idx?r2[0]:null).filter(Boolean);
+  const near=nbPick(nearNames,h,6);
+  const nearChips=near.map(n2=>schoolChip("/"+rt.sgs+"-"+romanKo(n2)+"-"+sk,n2+" "+J+" 과외")).join("");
+  const extra=`<section class="sec"><h2 id="sother">${esc(name)} 다른 과목 과외</h2><div>${others}</div>`
+    +(dongKo?`<p style="margin-top:10px"><a href="${areaBase}-${sk}" style="color:var(--sky-deep);font-weight:700">${esc(dongKo)} ${J} 과외 전체 보기 →</a></p>`:"")
+    +`</section>`
+    +(near.length?`<section class="sec"><h2 id="snear">${esc(g.sgk)} 다른 학교 ${J} 과외</h2><div>${nearChips}</div></section>`:"");
+  return renderCore({
+    R:name, S:g.s, subj:sk, path:path, extra:extra,
+    title:`${name} ${J} 과외 | ${LV} 내신 1:1 대비 - 레벨업과외`,
+    h1:`${name} ${J} 과외`,
+    d1:`${SG} ${name} 재학생을 위한 ${J} 1:1 과외. 학교 진도와 시험 범위에 맞춰 ${J} 내신을 대비하고, 방문·화상 수업과 무료 체험수업이 가능합니다.`,
+    crumb:bc([["홈",BASE],[J+" 과외","/"+sk],[g.s,"/"+sidoSlug+"-"+sk],[name,schoolPath],[J,null]]),
+    tag:`${g.sgk} · ${name} · ${J}`, titleSub:g.sgk, areaServed:SG, related:"",
+    nearby:dongKo?nbDong(g,dongKo,h,4):nbPick(g.d.map(d=>d[0]),h,4)});
+}
+
 export function tryRenderSeoPage(path){
   const d=ROUTES.get(path);
   if(d) return renderCoreRegion(d);
@@ -728,9 +768,11 @@ export function tryRenderSeoPage(path){
   if(sc) return renderSchool(sc);
   for(const sk of SUBJ_BY_LEN){
     if(path.endsWith("-"+sk)){
-      const key=path.slice(1, path.length-sk.length-1);
-      const rec=dongIndex.get(key);
+      const base=path.slice(0, path.length-sk.length-1);
+      const rec=dongIndex.get(base.slice(1));
       if(rec) return renderDong(rec,sk);
+      const sc2=SCHOOL_ROUTES.get(base);
+      if(sc2 && SCHOOL_SUBJECT_KEYS.indexOf(sk)>=0) return renderSchoolSubject(sc2,sk);
     }
   }
   return null;
@@ -739,7 +781,7 @@ export function seoSitemapPaths(){ return REGION_SM.concat(DONG_SM).concat(SCHOO
 export function seoCoreSitemapPaths(){ return REGION_SM; }
 // 분할 사이트맵용. 코어는 sitemap-core.xml 이 따로 내므로 여기서 뺀다.
 // 이전에는 코어 7,270개가 sitemap-1.xml 에도 중복 수록됐다.
-export function seoLongTailPaths(){ return DONG_SM.concat(SCHOOL_SM); }
+export function seoLongTailPaths(){ return DONG_SM.concat(SCHOOL_SM).concat(SITEMAP_SCHOOL_SUBJECT?SCHOOL_SUBJ_SM:[]); }
 // 실제 배포일 고정 — 콘텐츠를 실제로 변경해 배포할 때만 이 날짜를 갱신하세요 (YYYY-MM-DD)
 export const DEPLOY_DATE = "2026-09-03";
 export function seoLastmod(path){ return DEPLOY_DATE; }
