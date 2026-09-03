@@ -598,5 +598,5 @@ export function tryRenderSeoPage(path){
 export function seoSitemapPaths(){ return REGION_SM.concat(DONG_SM).concat(SCHOOL_SM); }
 export function seoCoreSitemapPaths(){ return REGION_SM; }
 // 실제 배포일 고정 — 콘텐츠를 실제로 변경해 배포할 때만 이 날짜를 갱신하세요 (YYYY-MM-DD)
-export const DEPLOY_DATE = "2026-08-17";
+export const DEPLOY_DATE = "2026-09-03";
 export function seoLastmod(path){ return DEPLOY_DATE; }

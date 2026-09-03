@@ -4,7 +4,7 @@
 
 // 상담 신청 시 이메일 알림 발송용 (Cloudflare Email Routing)
 import { EmailMessage } from "cloudflare:email";
-import { tryRenderSeoPage, seoSitemapPaths, seoCoreSitemapPaths, seoLastmod } from "./seo_pages.js";
+import { tryRenderSeoPage, seoSitemapPaths, seoCoreSitemapPaths, seoLastmod, DEPLOY_DATE } from "./seo_pages.js";
 
 // IndexNow 키 (네이버·빙 자동 색인 제출용). 이 값은 /키.txt 로도 응답해야 합니다.
 const INDEXNOW_KEY = "7c3f9a2e5b8d416cbf0e93b7d5a2c81f";
@@ -22,6 +22,14 @@ const HTML = `<!doctype html>
 <meta property="og:description" content="국어·영어·수학·사회·과학, 고등 선택·탐구과목까지. 학생의 현재 레벨에서 시작하는 1:1 맞춤 과외." />
 <meta property="og:url" content="https://level-up-lesson.com/" />
 <meta property="og:locale" content="ko_KR" />
+<meta property="og:site_name" content="레벨업과외" />
+<meta property="og:image" content="https://level-up-lesson.com/logo.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="레벨업과외 · 초·중·고 전과목 1:1 과외" />
+<meta name="twitter:description" content="국어·영어·수학·사회·과학, 고등 선택·탐구과목까지. 학생의 현재 레벨에서 시작하는 1:1 맞춤 과외." />
+<meta name="twitter:image" content="https://level-up-lesson.com/logo.png" />
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"EducationalOrganization","name":"레벨업과외","alternateName":"Level Up Lesson","url":"https://level-up-lesson.com/","logo":"https://level-up-lesson.com/logo.png","description":"국어·영어·수학·사회·과학, 고등 선택·탐구과목까지. 학생의 현재 레벨에서 시작하는 초·중·고 1:1 맞춤 과외.","areaServed":{"@type":"Country","name":"대한민국"},"knowsLanguage":"ko"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"레벨업과외","url":"https://level-up-lesson.com/","inLanguage":"ko"}</script>
 {{VERIFY}}
 <link rel="icon" type="image/png" sizes="32x32" href="data:image/png;base64,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" /> />
 <link rel="icon" href="favicon.ico" sizes="any" />
@@ -994,7 +1002,9 @@ export default {
       const total = seoSitemapPaths().length + 1;
       const n = Math.ceil(total / SM_CHUNK);
       let body = '<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
-      const smLm = new Date().toISOString().slice(0,10);
+      // 인덱스와 개별 URL 이 같은 날짜를 써야 한다. 인덱스만 매일 갱신되면
+      // "매일 바뀐다"고 알리면서 개별 URL 은 그대로여서 신호가 어긋난다.
+      const smLm = DEPLOY_DATE;
       body += '<sitemap><loc>https://level-up-lesson.com/sitemap-core.xml</loc><lastmod>' + smLm + '</lastmod></sitemap>\n';
       for (let i = 1; i <= n; i++) body += '<sitemap><loc>https://level-up-lesson.com/sitemap-' + i + '.xml</loc><lastmod>' + smLm + '</lastmod></sitemap>\n';
       body += '</sitemapindex>\n';
@@ -1030,7 +1040,7 @@ export default {
       const core = ["/"].concat(seoCoreSitemapPaths());
       let urls = "";
       for (const p of core) {
-        const lm = p === "/" ? new Date().toISOString().slice(0,10) : seoLastmod(p);
+        const lm = seoLastmod(p);
         const loc = p === "/" ? "https://level-up-lesson.com/" : "https://level-up-lesson.com" + p;
         const pr = p === "/" ? "1.0" : "0.8";
         urls += '<url><loc>' + loc + '</loc><lastmod>' + lm + '</lastmod><changefreq>weekly</changefreq><priority>' + pr + '</priority></url>\n';
@@ -1047,7 +1057,7 @@ export default {
       const slice = all.slice((i - 1) * SM_CHUNK, i * SM_CHUNK);
       let urls = "";
       for (const p of slice) {
-        const lm = p === "/" ? new Date().toISOString().slice(0,10) : seoLastmod(p);
+        const lm = seoLastmod(p);
         const loc = p === "/" ? "https://level-up-lesson.com/" : "https://level-up-lesson.com" + p;
         const pr = p === "/" ? "1.0" : "0.7";
         urls += '<url><loc>' + loc + '</loc><lastmod>' + lm + '</lastmod><changefreq>monthly</changefreq><priority>' + pr + '</priority></url>\n';

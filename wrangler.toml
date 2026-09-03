@@ -2,6 +2,12 @@ name = "level-up-lesson"
 main = "leveluplesson_worker.js"
 compatibility_date = "2025-06-01"
 
+# ── 정적 자산 (public/logo.png → https://level-up-lesson.com/logo.png) ──
+# og:image 가 /logo.png 를 가리키는데 라우트가 없어 404 였다.
+# 자산에 없는 주소는 기존대로 워커가 처리한다.
+[assets]
+directory = "./public/"
+
 # ── 매일 자동 색인 제출(IndexNow) 실행 시각: UTC 03:00 = 한국시간 12:00 ──
 [triggers]
 crons = ["0 3 * * *"]
