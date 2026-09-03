@@ -4,7 +4,7 @@
 
 // 상담 신청 시 이메일 알림 발송용 (Cloudflare Email Routing)
 import { EmailMessage } from "cloudflare:email";
-import { tryRenderSeoPage, seoSitemapPaths, seoCoreSitemapPaths, seoLastmod, DEPLOY_DATE } from "./seo_pages.js";
+import { tryRenderSeoPage, seoSitemapPaths, seoCoreSitemapPaths, seoLongTailPaths, seoLastmod, DEPLOY_DATE } from "./seo_pages.js";
 
 // IndexNow 키 (네이버·빙 자동 색인 제출용). 이 값은 /키.txt 로도 응답해야 합니다.
 const INDEXNOW_KEY = "7c3f9a2e5b8d416cbf0e93b7d5a2c81f";
@@ -999,7 +999,7 @@ export default {
     }
     const SM_CHUNK = 45000;
     if (path === "/sitemap.xml") {
-      const total = seoSitemapPaths().length + 1;
+      const total = seoLongTailPaths().length;
       const n = Math.ceil(total / SM_CHUNK);
       let body = '<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
       // 인덱스와 개별 URL 이 같은 날짜를 써야 한다. 인덱스만 매일 갱신되면
@@ -1050,7 +1050,7 @@ export default {
     }
     if (path.startsWith("/sitemap-") && path.endsWith(".xml")) {
       const i = parseInt(path.slice(9, -4), 10);
-      const all = ["/"].concat(seoSitemapPaths());
+      const all = seoLongTailPaths();
       if (!i || i < 1 || (i - 1) * SM_CHUNK >= all.length) {
         return new Response("Not Found", { status: 404 });
       }

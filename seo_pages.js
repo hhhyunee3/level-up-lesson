@@ -2,6 +2,11 @@ const B = {"DATA":{"sido":[{"ko":"서울특별시","s":"서울","slug":"seoul","
 const SUBJECTS=B.SUBJECTS, SCHOOL_PAGES=B.SCHOOL_PAGES||{}, DATA=B.DATA, GENERIC=B.GENERIC, DONG=B.DONG, CSS=B.CSS, LOGO=B.LOGO, FAVICON=B.FAVICON;
 const SUBJ_KEYS=Object.keys(SUBJECTS);
 const BASE_KEYS=["math","english","korean","social","science"];
+// 사이트맵에 넣을 계층. 페이지는 그대로 살아 있고 링크로도 닿으므로,
+// 여기서 빼는 것은 "적극적으로 알리지 않는다"는 뜻일 뿐이다. 값만 되돌리면 복구된다.
+// 10만 개를 한꺼번에 내면 크롤 예산이 얕게 퍼져 상위 페이지까지 색인이 밀린다.
+// 색인률이 올라오면 true 로 바꿔 단계적으로 넓힌다.
+const SITEMAP_ALL_SUBJECTS_ON_DONG = false;  // 동 페이지를 심화 과목까지 낼지 (약 60,700개)
 const SUBJ_BY_LEN=Object.keys(SUBJECTS).slice().sort((a,b)=>b.length-a.length);
 function subKo(k){return SUBJECTS[k].ko;}
 function subPools(k){return SUBJECTS[k];}
@@ -84,7 +89,8 @@ ROUTES.set("/tools-suneung-dday",{type:"tool_dday"}); REGION_SM.push("/tools-sun
 ROUTES.set("/tools-ged",{type:"tool_ged"}); REGION_SM.push("/tools-ged");
 for(const sd of DATA.sido){ROUTES.set("/regions-"+sd.slug,{type:"sido_index",sd}); REGION_SM.push("/regions-"+sd.slug);}
 const dongIndex=new Map(); const DONG_SM=[];
-for(const g of DONG) for(const d of g.d){const key=g.sgs+"-"+d[1]; dongIndex.set(key,{g:g,ko:d[0],rom:d[1]}); for(const sk of SUBJ_KEYS) DONG_SM.push("/"+key+"-"+sk);}
+const DONG_SM_KEYS = SITEMAP_ALL_SUBJECTS_ON_DONG ? SUBJ_KEYS : BASE_KEYS;
+for(const g of DONG) for(const d of g.d){const key=g.sgs+"-"+d[1]; dongIndex.set(key,{g:g,ko:d[0],rom:d[1]}); for(const sk of DONG_SM_KEYS) DONG_SM.push("/"+key+"-"+sk);}
 
 const HEAD={worries:["{R} 학생들이 가장 많이 하는 공부 고민","이런 고민, 혼자만의 문제가 아닙니다","{R}에서 자주 듣는 {J} 고민"],helps:["{R} {J} 과외로 도움받을 수 있는 부분","1:1 수업에서 이런 것을 해결합니다","{R} {J} 과외가 채워주는 부분"],localenv:["{R} 학습 환경 안내","{R} 인근 {J} 과외 안내","{R}과 인근 지역 안내"],study:["{J} 공부법, 이렇게 하세요","{R} 학생을 위한 {J} 공부법","{J} 성적을 올리는 학습 전략","혼자서도 되는 {J} 공부법","{R}에서 통하는 {J} 공부법","{R} {J} 성적을 올리는 학습 전략"],s1:["{R} {J} 과외, 왜 1:1 맞춤일까요?","{R}에서 {J} 과외를 시작하기 전에","{R} {J} 과외, 이렇게 다릅니다"],curri:["학년별 {J} 커리큘럼","{R} {J}, 학년별 학습 로드맵","{J} 학년별 수업 설계","{R} {J} 과외 커리큘럼","{R} 학년별 {J} 커리큘럼"],trait:["{J} 학습의 핵심","{J}, 이렇게 접근합니다","{J} 점수를 가르는 포인트","{R} {J} 학습의 핵심","{R}에서 {J} 점수를 가르는 포인트","{R} {J}, 이렇게 접근합니다"],stuck:["{R} 학생들이 {J}에서 자주 막히는 지점","{J} 성적이 정체되는 이유","이런 학생일수록 1:1이 필요합니다"],method:["레벨업과외 {J} 학습 4단계","수업은 이렇게 진행돼요","{J} 과외 진행 4단계","{R} {J} 과외 진행 4단계","{R} 학생을 위한 {J} 학습 4단계","{R} {J} 수업은 이렇게 진행됩니다"],why:["학원 대신 1:1 과외를 선택하는 이유","{R}에서 학원과 1:1 과외, 무엇이 다를까","왜 1:1 과외일까요?"],faq:["{R} {J} 과외 자주 묻는 질문","자주 묻는 질문 (FAQ)"],close:["{R}에서 {J} 성적, 지금부터 바꿔보세요","{R} {J}, 무료 상담부터 시작하세요"]};
 
@@ -295,7 +301,7 @@ function idxShell(o){
 <link rel="icon" type="image/png" sizes="32x32" href="${FAVICON}" />
 <link rel="icon" href="/favicon.ico" sizes="any" /><link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 <meta property="og:title" content="${esc(o.title)}" /><meta property="og:description" content="${esc(o.desc)}" />
-<meta property="og:type" content="website" /><meta property="og:site_name" content="레벨업과외" /><meta property="og:url" content="${url}" /><meta property="og:image" content="${ogImg}" /><meta name="twitter:card" content="summary_large_image" /><meta name="twitter:image" content="${ogImg}" /><meta property="og:url" content="${BASE+o.path}" />
+<meta property="og:type" content="website" /><meta property="og:site_name" content="레벨업과외" /><meta property="og:url" content="${url}" /><meta property="og:image" content="${ogImg}" /><meta name="twitter:card" content="summary_large_image" /><meta name="twitter:image" content="${ogImg}" />
 <link rel="preconnect" href="https://fonts.googleapis.com" /><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&display=swap" />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
@@ -422,7 +428,6 @@ const ld3={"@context":"https://schema.org","@type":"BreadcrumbList","itemListEle
 <link rel="icon" href="/favicon.ico" sizes="any" />
 <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 <meta property="og:title" content="${esc(R+" "+J+" 과외 - 레벨업과외")}" /><meta property="og:description" content="${esc(d1)}" /><meta property="og:type" content="website" /><meta property="og:site_name" content="레벨업과외" /><meta property="og:url" content="${url}" /><meta property="og:image" content="${ogImg}" /><meta name="twitter:card" content="summary_large_image" /><meta name="twitter:image" content="${ogImg}" />
-<meta property="og:type" content="website" /><meta property="og:url" content="${url}" />
 <link rel="preconnect" href="https://fonts.googleapis.com" /><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&display=swap" />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
@@ -597,6 +602,9 @@ export function tryRenderSeoPage(path){
 }
 export function seoSitemapPaths(){ return REGION_SM.concat(DONG_SM).concat(SCHOOL_SM); }
 export function seoCoreSitemapPaths(){ return REGION_SM; }
+// 분할 사이트맵용. 코어는 sitemap-core.xml 이 따로 내므로 여기서 뺀다.
+// 이전에는 코어 7,270개가 sitemap-1.xml 에도 중복 수록됐다.
+export function seoLongTailPaths(){ return DONG_SM.concat(SCHOOL_SM); }
 // 실제 배포일 고정 — 콘텐츠를 실제로 변경해 배포할 때만 이 날짜를 갱신하세요 (YYYY-MM-DD)
 export const DEPLOY_DATE = "2026-09-03";
 export function seoLastmod(path){ return DEPLOY_DATE; }
