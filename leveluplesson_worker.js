@@ -402,6 +402,10 @@ const HTML = `<!doctype html>
 .foot-brand{display:flex; align-items:baseline; gap:11px;}
 .foot-brand strong{color:#fff; font-size:16px; font-weight:800;}
 .foot-brand span{color:rgba(255,255,255,.5); font-size:13px;}
+.foot-regions{margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,.12);font-size:13px;line-height:2;opacity:.85}
+.foot-regions b{display:block;margin-bottom:4px;font-size:13.5px;opacity:.9}
+.foot-regions a{margin-right:12px;white-space:nowrap;text-decoration:none;color:inherit}
+.foot-regions a:hover{text-decoration:underline}
 .foot-links{display:flex; flex-wrap:wrap; gap:7px 18px;}
 .foot-links a{color:rgba(255,255,255,.72);}
 .foot-links a:hover{color:var(--sky);}
@@ -703,6 +707,10 @@ body{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-se
       <a href="#contact">상담 문의</a>
       <a href="/regions">전국 지역 안내</a>
       <a href="tel:01030388978">010-3038-8978</a>
+    </nav>
+    <nav class="foot-regions">
+      <b>지역별 과외</b>
+      <a href="/regions-seoul">서울</a><a href="/regions-busan">부산</a><a href="/regions-daegu">대구</a><a href="/regions-incheon">인천</a><a href="/regions-gwangju">광주</a><a href="/regions-daejeon">대전</a><a href="/regions-ulsan">울산</a><a href="/regions-sejong">세종</a><a href="/regions-gyeonggi">경기</a><a href="/regions-gangwon">강원</a><a href="/regions-chungbuk">충북</a><a href="/regions-chungnam">충남</a><a href="/regions-jeonbuk">전북</a><a href="/regions-jeonnam">전남</a><a href="/regions-gyeongbuk">경북</a><a href="/regions-gyeongnam">경남</a><a href="/regions-jeju">제주</a>
     </nav>
     <div class="foot-copy">© {{YEAR}} 레벨업과외 · level-up-lesson.com</div>
   </div>

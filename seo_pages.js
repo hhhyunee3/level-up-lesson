@@ -2,6 +2,10 @@ const B = {"DATA":{"sido":[{"ko":"서울특별시","s":"서울","slug":"seoul","
 const SUBJECTS=B.SUBJECTS, SCHOOL_PAGES=B.SCHOOL_PAGES||{}, DATA=B.DATA, GENERIC=B.GENERIC, DONG=B.DONG, CSS=B.CSS, LOGO=B.LOGO, FAVICON=B.FAVICON;
 const SUBJ_KEYS=Object.keys(SUBJECTS);
 const BASE_KEYS=["math","english","korean","social","science"];
+// 제목 뒤를 일반 문구 대신 실제 세부 과목·지역 이름으로 채운다.
+// 상위 노출 사이트들이 "상계동 고등 수학과외-미적분·확통·기하|노원구" 처럼
+// 뒤쪽을 구체적인 이름으로 채워 롱테일 검색어까지 함께 잡는 방식을 쓴다.
+const TITLE_SUBS={math:"미적분·기하·확통",science:"물리·화학·생명·지구",social:"생윤·사문·한지",korean:"문학·독서·화작",english:"내신·수능 독해"};
 // 사이트맵에 넣을 계층. 페이지는 그대로 살아 있고 링크로도 닿으므로,
 // 여기서 빼는 것은 "적극적으로 알리지 않는다"는 뜻일 뿐이다. 값만 되돌리면 복구된다.
 // 10만 개를 한꺼번에 내면 크롤 예산이 얕게 퍼져 상위 페이지까지 색인이 밀린다.
@@ -406,7 +410,18 @@ function renderCore(o){
   const _off=7+Math.abs(h)%54; const _md=new Date(Date.now()-_off*86400000); const MODISO=_md.toISOString().slice(0,10); const YM=_md.getFullYear()+"년 "+(_md.getMonth()+1)+"월 "+_md.getDate()+"일";
   const b2=o.g?(o.g.short==="초등"?"개념 이해와 올바른 학습 습관을 잡는 데 집중합니다.":o.g.short==="중등"?"학교 내신과 서술형, 고등 대비를 함께 준비합니다.":"학교 내신과 수능·모의고사를 함께 대비합니다."):"내신과 수능을 함께 대비하며 학년·학교별로 커리큘럼을 설계합니다.";
   const tldr='<div class="tldr" style="background:var(--sky-tint);border:1px solid var(--sky-edge);border-radius:14px;padding:15px 18px;margin:0 0 22px"><div style="font-weight:700;color:var(--sky-deep);margin-bottom:7px">'+esc(R+" "+J+" 과외 한눈에 보기")+'</div><p style="margin:0 0 10px;line-height:1.8;color:var(--ink)">'+esc(R+" "+J+" 과외는 학생의 현재 실력을 진단한 뒤 1:1로 맞춤 수업을 제공합니다. 방문 수업과 화상 수업 중 선택할 수 있고, 무료 체험수업으로 먼저 확인한 뒤 시작할 수 있습니다.")+'</p><ul style="margin:0;padding-left:18px;line-height:1.9;color:var(--ink-2)"><li>'+esc(pick1(GENERIC.tldrRun,h+20).split("{R}").join(R).split("{J}").join(J))+'</li><li>'+esc(b2)+'</li><li>'+esc(pick1(GENERIC.tldrMode,h+21))+'</li><li>'+esc(pick1(GENERIC.tldrFee,h+22))+'</li><li>첫 상담과 무료 체험수업이 가능합니다.</li><li>상담은 전화 010-3038-8978로 문의 가능합니다.</li></ul></div>';
-  const title=o.title || `${R} ${J} 과외 | ${o.titleSub} 1:1 맞춤 - 레벨업과외`;
+  const titleTail=(()=>{
+    if(o.tailNames && o.tailNames.length){
+      const t=o.tailNames.slice(0,3).join("·");
+      if(t.length<=14) return t+" 지역 맞춤";
+      const t2=o.tailNames.slice(0,2).join("·");
+      if(t2.length<=12) return t2+" 지역 맞춤";
+    }
+    const sub=TITLE_SUBS[o.subj];
+    if(sub) return sub+" 1:1";
+    return (o.titleSub||"")+" 1:1 맞춤";
+  })();
+  const title=o.title || `${R} ${J} 과외 | ${titleTail} - 레벨업과외`;
   const d1= o.d1 || `${R} ${J} 과외를 찾으신다면. 레벨 진단부터 시작하는 1:1 맞춤 수업으로 ${R} 학생의 내신과 수능을 함께 대비합니다. 방문·화상 모두 가능하고 무료 체험수업으로 먼저 확인하세요.`;
   const art=o.artOverride||buildArticle(R,o.S,o.subj,h,o.g,J,o.nearby);
   const thumb = STUDY.length ? `<img class="thumb" src="${esc(pick1(STUDY,h))}" alt="${esc(R+" "+J+" 학습")}" loading="lazy" />` : "";
@@ -496,7 +511,7 @@ function renderCoreRegion(desc){
     return renderCore({R:r.ko,S:r.sido_s,subj:desc.subj,path:"/"+r.slug+"-"+desc.subj,
       crumb:bc([["홈",BASE],[J+" 과외","/"+desc.subj],[r.sido_s,"/"+r.sido_slug+"-"+desc.subj],[r.ko,null]]),
       h1:r.sido_s+" "+r.ko+" "+J+" 과외",d1:r.sido_s+" "+r.ko+" "+J+" 과외를 찾으신다면. "+r.ko+" 학생을 위한 1:1 맞춤 수업으로 레벨 진단 후 내신·수능을 함께 대비합니다. 방문·화상 가능, 무료 체험수업으로 확인하세요.",
-      tag:`${r.sido_s} · ${r.ko} · ${J}`,titleSub:r.sido_s,areaServed:r.sido_s+" "+r.ko,related:relatedRegion(desc),extra:dongListBlock(r,desc.subj,J)+schoolListBlock(r.slug,r.ko),nearby:(function(){const dg=DONG.find(x=>x.sgs===r.slug);return dg?nbPick(dg.d.map(d=>d[0]),hashStr(r.slug),4):nbPick(r.sib,hashStr(r.slug),4);})()});
+      tag:`${r.sido_s} · ${r.ko} · ${J}`,titleSub:r.sido_s,areaServed:r.sido_s+" "+r.ko,tailNames:((DONG.find(x=>x.sgs===r.slug)||{d:[]}).d||[]).slice(0,3).map(x=>x[0]),related:relatedRegion(desc),extra:dongListBlock(r,desc.subj,J)+schoolListBlock(r.slug,r.ko),nearby:(function(){const dg=DONG.find(x=>x.sgs===r.slug);return dg?nbPick(dg.d.map(d=>d[0]),hashStr(r.slug),4):nbPick(r.sib,hashStr(r.slug),4);})()});
   } else if(desc.type==="sido_g"){const sd=desc.r, g=desc.g, JG=g.ko+" "+J;
     return renderCore({R:sd.s,S:sd.s,subj:desc.subj,jOver:JG,g,path:"/"+sd.slug+"-"+g.slug+"-"+desc.subj,
       crumb:bc([["홈",BASE],[J+" 과외","/"+desc.subj],[sd.s,"/"+sd.slug+"-"+desc.subj],[g.ko,null]]),
