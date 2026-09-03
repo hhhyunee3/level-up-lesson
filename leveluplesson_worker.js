@@ -862,9 +862,14 @@ async function handleInquiry(request, env) {
     atDisplay,
   };
 
+  // 상담 신청은 이 사이트의 유일한 전환 지점이다.
+  // 이전에는 메일·시트가 모두 실패해도 ok:true 를 돌려줘서, 학부모에게는
+  // "신청 완료"가 뜨고 신청은 아무 데도 남지 않았다. 한 곳이라도 기록에
+  // 성공했을 때만 성공으로 응답한다.
+  let mailOk = false, sheetOk = false;
+  let lastError = "";
+
   // ───────── 1) 이메일 알림 발송 (Cloudflare Email Routing) ─────────
-  // env.NOTIFY(send_email 바인딩) + env.NOTIFY_TO(받는 메일)가 설정돼 있으면
-  // 새 문의마다 HTML 카드형 알림 메일을 보냅니다. 없으면 건너뜁니다.
   try {
     if (env.NOTIFY && env.NOTIFY_TO) {
       const to = env.NOTIFY_TO;
@@ -872,32 +877,50 @@ async function handleInquiry(request, env) {
       const subjLabel = record.subjects.length ? record.subjects.join("·") + " " : "";
       const subject = "[레벨업과외] " + subjLabel + "상담 신청 - " + name;
       const raw = buildMime({ from, fromName: "레벨업과외", to, subject, html: renderEmailHtml(record) });
-      await env.NOTIFY.send(new EmailMessage(from, to, raw));
+      // 런타임에 따라 EmailMessage 생성자 대신 객체 형태만 받는 경우가 있다.
+      // 한쪽이 막히면 다른 쪽으로 한 번 더 시도한다.
+      try {
+        await env.NOTIFY.send(new EmailMessage(from, to, raw));
+      } catch (e1) {
+        console.log("EmailMessage 방식 실패, 객체 방식 재시도:", e1 && e1.message ? e1.message : e1);
+        await env.NOTIFY.send({ from, to, raw });
+      }
+      mailOk = true;
       console.log("상담 알림 메일 발송 성공 →", to);
     } else {
-      console.log("상담 알림 메일 건너뜀 (설정 누락) - NOTIFY바인딩:", !!env.NOTIFY, "/ NOTIFY_TO:", !!env.NOTIFY_TO);
+      lastError = "설정 누락 (NOTIFY 바인딩: " + !!env.NOTIFY + ", NOTIFY_TO: " + !!env.NOTIFY_TO + ")";
+      console.log("상담 알림 메일 건너뜀 -", lastError);
     }
   } catch (e) {
-    console.log("상담 알림 메일 발송 실패:", e && e.message ? e.message : e);
+    lastError = e && e.message ? e.message : String(e);
+    console.log("상담 알림 메일 발송 실패:", lastError);
   }
 
   // ───────── 2) 구글 시트 기록 (Apps Script 웹앱) ─────────
-  // env.SHEET_WEBHOOK_URL 이 설정돼 있으면 문의 한 건을 시트에 한 줄로 추가합니다.
   try {
     if (env.SHEET_WEBHOOK_URL) {
-      await fetch(env.SHEET_WEBHOOK_URL, {
+      const r = await fetch(env.SHEET_WEBHOOK_URL, {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify(record),
       });
+      sheetOk = r.ok;
+      if (!r.ok) console.log("구글 시트 기록 실패: HTTP", r.status);
     }
   } catch (e) {
     console.log("구글 시트 기록 실패:", e && e.message ? e.message : e);
   }
 
-  console.log("새 상담 신청:", JSON.stringify(record));
-  // ──────────────────────────────────────────────────────────────
+  console.log("새 상담 신청:", JSON.stringify(record), "| 메일:", mailOk, "| 시트:", sheetOk);
 
+  if (!mailOk && !sheetOk) {
+    // 어디에도 남지 않았다. 완료라고 말하면 신청이 그대로 사라진다.
+    console.log("상담 신청 저장 실패 — 사유:", lastError);
+    return json({
+      ok: false,
+      error: "접수 중 문제가 발생했습니다. 번거로우시겠지만 010-3038-8978 로 전화 주시면 바로 도와드리겠습니다.",
+    }, 500);
+  }
   return json({ ok: true });
 }
 
