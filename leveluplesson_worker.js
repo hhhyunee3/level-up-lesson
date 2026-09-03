@@ -871,8 +871,11 @@ async function handleInquiry(request, env) {
 
   // ───────── 1) 이메일 알림 발송 (Cloudflare Email Routing) ─────────
   try {
-    if (env.NOTIFY && env.NOTIFY_TO) {
-      const to = env.NOTIFY_TO;
+    // 대시보드 변수가 비어도 동작하도록 기본 수신 주소를 둔다.
+    // 설정 하나가 빠졌다고 문의가 통째로 사라지면 안 된다.
+    const NOTIFY_TO_DEFAULT = "hhhyunee3@naver.com";
+    if (env.NOTIFY) {
+      const to = env.NOTIFY_TO || NOTIFY_TO_DEFAULT;
       const from = env.NOTIFY_FROM || "noreply@level-up-lesson.com";
       const subjLabel = record.subjects.length ? record.subjects.join("·") + " " : "";
       const subject = "[레벨업과외] " + subjLabel + "상담 신청 - " + name;
@@ -888,7 +891,7 @@ async function handleInquiry(request, env) {
       mailOk = true;
       console.log("상담 알림 메일 발송 성공 →", to);
     } else {
-      lastError = "설정 누락 (NOTIFY 바인딩: " + !!env.NOTIFY + ", NOTIFY_TO: " + !!env.NOTIFY_TO + ")";
+      lastError = "NOTIFY 바인딩 없음 (wrangler.toml 의 [[send_email]] 확인)";
       console.log("상담 알림 메일 건너뜀 -", lastError);
     }
   } catch (e) {

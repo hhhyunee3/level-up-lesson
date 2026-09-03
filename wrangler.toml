@@ -15,9 +15,11 @@ crons = ["0 3 * * *"]
 # ── 상담 신청 메일 알림 (Cloudflare Email Routing) ──
 # 먼저 대시보드에서 Email Routing을 켜고, 받을 메일 주소를
 # Destination Address로 등록·인증해야 합니다.
-# 받는 주소는 워커 설정의 환경변수 NOTIFY_TO 에 넣습니다.
+# 받는 주소는 아래 destination_address 와 워커 코드의 기본값에 함께 두었습니다.
+# 대시보드 환경변수 NOTIFY_TO 로 덮어쓸 수 있습니다.
 [[send_email]]
 name = "NOTIFY"
+destination_address = "hhhyunee3@naver.com"
 
 # ── 커스텀 도메인 연결 (도메인이 Cloudflare에 등록되어 있어야 함) ──
 # routes = [
