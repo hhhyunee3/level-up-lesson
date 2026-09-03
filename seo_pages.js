@@ -478,6 +478,7 @@ function inlineForm(x){
 <input id="lf-dt" type="text" placeholder="상세주소 (동·호수 등)" required />
 </div>
 <div class="field full"><label for="lf-m">문의 내용</label><textarea id="lf-m" placeholder="현재 성적, 고민, 원하는 수업 방식 등을 자유롭게 적어주세요.">${esc(msg)}</textarea></div>
+<input id="lf-hp" type="text" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px" />
 <button type="submit" class="lf-submit">상담 신청하기</button>
 <p class="form-note">남겨주신 정보는 상담 안내 목적으로만 사용됩니다.</p>
 </form>
@@ -507,12 +508,18 @@ f.addEventListener("submit",function(e){e.preventDefault();
   if(!/^\d{2,3}-\d{3,4}-\d{4}$/.test(p)){alert("학부모 연락처를 정확히 입력해주세요.");return}
   if(!dt){alert("주소를 입력해주세요.");return}
   var addr="["+(g("lf-pc")||"-")+"] "+(rd||"${esc(area)}")+", "+dt;
+  // 사람에게는 보이지 않는 칸. 채워져 있으면 봇이므로 조용히 접수한 척한다.
+  var hp=(document.getElementById("lf-hp").value||"").trim();
+  if(hp){f.style.display="none";ok.classList.add("on");return}
   var subs=[].slice.call(f.querySelectorAll('input[name="lf-subj"]:checked')).map(function(c){return c.value});
   if(etcOn.checked&&etc.value.trim())subs.push(etc.value.trim());
   if(!subs.length){alert("희망 과목을 선택하거나 직접 입력해주세요.");return}
+  // 어느 페이지에서 온 문의인지 남긴다. 어떤 유형의 페이지가 실제로
+  // 문의를 만드는지 알아야 페이지 전략을 데이터로 판단할 수 있다.
+  var src=(document.title.split(" | ")[0].split(" - ")[0]+" · "+location.pathname).slice(0,200);
   var t=b.textContent;b.disabled=true;b.textContent="보내는 중...";
   fetch("/api/inquiry",{method:"POST",headers:{"content-type":"application/json"},
-    body:JSON.stringify({name:n,phone:p,address:addr,grade:g("lf-g"),subjects:subs,message:g("lf-m")})})
+    body:JSON.stringify({name:n,phone:p,address:addr,grade:g("lf-g"),subjects:subs,message:g("lf-m"),page:src,hp:hp})})
    .then(function(r){return r.json().catch(function(){return{}}).then(function(j){return{r:r,j:j}})})
    .then(function(o){
      if(!o.r.ok||!o.j.ok)throw new Error(o.j.error||"잠시 후 다시 시도해주세요.");

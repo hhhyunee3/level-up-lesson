@@ -850,6 +850,9 @@ async function handleInquiry(request, env) {
     hour: "2-digit", minute: "2-digit", hour12: true,
   });
 
+  // 사람에게 보이지 않는 칸이 채워져 있으면 봇이다. 접수한 척하고 버린다.
+  if (String(data.hp || "").trim()) return json({ ok: true });
+
   const record = {
     site: env.SITE_NAME || "레벨업과외",
     name,
@@ -858,6 +861,9 @@ async function handleInquiry(request, env) {
     grade: (data.grade || "").toString(),
     subjects: Array.isArray(data.subjects) ? data.subjects : [],
     message: (data.message || "").toString().trim(),
+    // 어느 페이지에서 온 문의인지. 어떤 유형의 페이지가 실제로 문의를
+    // 만드는지 알아야 페이지 전략을 데이터로 판단할 수 있다.
+    page: (data.page || "").toString().slice(0, 200),
     at: new Date().toISOString(),
     atDisplay,
   };
@@ -966,7 +972,10 @@ function renderEmailHtml(r) {
     '<td style="' + val + '">' + escapeHtml(r.address || "-") + '</td></tr>';
 
   rows += '<tr><td style="' + cell + '">문의 내용</td>' +
-    '<td style="padding:14px 0;font-size:15px;line-height:1.6;color:' + ink + ';">' + message + '</td></tr>';
+    '<td style="padding:14px 0;font-size:15px;line-height:1.6;color:' + ink + ';border-bottom:1px solid ' + line + ';">' + message + '</td></tr>';
+
+  rows += '<tr><td style="' + cell + '">유입 페이지</td>' +
+    '<td style="padding:14px 0;font-size:13.5px;color:#7C8A99;">' + escapeHtml(r.page || "-") + '</td></tr>';
 
   return '<!doctype html><html><body style="margin:0;padding:24px 12px;background:#F3F7FA;' +
     'font-family:-apple-system,BlinkMacSystemFont,Apple SD Gothic Neo,Malgun Gothic,sans-serif;">' +
