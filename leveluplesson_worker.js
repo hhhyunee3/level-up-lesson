@@ -220,12 +220,6 @@ const HTML = `<!doctype html>
   .form-success h3{font-size:24px;font-weight:800;color:var(--ink)}
   .form-success p{color:var(--muted);margin-top:8px}
 
-  /* ── 푸터 ── */
-  .ft{padding:50px 0 60px;border-top:1px solid #eee;text-align:center;color:var(--ink-2);font-size:14px}
-  .ft .links{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 18px;margin-bottom:18px;font-size:13px}
-  .ft .links a{color:#666}
-  .ft .links a:hover{color:var(--blue)}
-  .ft .copy{color:#999;font-size:12px;margin-top:8px}
 
   /* ── 플로팅 버튼 ── */
   .flo-pc{position:fixed;right:40px;bottom:40px;z-index:90;display:flex;flex-direction:column;gap:14px}
@@ -287,7 +281,6 @@ const HTML = `<!doctype html>
     .form-row{grid-template-columns:1fr;gap:0}
     .flo-pc{display:none}
     .flo-m{display:flex}
-    .ft{padding:36px 0 40px;font-size:13px}
   }
 </style>
 </head>
@@ -496,16 +489,6 @@ const HTML = `<!doctype html>
 </section>
 </main>
 
-<!-- ───────── 푸터 ───────── -->
-<footer class="ft">
-  <div class="wrap">
-    <div class="links">
-      <a href="/regions">지역별 과외</a><a href="/math">수학 과외</a><a href="/english">영어 과외</a><a href="/korean">국어 과외</a><a href="/social">사회 과외</a><a href="/science">과학 과외</a><a href="/coding">코딩 수업</a><a href="/ged">검정고시</a><a href="/guides">공부 가이드</a>
-    </div>
-    <p>@ {{YEAR}} 레벨업 과외 · 김윤아 · 010-3038-8978 · <a href="mailto:hhhyunee3@naver.com">hhhyunee3@naver.com</a> / 광고는 정중히 사양합니다.</p>
-    <p class="copy">Copyright ⓒ {{YEAR}} 레벨업과외 All rights reserved.</p>
-  </div>
-</footer>
 
 <!-- ───────── 플로팅 버튼 ───────── -->
 <div class="flo-pc" aria-label="빠른 상담">
