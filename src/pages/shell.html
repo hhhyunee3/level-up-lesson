@@ -1,0 +1,472 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>{{TITLE}}</title>
+<meta name="description" content="{{DESC}}" />
+<link rel="canonical" href="{{CANONICAL}}" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="{{TITLE}}" />
+<meta property="og:description" content="{{DESC}}" />
+<meta property="og:url" content="{{CANONICAL}}" />
+<meta property="og:locale" content="ko_KR" />
+<meta property="og:site_name" content="레벨업과외" />
+<meta property="og:image" content="https://level-up-lesson.com/logo.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="{{TITLE}}" />
+<meta name="twitter:description" content="{{DESC}}" />
+<meta name="twitter:image" content="https://level-up-lesson.com/logo.png" />
+{{VERIFY}}
+{{EXTRA_HEAD}}
+<link rel="icon" href="/favicon.ico" sizes="any" />
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+
+<style>
+  /* ─────────────────────────────────────────────────────────────
+     이미지 교체 안내
+     public/img/ 폴더의 파일을 같은 이름으로 바꾸면 그대로 반영됩니다.
+       hero-pc.jpg   PC 메인 배경 (1920×1080 권장)
+       hero-m.jpg    모바일 메인 배경 (720×600 권장)
+       timing-pc.jpg "성적 레벨업 타이밍" 사진 (1420×800)
+       coding-pc.jpg PC 코딩 배너 (1920×401) / coding-m.jpg 모바일 (720×300)
+       feat-1~5.png  특별한 방식 아이콘 (500×500, 투명 배경)
+       review-1~8.jpg 학습후기 카드 (285×285 정사각형)
+       logo-levelup.png 상단 로고 (245×48)
+       float-kakao.png / float-inquiry.png 플로팅 버튼 (80×80)
+       arrow.png 상담 신청 화살표 (30×30)
+     ───────────────────────────────────────────────────────────── */
+  :root{
+    --blue:#2196F3;        /* 시그니처 파랑 (imweb 원본) */
+    --blue-2:#1E88E5;
+    --blue-light:#4DABF5;
+    --blue-pale:#E9F5FE;   /* 카드 배경 */
+    --blue-txt:#BADEFB;    /* 파란 섹션 보조 텍스트 */
+    --purple:#7E57C2;      /* 코딩 배너 */
+    --ink:#222222;
+    --ink-2:#333333;
+    --muted:#777777;
+    --white:#ffffff;
+    --dark:#222222;        /* 모바일 하단 바 */
+    --maxw:1200px;
+    --hd-h:72px;
+    --font:"Pretendard","Helvetica Neue",Helvetica,Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+  body{margin:0;font-family:var(--font);color:var(--ink-2);background:var(--white);line-height:1.6;word-break:keep-all;overflow-x:hidden}
+  a{color:inherit;text-decoration:none}
+  img{max-width:100%;display:block}
+  ul{list-style:none;margin:0;padding:0}
+  h1,h2,h3,p{margin:0}
+  .wrap{width:100%;max-width:var(--maxw);margin:0 auto;padding:0 40px}
+  .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+  /* ── 스크롤 등장 모션 (imweb: slideInUp / fadeInUp / zoomIn, 0.7s) ── */
+  .anim{opacity:0}
+  .anim.in{opacity:1;animation-duration:.7s;animation-fill-mode:both;animation-timing-function:cubic-bezier(.22,.61,.36,1)}
+  .anim.in[data-anim="fadeInUp"]{animation-name:fadeInUp}
+  .anim.in[data-anim="slideInUp"]{animation-name:slideInUp}
+  .anim.in[data-anim="zoomIn"]{animation-name:zoomIn}
+  .anim.in[data-anim="fadeIn"]{animation-name:fadeIn}
+  @keyframes fadeInUp{from{opacity:0;transform:translate3d(0,40px,0)}to{opacity:1;transform:none}}
+  @keyframes slideInUp{from{opacity:0;transform:translate3d(0,60%,0)}to{opacity:1;transform:none}}
+  @keyframes zoomIn{from{opacity:0;transform:scale3d(.85,.85,.85)}to{opacity:1;transform:none}}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto}
+    .anim{opacity:1!important;animation:none!important}
+    .marquee-track{animation:none!important}
+  }
+
+  /* ── 헤더 ── */
+  .hd{position:fixed;top:0;left:0;right:0;z-index:100;height:var(--hd-h);background:var(--white);transition:box-shadow .25s}
+  .hd.scrolled{box-shadow:0 2px 14px rgba(0,0,0,.08)}
+  .hd .wrap{height:100%;display:flex;align-items:center;justify-content:space-between;gap:24px}
+  .hd .logo img{height:28px;width:auto}
+  .nav{display:flex;align-items:center;gap:8px;flex:1;justify-content:center}
+  .nav > li{position:relative}
+  .nav > li > a{display:block;padding:10px 22px;font-size:16px;font-weight:600;color:var(--ink);white-space:nowrap;border-radius:8px;transition:color .2s}
+  .nav > li:hover > a,.nav > li > a:hover{color:var(--blue)}
+  .nav .sub{position:absolute;left:50%;top:100%;transform:translate(-50%,8px);min-width:180px;background:var(--white);border-radius:12px;box-shadow:0 12px 32px rgba(0,0,0,.12);padding:10px 0;opacity:0;visibility:hidden;transition:opacity .2s,transform .2s,visibility .2s}
+  .nav > li:hover .sub,.nav > li:focus-within .sub{opacity:1;visibility:visible;transform:translate(-50%,0)}
+  .nav .sub a{display:block;padding:10px 20px;font-size:15px;color:var(--ink-2);white-space:nowrap}
+  .nav .sub a:hover{background:var(--blue-pale);color:var(--blue)}
+  .hd-cta{display:inline-flex;align-items:center;justify-content:center;height:42px;padding:0 24px;border-radius:999px;background:var(--blue);color:#fff;font-weight:700;font-size:15px;white-space:nowrap;transition:background .2s,transform .2s}
+  .hd-cta:hover{background:var(--blue-2);transform:translateY(-1px)}
+  .burger{display:none;width:44px;height:44px;border:0;background:none;padding:0;cursor:pointer;position:relative}
+  .burger span{position:absolute;left:11px;right:11px;height:2px;background:var(--ink);border-radius:2px;transition:transform .25s,opacity .2s,top .25s}
+  .burger span:nth-child(1){top:14px}.burger span:nth-child(2){top:21px}.burger span:nth-child(3){top:28px}
+  body.menu-open .burger span:nth-child(1){top:21px;transform:rotate(45deg)}
+  body.menu-open .burger span:nth-child(2){opacity:0}
+  body.menu-open .burger span:nth-child(3){top:21px;transform:rotate(-45deg)}
+
+  /* 모바일 드로어 메뉴 */
+  .drawer{position:fixed;top:var(--hd-h);left:0;right:0;bottom:0;background:var(--white);z-index:99;transform:translateX(100%);transition:transform .3s ease;overflow-y:auto;padding:12px 24px 120px;display:none}
+  body.menu-open .drawer{transform:none}
+  .drawer .grp{border-bottom:1px solid #eee}
+  .drawer .grp-row{display:flex;align-items:center;justify-content:space-between}
+  .drawer .grp-row > a{flex:1;display:block;padding:16px 4px;font-size:17px;font-weight:700;color:var(--ink)}
+  .drawer .grp-tg{width:48px;height:48px;border:0;background:none;padding:0;cursor:pointer;position:relative}
+  .drawer .grp-tg::after{content:"";position:absolute;left:18px;top:16px;width:9px;height:9px;border-right:2px solid #999;border-bottom:2px solid #999;transform:rotate(45deg);transition:transform .25s}
+  .drawer .grp.open .grp-tg::after{transform:rotate(-135deg);top:21px}
+  .drawer .grp ul{max-height:0;overflow:hidden;transition:max-height .3s ease}
+  .drawer .grp.open ul{max-height:400px}
+  .drawer .grp ul a{display:block;padding:11px 16px;font-size:15px;color:#555}
+  .drawer .grp ul a:hover{color:var(--blue)}
+  .drawer .drawer-cta{display:flex;justify-content:center;align-items:center;height:50px;margin:24px 0 8px;border-radius:999px;background:var(--blue);color:#fff;font-weight:700;font-size:16px}
+
+  /* ── 히어로 ── */
+  .hero{position:relative;height:min(100vh,960px);min-height:600px;margin-top:var(--hd-h);background:#fff url("/img/hero-pc.jpg") center/cover no-repeat;color:#fff;display:flex;align-items:center;overflow:hidden}
+  .hero::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.28) 0%,rgba(0,0,0,.12) 45%,rgba(0,0,0,0) 70%)}
+  .hero .wrap{position:relative;z-index:1}
+  .hero .eyebrow{font-size:16px;letter-spacing:5px;font-weight:500;opacity:0;animation:fadeInUp .8s .1s both}
+  .hero h1{font-size:64px;line-height:1.25;font-weight:800;margin:26px 0 44px;text-shadow:0 2px 12px rgba(0,0,0,.18);opacity:0;animation:fadeInUp .8s .3s both}
+  .hero .lead{font-size:20px;line-height:1.7;font-weight:400;opacity:0;animation:fadeInUp .8s .55s both}
+  .hero .lead strong{font-weight:800}
+
+  /* ── 타이밍 섹션 ── */
+  .timing{padding:120px 0 0;text-align:center}
+  .timing h2{font-size:60px;line-height:1.5;font-weight:800;color:var(--ink)}
+  .timing p{font-size:26px;line-height:1.5;color:var(--ink);margin-top:34px}
+  .timing .pic{margin-top:60px}
+  .timing .pic img{width:100%;height:auto;aspect-ratio:1420/800}
+
+  /* ── 코딩 배너 ── */
+  .banner{background:var(--purple);display:block}
+  .banner img{width:100%;height:auto;aspect-ratio:1920/401}
+  .banner .m{aspect-ratio:720/300}
+  .banner .m{display:none}
+
+  /* ── 특별한 방식 ── */
+  .feat{padding:200px 0}
+  .feat .head{font-size:48px;line-height:1.25;font-weight:800;color:var(--ink-2);margin-bottom:60px}
+  .feat .head em{font-style:normal;color:var(--blue)}
+  .feat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:40px}
+  .card{background:var(--blue-pale);border-radius:20px;padding:44px 44px 40px;display:flex;justify-content:space-between;align-items:flex-start;gap:24px;min-height:320px;transition:transform .3s,box-shadow .3s}
+  .card:hover{transform:translateY(-6px);box-shadow:0 24px 44px -20px rgba(33,150,243,.35)}
+  .card .num{font-size:16px;font-style:italic;color:var(--blue);margin-bottom:6px}
+  .card h3{font-size:26px;line-height:1.35;font-weight:800;color:var(--ink-2);margin-bottom:26px}
+  .card p{font-size:16px;line-height:1.7;color:var(--ink-2)}
+  .card img{width:140px;height:140px;flex:0 0 140px;object-fit:contain}
+  /* PC: 지그재그 배치 (imweb 원본처럼 오른쪽 열이 한 칸 아래로) */
+  .feat-grid .card:nth-child(even){transform:translateY(120px)}
+  .feat-grid .card:nth-child(even):hover{transform:translateY(114px)}
+  .feat-grid::after{content:"";display:block;height:120px;grid-column:1/-1}
+
+  /* ── 학습후기 (파란 섹션) ── */
+  .reviews{background:var(--blue);color:#fff;padding:90px 0 70px;overflow:hidden}
+  .reviews .eyebrow{text-align:center;font-size:18px;color:var(--blue-txt)}
+  .reviews h2{text-align:center;font-size:48px;font-weight:800;color:#fff;margin:6px 0 50px}
+  .marquee{position:relative;overflow:hidden;width:100%}
+  .marquee-track{display:flex;gap:16px;width:max-content;animation:marquee 46s linear infinite;will-change:transform}
+  .marquee:hover .marquee-track{animation-play-state:paused}
+  .marquee-track .item{flex:0 0 auto;width:285px;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 12px 30px -12px rgba(0,0,0,.35)}
+  .marquee-track .item img{width:285px;height:285px;object-fit:cover}
+  @keyframes marquee{from{transform:translate3d(0,0,0)}to{transform:translate3d(-50%,0,0)}}
+  .reviews .cta{display:flex;justify-content:center;align-items:center;gap:8px;margin:70px auto 0;font-size:30px;font-weight:800;color:#fff;transition:transform .25s}
+  .reviews .cta:hover{transform:translateX(6px)}
+  .reviews .cta img{width:30px;height:30px}
+  .reviews .mark{margin-top:40px;text-align:right;font-size:96px;line-height:1;font-weight:900;color:#fff;opacity:.2;letter-spacing:-.02em;white-space:nowrap;user-select:none}
+
+  /* ── 상담 신청 ── */
+  .contact{padding:120px 0}
+  .contact .head{text-align:center;margin-bottom:44px}
+  .contact .head .num{font-size:16px;font-style:italic;color:var(--blue)}
+  .contact .head h2{font-size:44px;font-weight:800;color:var(--ink);line-height:1.3;margin-top:6px}
+  .contact .head p{font-size:17px;color:var(--muted);margin-top:14px}
+  .form-card{max-width:760px;margin:0 auto;background:var(--blue-pale);border-radius:24px;padding:48px}
+  .form-row{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  .field{display:flex;flex-direction:column;gap:8px;margin-bottom:18px}
+  .field label{font-size:14px;font-weight:700;color:var(--ink-2)}
+  .field .req{color:#E53935}
+  .field input,.field select,.field textarea{width:100%;height:50px;border:1px solid #d6e6f5;border-radius:12px;padding:0 16px;font:inherit;font-size:15px;color:var(--ink);background:#fff;outline:none;transition:border-color .2s,box-shadow .2s}
+  .field textarea{height:130px;padding:14px 16px;resize:vertical}
+  .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(33,150,243,.15)}
+  .field input[readonly]{background:#f6fafd;color:#555}
+  .phone-3{display:flex;align-items:center;gap:6px}
+  .phone-3 input{text-align:center;padding:0 6px}
+  .phone-sep{color:#999}
+  .subj-pick{display:flex;flex-wrap:wrap;gap:8px}
+  .subj-pick label{display:inline-flex;align-items:center;gap:6px;height:38px;padding:0 14px;border-radius:999px;background:#fff;border:1px solid #d6e6f5;font-size:14px;font-weight:600;color:var(--ink-2);cursor:pointer;user-select:none}
+  .subj-pick label:has(input:checked){background:var(--blue);border-color:var(--blue);color:#fff}
+  .subj-pick input{width:auto;height:auto;margin:0;accent-color:var(--blue)}
+  .addr-row{display:flex;gap:8px}
+  .addr-row input{flex:1}
+  .addr-btn{height:50px;padding:0 18px;border:0;border-radius:12px;background:var(--ink);color:#fff;font:inherit;font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap}
+  .field.full input + input{margin-top:8px}
+  .btn-submit{width:100%;height:56px;border:0;border-radius:999px;background:var(--blue);color:#fff;font:inherit;font-size:17px;font-weight:800;cursor:pointer;margin-top:8px;transition:background .2s,transform .2s}
+  .btn-submit:hover{background:var(--blue-2);transform:translateY(-1px)}
+  .btn-submit:disabled{opacity:.6;cursor:default;transform:none}
+  .form-note{font-size:13px;color:#888;text-align:center;margin-top:14px}
+  .hp-field{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+  .form-success{display:none;text-align:center;padding:30px 0}
+  .form-success.show{display:block;animation:fadeInUp .6s both}
+  .form-success .ok{width:64px;height:64px;border-radius:50%;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;margin:0 auto 18px}
+  .form-success .ok svg{width:30px;height:30px;stroke:#fff}
+  .form-success h3{font-size:24px;font-weight:800;color:var(--ink)}
+  .form-success p{color:var(--muted);margin-top:8px}
+
+
+  /* ── 플로팅 버튼 ── */
+  .flo-pc{position:fixed;right:40px;bottom:40px;z-index:90;display:flex;flex-direction:column;gap:14px}
+  .flo-pc a{display:block;width:80px;height:80px;border-radius:50%;box-shadow:0 10px 24px -8px rgba(0,0,0,.35);transition:transform .2s}
+  .flo-pc a:hover{transform:translateY(-4px)}
+  .flo-pc img{width:80px;height:80px}
+  .flo-m{display:none;position:fixed;left:0;right:0;bottom:0;z-index:90;background:var(--dark);height:56px}
+  .flo-m a{flex:1;display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;font-weight:700}
+  .flo-m a + a{border-left:1px solid rgba(255,255,255,.18)}
+
+  /* ── 반응형 ── */
+  @media (max-width:1100px){
+    .nav > li > a{padding:10px 14px;font-size:15px}
+    .hero h1{font-size:52px}
+    .timing h2{font-size:46px}
+    .feat .head{font-size:40px}
+  }
+  @media (max-width:860px){
+    :root{--hd-h:64px}
+    .wrap{padding:0 20px}
+    .nav,.hd-cta{display:none}
+    .burger{display:block}
+    .drawer{display:block}
+    body{padding-bottom:56px}
+    .hero{height:600px;min-height:0;background-image:url("/img/hero-m.jpg");background-position:50% 0;align-items:flex-start;padding-top:56px;text-align:center}
+    .hero::before{background:linear-gradient(180deg,rgba(0,0,0,.25) 0%,rgba(0,0,0,.05) 60%)}
+    .hero .eyebrow{font-size:13px;letter-spacing:5px}
+    .hero h1{font-size:26px;margin:18px 0 22px;line-height:1.45}
+    .hero .lead{font-size:16px;line-height:1.6}
+    .timing{padding:70px 0 0}
+    .timing h2{font-size:26px;line-height:1.5}
+    .timing p{font-size:16px;margin-top:16px}
+    .timing .pic{margin-top:36px}
+    .banner .pc{display:none}.banner .m{display:block}
+    .feat{padding:80px 0}
+    .feat .head{font-size:26px;text-align:center;margin-bottom:34px}
+    .feat-grid{grid-template-columns:1fr;gap:16px}
+    .feat-grid .card:nth-child(even){transform:none}
+    .feat-grid .card:nth-child(even):hover{transform:translateY(-4px)}
+    .feat-grid::after{display:none}
+    .card{flex-direction:column;padding:30px 26px 32px;min-height:0;gap:18px}
+    .card img{width:60px;height:60px;flex-basis:60px;order:-1}
+    .card .num{font-size:14px}
+    .card h3{font-size:20px;margin-bottom:18px}
+    .card p{font-size:16px}
+    .reviews{padding:60px 0 50px}
+    .reviews .eyebrow{font-size:16px}
+    .reviews h2{font-size:26px;margin-bottom:30px}
+    .marquee-track{gap:12px;animation-duration:36s}
+    .marquee-track .item,.marquee-track .item img{width:240px}
+    .marquee-track .item img{height:240px}
+    .reviews .cta{font-size:20px;margin-top:44px}
+    .reviews .cta img{width:24px;height:24px}
+    .reviews .mark{font-size:36px;text-align:center;opacity:1;color:var(--blue-light);margin-top:40px}
+    .contact{padding:70px 0}
+    .contact .head h2{font-size:28px}
+    .contact .head p{font-size:15px}
+    .form-card{padding:28px 20px;border-radius:18px}
+    .form-row{grid-template-columns:1fr;gap:0}
+    .flo-pc{display:none}
+    .flo-m{display:flex}
+  }
+</style>
+{{EXTRA_CSS}}
+</head>
+<body class="{{BODY_CLASS}}">
+
+<!-- ───────── 헤더 ───────── -->
+<header class="hd" id="hd">
+  <div class="wrap">
+    <a class="logo" href="/" aria-label="레벨업과외 홈"><img src="/img/logo-levelup.png" alt="레벨업과외" width="138" height="27" /></a>
+
+    <!-- ▼ 메뉴 링크: 필요한 주소로 바꾸세요 (드로어 메뉴도 아래 동일하게 수정) -->
+    <ul class="nav">
+      <li><a href="/regions">과외</a>
+        <ul class="sub">
+          <li><a href="/regions">지역별 수업</a></li>
+          <li><a href="/regions">고등학생 수업</a></li>
+          <li><a href="/regions">중학생 수업</a></li>
+          <li><a href="/regions">유·초등 수업</a></li>
+        </ul>
+      </li>
+      <li><a href="/coaching">학습코칭</a></li>
+      <li><a href="/coding">특별프로그램</a>
+        <ul class="sub">
+          <li><a href="/coding">코딩수업</a></li>
+          <li><a href="/ged">검정고시</a></li>
+          <li><a href="/korean">한글수업</a></li>
+          <li><a href="#contact">해외캠프/유학</a></li>
+          <li><a href="#contact">입시컨설팅(고입/대입)</a></li>
+        </ul>
+      </li>
+      <li><a href="/english">외국어</a>
+        <ul class="sub">
+          <li><a href="/english">영어</a></li>
+          <li><a href="#contact">일본어</a></li>
+          <li><a href="#contact">중국어</a></li>
+        </ul>
+      </li>
+    </ul>
+
+    <a class="hd-cta" href="#contact">상담신청</a>
+    <button class="burger" id="burger" aria-label="메뉴 열기" aria-expanded="false" aria-controls="drawer"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<!-- 모바일 드로어 메뉴 -->
+<nav class="drawer" id="drawer" aria-label="모바일 메뉴">
+  <div class="grp"><div class="grp-row"><a href="/regions">과외</a><button type="button" class="grp-tg" aria-label="하위 메뉴 열기"></button></div>
+    <ul><li><a href="/regions">지역별 수업</a></li><li><a href="/regions">고등학생 수업</a></li><li><a href="/regions">중학생 수업</a></li><li><a href="/regions">유·초등 수업</a></li></ul>
+  </div>
+  <div class="grp"><div class="grp-row"><a href="/coaching">학습코칭</a></div></div>
+  <div class="grp"><div class="grp-row"><a href="/coding">특별프로그램</a><button type="button" class="grp-tg" aria-label="하위 메뉴 열기"></button></div>
+    <ul><li><a href="/coding">코딩수업</a></li><li><a href="/ged">검정고시</a></li><li><a href="/korean">한글수업</a></li><li><a href="#contact">해외캠프/유학</a></li><li><a href="#contact">입시컨설팅(고입/대입)</a></li></ul>
+  </div>
+  <div class="grp"><div class="grp-row"><a href="/english">외국어</a><button type="button" class="grp-tg" aria-label="하위 메뉴 열기"></button></div>
+    <ul><li><a href="/english">영어</a></li><li><a href="#contact">일본어</a></li><li><a href="#contact">중국어</a></li></ul>
+  </div>
+  <a class="drawer-cta" href="#contact">상담신청</a>
+</nav>
+
+<main>
+{{MAIN}}</main>
+
+<!-- ───────── 플로팅 버튼 ───────── -->
+<div class="flo-pc" aria-label="빠른 상담">
+  <a href="http://pf.kakao.com/_hzCPG/chat" target="_blank" rel="noopener" aria-label="카톡상담"><img src="/img/float-kakao.png" alt="카톡상담" /></a>
+  <a href="#contact" aria-label="상담신청"><img src="/img/float-inquiry.png" alt="상담신청" /></a>
+</div>
+<div class="flo-m" aria-label="빠른 상담">
+  <a href="http://pf.kakao.com/_hzCPG/chat" target="_blank" rel="noopener">카톡상담</a>
+  <a href="tel:010-3038-8978">전화상담</a>
+  <a href="#contact">상담신청</a>
+</div>
+
+<script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<script>
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const byId = (id) => document.getElementById(id);
+
+  // ── 헤더: 스크롤 시 그림자
+  const hd = byId('hd');
+  const onScroll = () => hd.classList.toggle('scrolled', window.scrollY > 8);
+  onScroll(); window.addEventListener('scroll', onScroll, { passive: true });
+
+  // ── 모바일 메뉴
+  const burger = byId('burger');
+  const closeMenu = () => { document.body.classList.remove('menu-open'); burger.setAttribute('aria-expanded', 'false'); };
+  burger.addEventListener('click', () => {
+    const open = document.body.classList.toggle('menu-open');
+    burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+  document.querySelectorAll('.drawer .grp-tg').forEach((b) => {
+    b.addEventListener('click', () => b.closest('.grp').classList.toggle('open'));
+  });
+  document.querySelectorAll('.drawer a').forEach((a) => a.addEventListener('click', closeMenu));
+  window.addEventListener('resize', () => { if (window.innerWidth > 860) closeMenu(); });
+
+  // ── 스크롤 등장 모션 (imweb 위젯 애니메이션과 같은 방식)
+  const animEls = document.querySelectorAll('.anim');
+  if (reduce || !('IntersectionObserver' in window)) {
+    animEls.forEach((el) => el.classList.add('in'));
+  } else {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((en) => { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } });
+    }, { threshold: 0.15, rootMargin: '0px 0px -8% 0px' });
+    animEls.forEach((el) => io.observe(el));
+  }
+
+  // ── 학습후기 무한 슬라이드: 카드를 한 번 더 복제해 끊김 없이 흐르게
+  const track = byId('marqueeTrack');
+  if (track) track.innerHTML += track.innerHTML;
+
+  // ── 상담 신청 폼 (홈: 전체 폼 / 하위 페이지: 간단 폼) — 공통 도우미
+  const onlyDigits = (el) => { el.value = el.value.replace(/\D/g, '').slice(0, el.maxLength); };
+  const wirePhone = (els) => els.forEach((el, i) => {
+    el.addEventListener('input', () => { onlyDigits(el); if (el.value.length >= el.maxLength && i < els.length - 1) els[i + 1].focus(); });
+    el.addEventListener('keydown', (e) => { if (e.key === 'Backspace' && el.value === '' && i > 0) els[i - 1].focus(); });
+  });
+  const phoneOf = (els) => {
+    const v = els.map((el) => el.value);
+    if (v[0].length !== 3 || v[1].length !== 4 || v[2].length !== 4) { (v[0].length !== 3 ? els[0] : v[1].length !== 4 ? els[1] : els[2]).focus(); return null; }
+    return v.join('-');
+  };
+  const send = async (payload, btn, onOk) => {
+    const label = btn.textContent; btn.disabled = true; btn.textContent = '보내는 중...';
+    try {
+      const res = await fetch('/api/inquiry', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(payload) });
+      const out = await res.json().catch(() => ({}));
+      if (!res.ok || !out.ok) throw new Error(out.error || '잠시 후 다시 시도해주세요.');
+      onOk();
+    } catch (err) {
+      alert('전송 중 문제가 발생했어요. ' + err.message);
+      btn.disabled = false; btn.textContent = label;
+    }
+  };
+
+  // 홈 전체 폼
+  const form = byId('inquiryForm');
+  if (form) {
+    const success = byId('formSuccess');
+    const phoneParts = ['phone1', 'phone2', 'phone3'].map(byId);
+    wirePhone(phoneParts);
+    byId('addrSearch').addEventListener('click', () => {
+      if (typeof daum === 'undefined' || !daum.Postcode) { alert('주소 검색을 불러오지 못했어요. 잠시 후 다시 시도해주세요.'); return; }
+      new daum.Postcode({
+        oncomplete: (d) => {
+          byId('postcode').value = d.zonecode || '';
+          byId('addrRoad').value = d.roadAddress || d.address || '';
+          byId('addrDetail').focus();
+        }
+      }).open();
+    });
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const f = form.elements;
+      const name = f['name'].value.trim();
+      if (!name){ f['name'].focus(); alert('학생 이름을 입력해주세요.'); return; }
+      const phone = phoneOf(phoneParts);
+      if (!phone){ alert('학부모 연락처를 정확히 입력해주세요. (예: 010-1234-5678)'); return; }
+      const road = byId('addrRoad').value.trim();
+      const detail = byId('addrDetail').value.trim();
+      if (!road){ byId('addrSearch').focus(); alert('주소 찾기로 도로명 주소를 선택해주세요.'); return; }
+      if (!detail){ byId('addrDetail').focus(); alert('상세주소를 입력해주세요.'); return; }
+      const address = '[' + (byId('postcode').value.trim() || '-') + '] ' + road + ', ' + detail;
+      const subjects = [...form.querySelectorAll('input[name="subject"]:checked')].map(c => c.value);
+      const payload = { name, phone, grade: f['grade'].value, subjects, address, message: f['message'].value.trim(), hp: f['hp'].value, page: location.pathname };
+      send(payload, form.querySelector('button[type="submit"]'), () => {
+        form.style.display = 'none';
+        success.classList.add('show');
+        success.scrollIntoView({behavior: reduce ? 'auto' : 'smooth', block:'center'});
+      });
+    });
+  }
+
+  // 하위 페이지 간단 폼 (학생이름 · 연락처 · 내용 · 동의)
+  document.querySelectorAll('form.mini-form').forEach((mf) => {
+    const parts = [...mf.querySelectorAll('input[data-phone]')];
+    wirePhone(parts);
+    const agreeBtn = mf.querySelector('.agree-toggle');
+    if (agreeBtn) agreeBtn.addEventListener('click', () => mf.querySelector('.agree-text').classList.toggle('open'));
+    mf.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const f = mf.elements;
+      const name = f['name'].value.trim();
+      if (!name){ f['name'].focus(); alert('학생 이름을 입력해주세요.'); return; }
+      const phone = phoneOf(parts);
+      if (!phone){ alert('연락처를 정확히 입력해주세요. (예: 010-1234-5678)'); return; }
+      if (f['agree'] && !f['agree'].checked){ alert('개인정보 수집 및 이용에 동의해주세요.'); return; }
+      const payload = { name, phone, address: '', subjects: [mf.dataset.subject || ''].filter(Boolean), message: (f['message'] ? f['message'].value.trim() : ''), hp: f['hp'] ? f['hp'].value : '', page: location.pathname };
+      send(payload, mf.querySelector('button[type="submit"]'), () => {
+        mf.querySelector('.mini-fields').style.display = 'none';
+        mf.querySelector('.mini-done').classList.add('show');
+      });
+    });
+  });
+</script>
+{{ANTICOPY}}
+</body>
+</html>

@@ -1,0 +1,245 @@
+<!-- title: 학습코칭 · 레벨업과외 -->
+<!-- desc: 목표 설정, 플랜, 루틴까지 맞춤 설계. 학습 전문 코치의 1:1 온라인 코칭으로 나에게 꼭 맞는 공부 방향을 찾고 끝까지 완주합니다. -->
+<!-- path: /coaching -->
+<!-- head:
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"홈","item":"https://level-up-lesson.com/"},{"@type":"ListItem","position":2,"name":"학습코칭","item":"https://level-up-lesson.com/coaching"}]}</script>
+-->
+<!-- css:
+  /* ── 학습코칭 페이지 전용 (이미지: public/img/coaching/) ── */
+  .c-hero{position:relative;margin-top:var(--hd-h);padding:110px 0 470px;background:#474771 url("/img/coaching/hero-pc.jpg") 50% 100%/cover no-repeat;color:#fff;text-align:center;overflow:hidden}
+  .c-hero::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(40,40,80,.35),rgba(40,40,80,0) 55%)}
+  .c-hero .wrap{position:relative;z-index:1}
+  .c-hero h1{font-size:52px;line-height:1.35;font-weight:800;opacity:0;animation:fadeInUp .8s .15s both}
+  .c-hero h1 em{font-style:normal;color:#C4B2E3;display:block}
+  .c-hero p{font-size:22px;line-height:1.6;margin-top:28px;opacity:0;animation:fadeInUp .8s .4s both}
+
+  .c-sec{padding:120px 0}
+  .c-h2{font-size:48px;line-height:1.3;font-weight:800;color:var(--ink)}
+  .c-h2 em{font-style:normal;color:var(--purple)}
+  .c-sub{font-size:22px;line-height:1.6;color:var(--ink-2);margin-top:18px}
+  .center{text-align:center}
+
+  /* 프로그램 */
+  .c-program{background:#F7F8F9}
+  .c-program .grid{display:grid;grid-template-columns:5fr 6fr;gap:60px;align-items:start}
+  .c-program .photo{position:relative;border-radius:24px;overflow:hidden}
+  .c-program .photo img{width:100%;height:auto}
+  .c-program .tags{position:absolute;left:20px;top:20px;display:flex;flex-direction:column;gap:8px}
+  .c-program .tags span{display:inline-block;background:var(--purple);color:#fff;font-size:17px;font-weight:600;padding:8px 16px;border-radius:999px}
+  .c-list{margin-top:40px;display:flex;flex-direction:column;gap:26px}
+  .c-list li{display:flex;gap:14px;align-items:flex-start}
+  .c-list img{width:32px;height:32px;flex:0 0 32px;margin-top:4px}
+  .c-list b{display:block;font-size:22px;font-weight:800;color:var(--ink);margin-bottom:4px}
+  .c-list p{font-size:17px;line-height:1.7;color:var(--ink-2)}
+  .c-routine{margin-top:120px}
+  .c-plans{display:grid;grid-template-columns:1fr 1fr;gap:30px;margin-top:50px}
+  .c-plans img{width:100%;height:auto;border-radius:16px;box-shadow:0 20px 40px -24px rgba(60,40,120,.35)}
+
+  /* 이런 학생에게 */
+  .c-who .c-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:30px;margin-top:60px}
+  .c-who .c-card{text-align:center;padding:36px 20px;border-radius:24px;background:#F7F8F9}
+  .c-who .c-card img{width:160px;height:160px;margin:0 auto 18px}
+  .c-who .c-card p{font-size:16px;line-height:1.6;color:var(--ink-2)}
+  .c-who .c-card b{display:block;font-size:22px;font-weight:800;color:var(--ink);margin-top:10px}
+  .c-who .types{margin-top:60px}
+  .c-who .types img{width:100%;height:auto}
+  .c-video{margin-top:60px;position:relative;border-radius:24px;overflow:hidden;aspect-ratio:16/9;background:#000;box-shadow:0 30px 60px -30px rgba(0,0,0,.4)}
+  .c-video iframe,.c-video img{position:absolute;inset:0;width:100%;height:100%;border:0;object-fit:cover}
+  .c-video button{position:absolute;inset:0;width:100%;height:100%;border:0;background:rgba(0,0,0,.15);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .25s}
+  .c-video button:hover{background:rgba(0,0,0,.3)}
+  .c-video button span{width:88px;height:88px;border-radius:50%;background:rgba(255,255,255,.92);display:flex;align-items:center;justify-content:center;box-shadow:0 10px 30px rgba(0,0,0,.3)}
+  .c-video button span::after{content:"";margin-left:6px;border-left:26px solid var(--purple);border-top:16px solid transparent;border-bottom:16px solid transparent}
+
+  /* 전문가 */
+  .c-expert{background:#F2EEF9}
+  .c-expert .icon{width:120px;height:120px;margin:0 auto 20px}
+  .c-expert .people{display:grid;grid-template-columns:repeat(3,1fr);gap:30px;margin-top:60px}
+  .c-expert .person{text-align:center}
+  .c-expert .person img{width:240px;height:160px;margin:0 auto 18px}
+  .c-expert .person p{font-size:16px;color:var(--ink-2)}
+  .c-expert .person b{display:block;font-size:22px;font-weight:800;color:var(--ink);margin-top:6px}
+  .c-expert .divider{margin:80px 0 60px}
+  .c-expert .divider img{width:100%;height:auto;display:block}
+  .c-reviews{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:50px}
+  .c-reviews img{width:100%;height:auto;border-radius:16px}
+
+  /* 상담 폼 (보라) */
+  .c-cta{background:var(--purple);color:#fff;padding:100px 0}
+  .c-cta h2{font-size:40px;font-weight:800;text-align:center}
+  .c-cta .tel{display:block;text-align:center;font-size:34px;font-weight:800;color:#fff;margin-top:8px;letter-spacing:.02em}
+  .mini-form{max-width:640px;margin:40px auto 0;background:#fff;border-radius:24px;padding:40px;color:var(--ink)}
+  .mini-form .row{display:grid;grid-template-columns:110px 1fr;gap:12px;align-items:center;margin-bottom:16px}
+  .mini-form label{font-size:15px;font-weight:700;color:var(--ink-2)}
+  .mini-form input[type=text],.mini-form input[type=tel],.mini-form textarea{width:100%;height:48px;border:1px solid #ddd;border-radius:10px;padding:0 14px;font:inherit;font-size:15px;color:var(--ink);outline:none;transition:border-color .2s,box-shadow .2s}
+  .mini-form textarea{height:120px;padding:12px 14px;resize:vertical}
+  .mini-form input:focus,.mini-form textarea:focus{border-color:var(--purple);box-shadow:0 0 0 3px rgba(126,87,194,.15)}
+  .mini-form .phone{display:flex;align-items:center;gap:6px}
+  .mini-form .phone input{text-align:center;padding:0 4px}
+  .mini-form .phone span{color:#999}
+  .mini-form .agree{margin:8px 0 18px;font-size:14px;color:#555;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .mini-form .agree input{accent-color:var(--purple);width:18px;height:18px;margin:0}
+  .mini-form .agree-toggle{background:none;border:0;padding:0;font:inherit;font-size:13px;color:var(--purple);text-decoration:underline;cursor:pointer}
+  .mini-form .agree-text{display:none;font-size:13px;line-height:1.7;color:#666;background:#F7F8F9;border-radius:10px;padding:14px 16px;margin-bottom:18px}
+  .mini-form .agree-text.open{display:block}
+  .mini-form .btn{width:100%;height:54px;border:0;border-radius:999px;background:var(--purple);color:#fff;font:inherit;font-size:17px;font-weight:800;cursor:pointer;transition:filter .2s,transform .2s}
+  .mini-form .btn:hover{filter:brightness(1.08);transform:translateY(-1px)}
+  .mini-form .btn:disabled{opacity:.6;transform:none}
+  .mini-done{display:none;text-align:center;padding:20px 0}
+  .mini-done.show{display:block;animation:fadeInUp .5s both}
+  .mini-done b{display:block;font-size:22px;font-weight:800;color:var(--ink);margin-bottom:8px}
+  .hp-field{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+
+  @keyframes flipInY{from{opacity:0;transform:perspective(600px) rotateY(-70deg)}to{opacity:1;transform:none}}
+  .anim.in[data-anim="flipInY"]{animation-name:flipInY;animation-duration:.8s}
+
+  @media (max-width:1100px){
+    .c-h2{font-size:38px}
+    .c-hero h1{font-size:42px}
+  }
+  @media (max-width:860px){
+    .c-hero{padding:60px 0 240px;background-image:url("/img/coaching/hero-m.jpg");background-position:50% 100%;background-size:100% auto}
+        .c-hero h1{font-size:26px}
+    .c-hero p{font-size:15px;margin-top:16px}
+    .c-sec{padding:70px 0}
+    .c-h2{font-size:26px}
+    .c-sub{font-size:16px;margin-top:12px}
+    .c-program .grid{grid-template-columns:1fr;gap:30px}
+    .c-program .tags span{font-size:14px;padding:6px 12px}
+    .c-list{margin-top:28px;gap:20px}
+    .c-list b{font-size:19px}
+    .c-list p{font-size:15px}
+    .c-routine{margin-top:70px}
+    .c-plans{grid-template-columns:1fr;gap:16px;margin-top:30px}
+    .c-who .c-cards{grid-template-columns:1fr;gap:14px;margin-top:34px}
+    .c-who .c-card{padding:26px 16px}
+    .c-who .c-card img{width:120px;height:120px}
+    .c-who .c-card b{font-size:19px}
+    .c-who .types{margin-top:34px;overflow-x:auto}
+    .c-who .types img{min-width:700px}
+    .c-video{margin-top:34px;border-radius:14px}
+    .c-video button span{width:64px;height:64px}
+    .c-expert .icon{width:80px;height:80px}
+    .c-expert .people{grid-template-columns:1fr;gap:24px;margin-top:34px}
+    .c-expert .person img{width:180px;height:120px}
+    .c-expert .divider{margin:50px 0 30px}
+    .c-reviews{grid-template-columns:1fr;gap:12px;margin-top:30px}
+    .c-cta{padding:60px 0}
+    .c-cta h2{font-size:26px}
+    .c-cta .tel{font-size:24px}
+    .mini-form{padding:24px 18px;border-radius:16px;margin-top:28px}
+    .mini-form .row{grid-template-columns:1fr;gap:6px}
+  }
+-->
+<!-- ───────── 학습코칭 히어로 ───────── -->
+<section class="c-hero" id="top">
+  <div class="wrap">
+    <h1>공부의 올바른 방향을 더하다 레벨업 코칭수업<em>목표 설정, 플랜, 루틴까지 맞춤 설계.</em></h1>
+    <p>레벨업 코칭 수업이 나에게 꼭 맞는 학습 방향을 찾고,<br />끝까지 완주할 수 있도록 도와드립니다.</p>
+  </div>
+</section>
+
+<!-- ───────── 코칭 프로그램 ───────── -->
+<section class="c-sec c-program" id="program">
+  <div class="wrap">
+    <div class="grid">
+      <div class="photo anim" data-anim="zoomIn">
+        <img src="/img/coaching/program.jpg" width="648" height="608" alt="1:1 학습 코칭 수업 모습" loading="lazy" />
+        <div class="tags"><span>대상: 초등학생~고등학생</span><span>방식: 1:1 온라인 수업</span></div>
+      </div>
+      <div>
+        <h2 class="c-h2 anim" data-anim="slideInUp">진학으로 연결되는<br /><em>진로 맞춤 코칭</em></h2>
+        <ul class="c-list">
+          <li class="anim" data-anim="slideInUp"><img src="/img/coaching/icon-1.png" alt="" /><div><b>스타트 체크</b><p>학습에 영향을 주는 네가지 핵심 영역 분석으로 학생의 강점과 약점 파악</p></div></li>
+          <li class="anim" data-anim="slideInUp" style="animation-delay:.08s"><img src="/img/coaching/icon-2.png" alt="" /><div><b>맞춤형 커리큘럼 사례</b><p>맞춤 커리큘럼 설계 영향을 주는 네가지 핵심 영역 분석으로 학생의 강점과 약점 파악</p></div></li>
+          <li class="anim" data-anim="slideInUp" style="animation-delay:.16s"><img src="/img/coaching/icon-3.png" alt="" /><div><b>1:1 맞춤 코칭</b><p>라이브로 진행되는 생활습관/학습법/진로/플랜 코칭</p></div></li>
+          <li class="anim" data-anim="slideInUp" style="animation-delay:.24s"><img src="/img/coaching/icon-4.png" alt="" /><div><b>실행력을 높이는 플래닝</b><p>해야할 일과 하고 싶은 일을 구별하는 자기주도학습의 키</p></div></li>
+          <li class="anim" data-anim="slideInUp" style="animation-delay:.32s"><img src="/img/coaching/icon-5.png" alt="" /><div><b>학습 전문 코치의 FULL CARE</b><p>공부에 대한 고민, 공부가 아닌 고민도 모두 케어하는 학습 전문 코치</p></div></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="c-routine center">
+      <h2 class="c-h2 anim" data-anim="slideInUp">나에게 <em>딱 맞는 공부 루틴</em> 찾기</h2>
+      <p class="c-sub anim" data-anim="slideInUp" style="animation-delay:.1s">학습 전문 코치가 혼자서도 끝까지 해내는 공부 습관 만들기를 도와드립니다.</p>
+      <div class="c-plans">
+        <img class="anim" data-anim="slideInUp" src="/img/coaching/plan-1.png" width="710" height="472" alt="월간 학습 플랜 예시" loading="lazy" />
+        <img class="anim" data-anim="slideInUp" style="animation-delay:.12s" src="/img/coaching/plan-2.png" width="710" height="472" alt="일간 학습 플랜 예시" loading="lazy" />
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ───────── 이런 학생에게 ───────── -->
+<section class="c-sec c-who" id="who">
+  <div class="wrap">
+    <h2 class="c-h2 center anim" data-anim="slideInUp">학습코칭은 <em>이런 학생에게 필요</em>합니다</h2>
+    <div class="cards">
+      <div class="c-card anim" data-anim="flipInY"><img src="/img/coaching/student-1.png" width="200" height="200" alt="" loading="lazy" /><p>공부를 어디서부터<br />시작 해야 하는지 모르는</p><b>중학교 2학년 심*석</b></div>
+      <div class="c-card anim" data-anim="flipInY" style="animation-delay:.12s"><img src="/img/coaching/student-2.png" width="200" height="200" alt="" loading="lazy" /><p>열심히 플랜을 세우지만<br />실천하기 어려운</p><b>고등학교 1학년 김*예</b></div>
+      <div class="c-card anim" data-anim="flipInY" style="animation-delay:.24s"><img src="/img/coaching/student-3.png" width="200" height="200" alt="" loading="lazy" /><p>학원숙제하느라<br />나만의 공부시간이 없는</p><b>중학교 3학년 신*욱</b></div>
+    </div>
+    <div class="types anim" data-anim="fadeInUp"><img src="/img/coaching/types.png" width="1248" height="266" alt="학습역량이 부족한 학생, 학습동기가 부족한 학생, 열심히 노력하지만 성적이 안나오는 학생을 위한 코칭 항목" loading="lazy" /></div>
+    <div class="c-video anim" data-anim="zoomIn" id="coachVideo">
+      <img src="/img/coaching/video-poster.jpg" width="1280" height="720" alt="레벨업 학습코칭 소개 영상" loading="lazy" />
+      <button type="button" aria-label="영상 재생" data-yt="dm9KnAuYdSA"><span></span></button>
+    </div>
+  </div>
+</section>
+
+<!-- ───────── 전문가 검증 · 후기 ───────── -->
+<section class="c-sec c-expert" id="expert">
+  <div class="wrap">
+    <img class="icon anim" data-anim="zoomIn" src="/img/coaching/expert-icon.png" width="500" height="500" alt="" loading="lazy" />
+    <h2 class="c-h2 center anim" data-anim="slideInUp"><em>진로 진학 전문가가 검증</em>한 코칭 수업</h2>
+    <p class="c-sub center anim" data-anim="slideInUp" style="animation-delay:.1s">아이에게 맞춰진 최적의 코칭으로 습관을 레벨업 해드립니다.</p>
+    <div class="people">
+      <div class="person anim" data-anim="flipInY"><img src="/img/coaching/expert-1.png" width="240" height="160" alt="" loading="lazy" /><p>전국입학담당관협의회 회장</p><b>정남환 교육학 박사</b></div>
+      <div class="person anim" data-anim="flipInY" style="animation-delay:.12s"><img src="/img/coaching/expert-2.png" width="240" height="160" alt="" loading="lazy" /><p>한국GFAT평가원장</p><b>김용 이학 박사</b></div>
+      <div class="person anim" data-anim="flipInY" style="animation-delay:.24s"><img src="/img/coaching/expert-3.png" width="240" height="160" alt="" loading="lazy" /><p>한국진로진학연구소 책임연구원</p><b>최인선 철학 박사</b></div>
+    </div>
+    <div class="divider"><img src="/img/coaching/divider.png" width="1920" height="160" alt="" loading="lazy" /></div>
+    <h2 class="c-h2 center anim" data-anim="slideInUp">학생과 학부모가 <em>만족하는 수업 후기</em></h2>
+    <p class="c-sub center anim" data-anim="slideInUp" style="animation-delay:.1s">성장과 만족이 담긴 생생한 리얼 후기로 증명합니다.</p>
+    <div class="c-reviews">
+      <img class="anim" data-anim="fadeInUp" src="/img/coaching/review-1.png" width="608" height="272" alt="학습코칭 후기 1" loading="lazy" />
+      <img class="anim" data-anim="fadeInUp" style="animation-delay:.08s" src="/img/coaching/review-2.png" width="608" height="272" alt="학습코칭 후기 2" loading="lazy" />
+      <img class="anim" data-anim="fadeInUp" style="animation-delay:.16s" src="/img/coaching/review-3.png" width="608" height="272" alt="학습코칭 후기 3" loading="lazy" />
+      <img class="anim" data-anim="fadeInUp" style="animation-delay:.24s" src="/img/coaching/review-4.png" width="608" height="272" alt="학습코칭 후기 4" loading="lazy" />
+    </div>
+  </div>
+</section>
+
+<!-- ───────── 무료 모의수업 & 상담 신청 ───────── -->
+<section class="c-cta" id="contact">
+  <div class="wrap">
+    <h2 class="anim" data-anim="slideInUp">무료 모의수업 &amp; 상담 신청</h2>
+    <a class="tel anim" data-anim="slideInUp" style="animation-delay:.1s" href="tel:010-3038-8978">010-3038-8978</a>
+    <form class="mini-form anim" data-anim="fadeInUp" data-subject="학습코칭" novalidate>
+      <div class="mini-fields">
+        <div class="row"><label for="cName">학생이름</label><input id="cName" name="name" type="text" placeholder="학생 이름" autocomplete="off" /></div>
+        <div class="row"><label for="cPhone1">연락처</label>
+          <div class="phone"><input id="cPhone1" data-phone type="tel" inputmode="numeric" maxlength="3" placeholder="010" /><span>-</span><input data-phone type="tel" inputmode="numeric" maxlength="4" placeholder="0000" /><span>-</span><input data-phone type="tel" inputmode="numeric" maxlength="4" placeholder="0000" /></div>
+        </div>
+        <div class="row"><label for="cMsg">내용</label><textarea id="cMsg" name="message" placeholder="학생의 학년, 현재 고민, 원하는 코칭 내용을 적어주세요."></textarea></div>
+        <div class="agree"><input id="cAgree" name="agree" type="checkbox" /><label for="cAgree">개인정보 수집 및 이용 동의</label><button type="button" class="agree-toggle">내용 보기</button></div>
+        <div class="agree-text">수집 항목: 학생 이름, 연락처, 문의 내용 · 이용 목적: 무료 모의수업 및 상담 안내 · 보유 기간: 상담 목적 달성 후 지체 없이 파기 · 동의를 거부할 수 있으나 거부 시 상담 신청이 제한됩니다.</div>
+        <div class="hp-field" aria-hidden="true"><label for="cHp">홈페이지</label><input id="cHp" name="hp" type="text" tabindex="-1" autocomplete="off" /></div>
+        <button type="submit" class="btn">작성</button>
+      </div>
+      <div class="mini-done"><b>정상적으로 접수되었습니다</b><p>확인 후 빠르게 연락드리겠습니다. 감사합니다.</p></div>
+    </form>
+  </div>
+</section>
+<script>
+  // 유튜브 영상: 누르기 전에는 썸네일만 두고, 누르면 그때 불러온다 (페이지 속도)
+  document.querySelectorAll('.c-video button[data-yt]').forEach((b) => {
+    b.addEventListener('click', () => {
+      const box = b.parentElement;
+      const f = document.createElement('iframe');
+      f.src = 'https://www.youtube.com/embed/' + b.dataset.yt + '?autoplay=1&rel=0';
+      f.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+      f.allowFullscreen = true; f.title = '레벨업 학습코칭 소개 영상';
+      box.innerHTML = ''; box.appendChild(f);
+    });
+  });
+</script>
