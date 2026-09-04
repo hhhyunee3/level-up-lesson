@@ -1,0 +1,153 @@
+<!-- title: 해외캠프/유학 · 레벨업과외 -->
+<!-- desc: 어학연수·대학·학위유학·조기유학까지, 모든 해외캠프/유학 준비는 레벨업 유학원. 캐나다·뉴질랜드·영국·미국·일본 방학캠프 프로그램 안내. -->
+<!-- path: /program-camp -->
+<!-- head:
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"홈","item":"https://level-up-lesson.com/"},{"@type":"ListItem","position":2,"name":"특별프로그램","item":"https://level-up-lesson.com/program-ged"},{"@type":"ListItem","position":3,"name":"해외캠프/유학","item":"https://level-up-lesson.com/program-camp"}]}</script>
+-->
+<!-- css:
+  /* ── 해외캠프/유학 페이지 전용 (이미지: public/img/camp/) ── */
+  main{--accent:#2196F3}
+  .k-hero{margin-top:var(--hd-h);background:#99CFF9;padding:28px 0 0;overflow:hidden}
+  .k-hero .pic{margin-top:24px}
+  .k-hero .pic img{width:100%;height:auto;display:block}
+  .k-hero .pic .m{display:none}
+
+  /* 방학캠프 프로그램 (아임웹 원본 커스텀 블록 스타일을 옮김) */
+  .camp{padding:90px 0 100px;--brand:#146AF0;--line:rgba(20,106,240,.14);--soft:#F7FBFF;--radius:22px;--shadow:0 10px 24px rgba(2,6,23,.06);--shadow2:0 22px 44px rgba(2,6,23,.12);--sub:#64748B}
+  .camp-title{font-size:30px;font-weight:900;margin:0 0 22px;letter-spacing:-.02em;position:relative;padding-left:16px;color:var(--ink)}
+  .camp-title::before{content:"";position:absolute;left:0;top:8px;bottom:8px;width:5px;border-radius:3px;background:var(--brand)}
+  .camp-row{display:flex;gap:26px;padding:18px;margin:16px 0;align-items:center;border:1px solid var(--line);border-radius:var(--radius);background:linear-gradient(180deg,#fff,var(--soft));box-shadow:var(--shadow);transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}
+  .camp-row:hover{transform:translateY(-3px);box-shadow:var(--shadow2);border-color:rgba(20,106,240,.35)}
+  .camp-img{width:520px;aspect-ratio:700/420;flex-shrink:0;border-radius:calc(var(--radius) - 4px);overflow:hidden;background:#EEF2F7;position:relative}
+  .camp-img::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(2,6,23,0) 40%,rgba(2,6,23,.22) 100%);pointer-events:none}
+  .camp-img img{width:100%;height:100%;object-fit:cover;transform:scale(1.02);transition:transform .35s ease;display:block}
+  .camp-row:hover .camp-img img{transform:scale(1.06)}
+  .camp-content{flex:1;min-width:0;padding:4px 2px}
+  .camp-content h3{margin:0;font-size:32px;font-weight:900;letter-spacing:-.02em;color:var(--ink)}
+  .camp-loc{margin:8px 0 6px;font-size:15px;color:var(--sub)}
+  .camp-meta{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border-radius:999px;background:rgba(20,106,240,.10);color:var(--brand);font-size:13px;font-weight:900;margin:4px 0 12px}
+  .camp-content ul{margin:0;padding-left:18px;line-height:1.75;font-size:18px;color:#1F2937;list-style:disc}
+  .camp-content ul li{margin:6px 0}
+  .camp-content ul li::marker{color:rgba(20,106,240,.75)}
+  .camp-benefit{margin-top:28px;padding:40px;border-radius:16px;border:1px solid rgba(20,106,240,.16);background:#F7FBFF;box-shadow:0 10px 24px rgba(2,6,23,.06)}
+  .camp-benefit strong{display:inline-flex;align-items:center;gap:10px;font-size:20px;font-weight:900;color:#0F172A;letter-spacing:-.02em}
+  .camp-benefit strong::before{content:"혜택";display:inline-flex;align-items:center;justify-content:center;height:24px;padding:0 10px;border-radius:999px;background:var(--brand);color:#fff;font-size:12px;font-weight:900}
+  .camp-benefit p{margin:10px 0 0;font-size:18px;line-height:1.75;color:#334155}
+  .camp-benefit b{color:#0F172A;font-weight:900;background:rgba(20,106,240,.16);padding:0 4px;border-radius:6px}
+  .camp-note{display:block;margin-top:10px;font-size:16px;color:rgba(15,23,42,.62)}
+
+  @media (max-width:1100px){ .camp-img{width:380px} .camp-content h3{font-size:26px} .camp-content ul{font-size:16px} }
+  @media (max-width:860px){
+    .k-hero{padding-top:18px}
+    .k-hero .pic{margin-top:14px}
+    .k-hero .pic .pc{display:none}
+    .k-hero .pic .m{display:block}
+    .camp{padding:50px 0 60px}
+    .camp-title{font-size:22px}
+    .camp-row{flex-direction:column;gap:14px;padding:12px;align-items:stretch}
+    .camp-img{width:100%}
+    .camp-content{padding:4px 6px 8px}
+    .camp-content h3{font-size:24px}
+    .camp-content ul{font-size:15px}
+    .camp-benefit{padding:24px 20px}
+    .camp-benefit p{font-size:15px}
+    .camp-note{font-size:13px}
+  }
+-->
+<!-- ───────── 특별프로그램 탭 + 히어로 ───────── -->
+<section class="k-hero" id="top">
+  <div class="wrap">
+    <nav class="ptabs" aria-label="특별프로그램">
+      <a href="/coding">코딩수업</a><a href="/program-ged">검정고시</a><a href="/program-hangeul">한글수업</a><a class="on" href="/program-camp">해외캠프/유학</a><a href="#contact">입시컨설팅(고입/대입)</a>
+    </nav>
+  </div>
+  <div class="pic">
+    <img class="pc" src="/img/camp/hero-pc.jpg" width="1920" height="960" alt="어학연수 / 대학 / 학위유학 / 조기유학. 모든 해외캠프/유학 준비는 레벨업 유학원. 상담 및 예약 문의 010-3038-8978" />
+    <img class="m" src="/img/camp/hero-m.jpg" width="1024" height="800" alt="어학연수 / 대학 / 학위유학 / 조기유학. 모든 해외캠프/유학 준비는 레벨업 유학원. 상담 및 예약 문의 010-3038-8978" />
+  </div>
+</section>
+
+<!-- ───────── 방학캠프 프로그램 ───────── -->
+<section class="camp" id="camps">
+  <div class="wrap">
+    <h2 class="camp-title anim" data-anim="fadeInUp">방학캠프 프로그램</h2>
+
+    <div class="camp-row anim" data-anim="fadeInUp">
+      <div class="camp-img"><img src="/img/camp/camp-1.jpg" width="700" height="420" alt="캐나다 방학캠프" loading="lazy" /></div>
+      <div class="camp-content">
+        <h3>캐나다</h3>
+        <p class="camp-loc">온타리오주 나이아가라 폭포</p>
+        <p class="camp-meta">만 10세~17세 · 3주</p>
+        <ul><li>캐나다 공립학교 영어 학습</li><li>다양한 액티비티 및 현지 문화 체험</li><li>토론토 · 나이아가라 폭포 · 원더랜드 · 사파리 투어</li></ul>
+      </div>
+    </div>
+
+    <div class="camp-row anim" data-anim="fadeInUp">
+      <div class="camp-img"><img src="/img/camp/camp-2.jpg" width="700" height="420" alt="뉴질랜드 방학캠프" loading="lazy" /></div>
+      <div class="camp-content">
+        <h3>뉴질랜드</h3>
+        <p class="camp-loc">오클랜드 · 와이우쿠 (Waiuku)</p>
+        <p class="camp-meta">만 10세~17세 · 3주</p>
+        <ul><li>뉴질랜드 공립학교 정규과정 참여</li><li>유학생활 체험 · 액티비티</li><li>호빗튼 세트장 · 럭비 경기 · 마오리 문화 체험</li></ul>
+      </div>
+    </div>
+
+    <div class="camp-row anim" data-anim="fadeInUp">
+      <div class="camp-img"><img src="/img/camp/camp-3.jpg" width="700" height="420" alt="영국 방학캠프" loading="lazy" /></div>
+      <div class="camp-content">
+        <h3>영국</h3>
+        <p class="camp-loc">런던 (UCL 연계)</p>
+        <p class="camp-meta">만 12세~17세 · 3주</p>
+        <ul><li>영어 집중 학습 및 액티비티</li><li>런던 명문대 UCL 프로그램</li><li>프랑스 · 독일 · 체코 1주 유럽 탐방</li></ul>
+      </div>
+    </div>
+
+    <div class="camp-row anim" data-anim="fadeInUp">
+      <div class="camp-img"><img src="/img/camp/camp-4.jpg" width="700" height="420" alt="미국 방학캠프" loading="lazy" /></div>
+      <div class="camp-content">
+        <h3>미국</h3>
+        <p class="camp-loc">캘리포니아 패서디나 (Pasadena)</p>
+        <p class="camp-meta">2주 / 3주 선택</p>
+        <ul><li>영어 학습 + 글로벌 문화 체험</li><li>디즈니랜드 · 유니버설 스튜디오</li><li>그리피스 천문대 · 할리우드 방문</li></ul>
+      </div>
+    </div>
+
+    <div class="camp-row anim" data-anim="fadeInUp">
+      <div class="camp-img"><img src="/img/camp/camp-5.jpg" width="700" height="420" alt="일본 방학캠프" loading="lazy" /></div>
+      <div class="camp-content">
+        <h3>일본</h3>
+        <p class="camp-loc">교토 · 오사카</p>
+        <p class="camp-meta">만 14세~18세 · 2주</p>
+        <ul><li>일본어 학습 및 현지 문화 체험</li><li>교토 · 오사카 주요 명소 탐방</li><li>유니버설 스튜디오 방문</li></ul>
+      </div>
+    </div>
+
+    <div class="camp-benefit anim" data-anim="fadeInUp">
+      <strong>🎁 조기 마감 혜택 안내</strong>
+      <p>매 시즌 빠르게 마감되는 인기 캠프입니다.<br /><b>얼리버드 등록 시 우선 선발 혜택</b> 제공<br />형제·자매 동시 등록 시 <b>추가 지원 혜택</b> 제공</p>
+      <span class="camp-note">※ 혜택은 선착순 적용되며 중복 적용은 불가합니다.</span>
+    </div>
+  </div>
+</section>
+
+<!-- ───────── 무료 모의수업 & 상담 신청 ───────── -->
+<section class="sub-cta" id="contact">
+  <div class="wrap">
+    <h2 class="anim" data-anim="slideInUp">무료 모의수업 &amp; 상담 신청</h2>
+    <a class="tel anim" data-anim="slideInUp" style="animation-delay:.1s" href="tel:010-3038-8978">010-3038-8978</a>
+    <form class="mini-form anim" data-anim="fadeInUp" data-subject="해외캠프/유학" novalidate>
+      <div class="mini-fields">
+        <div class="row"><label for="kName">학생이름</label><input id="kName" name="name" type="text" placeholder="학생 이름" autocomplete="off" /></div>
+        <div class="row"><label for="kPhone1">연락처</label>
+          <div class="phone"><input id="kPhone1" data-phone type="tel" inputmode="numeric" maxlength="3" placeholder="010" /><span>-</span><input data-phone type="tel" inputmode="numeric" maxlength="4" placeholder="0000" /><span>-</span><input data-phone type="tel" inputmode="numeric" maxlength="4" placeholder="0000" /></div>
+        </div>
+        <div class="row"><label for="kMsg">내용</label><textarea id="kMsg" name="message" placeholder="관심 있는 캠프·국가, 학생 나이, 희망 시기를 적어주세요."></textarea></div>
+        <div class="agree"><input id="kAgree" name="agree" type="checkbox" /><label for="kAgree">개인정보 수집 및 이용 동의</label><button type="button" class="agree-toggle">내용 보기</button></div>
+        <div class="agree-text">수집 항목: 학생 이름, 연락처, 문의 내용 · 이용 목적: 무료 모의수업 및 상담 안내 · 보유 기간: 상담 목적 달성 후 지체 없이 파기 · 동의를 거부할 수 있으나 거부 시 상담 신청이 제한됩니다.</div>
+        <div class="hp-field" aria-hidden="true"><label for="kHp">홈페이지</label><input id="kHp" name="hp" type="text" tabindex="-1" autocomplete="off" /></div>
+        <button type="submit" class="btn">작성</button>
+      </div>
+      <div class="mini-done"><b>정상적으로 접수되었습니다</b><p>확인 후 빠르게 연락드리겠습니다. 감사합니다.</p></div>
+    </form>
+  </div>
+</section>
