@@ -532,6 +532,14 @@ f.addEventListener("submit",function(e){e.preventDefault();
 });})();</script>`;
 }
 
+// 코딩 과외 페이지 전용: 하우코딩 커리큘럼(메인 코딩 페이지)으로 안내하는 버튼 블록
+function codingCta(R){
+  const who=R&&R!=="전국"?esc(R)+" ":"";
+  return '<div class="coding-cta" style="margin:0 0 22px;padding:22px 24px;border-radius:16px;background:linear-gradient(135deg,#F2EEF9,#E9F5FE);border:1px solid #DCD3F0;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap">'
+   +'<div style="flex:1 1 260px"><div style="font-weight:800;font-size:17px;color:#0E3550;margin-bottom:6px">'+who+'코딩 과외, 커리큘럼이 궁금하신가요?</div>'
+   +'<div style="font-size:14px;line-height:1.6;color:#2E5269">자바스크립트 앱창작 5레벨 60회차 · 파이썬 데이터사이언스 5레벨 48회차. 단계별 커리큘럼과 소개 영상, 수업 방식을 코딩 메인 페이지에서 확인하세요.</div></div>'
+   +'<a href="/program-coding" style="flex:0 0 auto;display:inline-flex;align-items:center;gap:8px;padding:13px 22px;border-radius:999px;background:linear-gradient(180deg,#9575CD,#7E57C2);color:#fff;font-weight:800;font-size:15px;text-decoration:none;box-shadow:0 10px 24px -12px rgba(126,87,194,.6)">코딩 커리큘럼 보기 <span aria-hidden="true">→</span></a></div>';
+}
 function renderCore(o){
   const J=o.jOver||subKo(o.subj), Jb=subKo(o.subj), R=o.R, url=BASE+o.path, h=hashStr(o.path);
   const H1V = o.h1 || ((R||"")+" "+J+" 과외").trim();
@@ -586,7 +594,7 @@ const ld3={"@context":"https://schema.org","@type":"BreadcrumbList","itemListEle
 <p class="lede">${esc(d1)}</p>
 <div class="cta-row"><a class="btn btn-pri" href="${BASE}/#contact">무료 상담 신청하기</a><a class="btn btn-ghost" href="tel:01030388978">전화 상담 010-3038-8978</a></div>
 <div class="trust"><div><div class="k">1:1</div><div class="v">완전 개별 맞춤</div></div><div><div class="k">레벨 진단</div><div class="v">현재 실력부터</div></div><div><div class="k">내신+수능</div><div class="v">동시 대비</div></div><div><div class="k">방문·화상</div><div class="v">방식 선택</div></div></div></div></section>
-<div class="wrap layout"><article>${tldr}${thumb}${art.html}</article>
+<div class="wrap layout"><article>${tldr}${o.subj==="coding"?codingCta(R):""}${thumb}${art.html}</article>
 <aside><div class="toc"><h4>목차</h4><a href="#s1">개요</a><a href="#s2">커리큘럼</a><a href="#faq">자주 묻는 질문</a><a href="#close">상담</a></div>
 <div class="side-cta"><b>무료 상담 · 체험수업</b><p>학생 상황만 남겨주시면 빠르게 연락드려요. 무료 체험수업 후 결정하셔도 됩니다.</p><a class="btn" href="${BASE}/#contact">신청하기 →</a></div></aside></div>
 ${o.extra||""}
