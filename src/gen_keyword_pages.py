@@ -336,7 +336,7 @@ def render(p):
               "provider": {"@type": "EducationalOrganization", "name": "레벨업과외", "url": BASE + "/", "telephone": "+82-10-3038-8978"}}
     head = "\n".join('<script type="application/ld+json">%s</script>' % json.dumps(x, ensure_ascii=False) for x in (ld_bc, ld_faq, ld_svc))
     fid = p["slug"].replace("-", "")
-    labels = "" if p.get("kids") else ' labels="adult"'  # 성인 대상 페이지는 성함·연락처
+    labels = ' grade="1"' if p.get("kids") else ' labels="adult"'  # 아이 대상: 학생 이름·학부모 연락처·학년 / 성인 대상: 성함·연락처
     return f'''<!-- title: {p["title"]} -->
 <!-- desc: {p["desc"]} -->
 <!-- path: /{p["slug"]} -->
