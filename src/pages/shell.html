@@ -180,6 +180,11 @@
   .contact .head h2{font-size:44px;font-weight:800;color:var(--ink);line-height:1.3;margin-top:6px}
   .contact .head p{font-size:17px;color:var(--muted);margin-top:14px}
   .form-card{max-width:760px;margin:0 auto;background:var(--blue-pale);border-radius:24px;padding:48px}
+  .form-card.on-blue{background:#fff;margin-top:40px;box-shadow:0 30px 60px -30px rgba(0,0,0,.35)}
+  .form-card.on-blue .field label{color:var(--ink-2)}
+  .form-card.on-blue input[readonly]{background:#F6FAFD}
+  .form-card.on-blue .btn-submit{background:var(--accent,var(--blue))}
+  .form-card.on-blue .subj-pick label:has(input:checked){background:var(--accent,var(--blue));border-color:var(--accent,var(--blue))}
   .form-row{display:grid;grid-template-columns:1fr 1fr;gap:18px}
   .field{display:flex;flex-direction:column;gap:8px;margin-bottom:18px}
   .field label{font-size:14px;font-weight:700;color:var(--ink-2)}
@@ -497,87 +502,57 @@
   const track = byId('marqueeTrack');
   if (track) track.innerHTML += track.innerHTML;
 
-  // ── 상담 신청 폼 (홈: 전체 폼 / 하위 페이지: 간단 폼) — 공통 도우미
+  // ── 상담 신청 폼 (모든 페이지 공통, src/pages/_form.html)
   const onlyDigits = (el) => { el.value = el.value.replace(/\D/g, '').slice(0, el.maxLength); };
-  const wirePhone = (els) => els.forEach((el, i) => {
-    el.addEventListener('input', () => { onlyDigits(el); if (el.value.length >= el.maxLength && i < els.length - 1) els[i + 1].focus(); });
-    el.addEventListener('keydown', (e) => { if (e.key === 'Backspace' && el.value === '' && i > 0) els[i - 1].focus(); });
-  });
-  const phoneOf = (els) => {
-    const v = els.map((el) => el.value);
-    if (v[0].length !== 3 || v[1].length !== 4 || v[2].length !== 4) { (v[0].length !== 3 ? els[0] : v[1].length !== 4 ? els[1] : els[2]).focus(); return null; }
-    return v.join('-');
-  };
-  const send = async (payload, btn, onOk) => {
-    const label = btn.textContent; btn.disabled = true; btn.textContent = '보내는 중...';
-    try {
-      const res = await fetch('/api/inquiry', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(payload) });
-      const out = await res.json().catch(() => ({}));
-      if (!res.ok || !out.ok) throw new Error(out.error || '잠시 후 다시 시도해주세요.');
-      onOk();
-    } catch (err) {
-      alert('전송 중 문제가 발생했어요. ' + err.message);
-      btn.disabled = false; btn.textContent = label;
-    }
-  };
-
-  // 홈 전체 폼
-  const form = byId('inquiryForm');
-  if (form) {
-    const success = byId('formSuccess');
-    const phoneParts = ['phone1', 'phone2', 'phone3'].map(byId);
-    wirePhone(phoneParts);
-    byId('addrSearch').addEventListener('click', () => {
-      if (typeof daum === 'undefined' || !daum.Postcode) { alert('주소 검색을 불러오지 못했어요. 잠시 후 다시 시도해주세요.'); return; }
-      new daum.Postcode({
-        oncomplete: (d) => {
-          byId('postcode').value = d.zonecode || '';
-          byId('addrRoad').value = d.roadAddress || d.address || '';
-          byId('addrDetail').focus();
-        }
-      }).open();
+  document.querySelectorAll('form.inq-form').forEach((form) => {
+    const $ = (sel) => form.querySelector(sel);
+    const card = form.closest('.form-card');
+    const success = card ? card.querySelector('.form-success') : null;
+    const parts = [...form.querySelectorAll('input[data-phone]')];
+    // 전화번호: 3-4-4 세 칸, 다 채우면 다음 칸으로 자동 이동 (지우면 이전 칸으로)
+    parts.forEach((el, i) => {
+      el.addEventListener('input', () => { onlyDigits(el); if (el.value.length >= el.maxLength && i < parts.length - 1) parts[i + 1].focus(); });
+      el.addEventListener('keydown', (e) => { if (e.key === 'Backspace' && el.value === '' && i > 0) parts[i - 1].focus(); });
     });
-    form.addEventListener('submit', (e) => {
+    // 주소 찾기 (다음 우편번호 → 도로명주소)
+    const addrBtn = $('[data-addr-search]');
+    if (addrBtn) addrBtn.addEventListener('click', () => {
+      if (typeof daum === 'undefined' || !daum.Postcode) { alert('주소 검색을 불러오지 못했어요. 잠시 후 다시 시도해주세요.'); return; }
+      new daum.Postcode({ oncomplete: (d) => {
+        $('[name="postcode"]').value = d.zonecode || '';
+        $('[name="addrRoad"]').value = d.roadAddress || d.address || '';
+        $('[name="addrDetail"]').focus();
+      } }).open();
+    });
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
       const f = form.elements;
       const name = f['name'].value.trim();
       if (!name){ f['name'].focus(); alert('학생 이름을 입력해주세요.'); return; }
-      const phone = phoneOf(phoneParts);
-      if (!phone){ alert('학부모 연락처를 정확히 입력해주세요. (예: 010-1234-5678)'); return; }
-      const road = byId('addrRoad').value.trim();
-      const detail = byId('addrDetail').value.trim();
-      if (!road){ byId('addrSearch').focus(); alert('주소 찾기로 도로명 주소를 선택해주세요.'); return; }
-      if (!detail){ byId('addrDetail').focus(); alert('상세주소를 입력해주세요.'); return; }
-      const address = '[' + (byId('postcode').value.trim() || '-') + '] ' + road + ', ' + detail;
-      const subjects = [...form.querySelectorAll('input[name="subject"]:checked')].map(c => c.value);
-      const payload = { name, phone, grade: f['grade'].value, subjects, address, message: f['message'].value.trim(), hp: f['hp'].value, page: location.pathname };
-      send(payload, form.querySelector('button[type="submit"]'), () => {
+      const v = parts.map((el) => el.value);
+      if (v[0].length !== 3 || v[1].length !== 4 || v[2].length !== 4){
+        (v[0].length !== 3 ? parts[0] : v[1].length !== 4 ? parts[1] : parts[2]).focus();
+        alert('학부모 연락처를 정확히 입력해주세요. (예: 010-1234-5678)'); return;
+      }
+      const road = $('[name="addrRoad"]').value.trim(), detail = $('[name="addrDetail"]').value.trim();
+      if (!road){ addrBtn.focus(); alert('주소 찾기로 도로명 주소를 선택해주세요.'); return; }
+      if (!detail){ $('[name="addrDetail"]').focus(); alert('상세주소를 입력해주세요.'); return; }
+      const address = '[' + ($('[name="postcode"]').value.trim() || '-') + '] ' + road + ', ' + detail;
+      const subjects = [...form.querySelectorAll('input[name="subject"]:checked')].map((c) => c.value);
+      if (!subjects.length && form.dataset.subject) subjects.push(form.dataset.subject);
+      const payload = { name, phone: v.join('-'), grade: f['grade'] ? f['grade'].value : '', subjects, address, message: f['message'].value.trim(), hp: f['hp'].value, page: location.pathname };
+      const btn = form.querySelector('button[type="submit"]');
+      const label = btn.textContent; btn.disabled = true; btn.textContent = '보내는 중...';
+      try {
+        const res = await fetch('/api/inquiry', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(payload) });
+        const out = await res.json().catch(() => ({}));
+        if (!res.ok || !out.ok) throw new Error(out.error || '잠시 후 다시 시도해주세요.');
         form.style.display = 'none';
-        success.classList.add('show');
-        success.scrollIntoView({behavior: reduce ? 'auto' : 'smooth', block:'center'});
-      });
-    });
-  }
-
-  // 하위 페이지 간단 폼 (학생이름 · 연락처 · 내용 · 동의)
-  document.querySelectorAll('form.mini-form').forEach((mf) => {
-    const parts = [...mf.querySelectorAll('input[data-phone]')];
-    wirePhone(parts);
-    const agreeBtn = mf.querySelector('.agree-toggle');
-    if (agreeBtn) agreeBtn.addEventListener('click', () => mf.querySelector('.agree-text').classList.toggle('open'));
-    mf.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const f = mf.elements;
-      const name = f['name'].value.trim();
-      if (!name){ f['name'].focus(); alert('학생 이름을 입력해주세요.'); return; }
-      const phone = phoneOf(parts);
-      if (!phone){ alert('연락처를 정확히 입력해주세요. (예: 010-1234-5678)'); return; }
-      if (f['agree'] && !f['agree'].checked){ alert('개인정보 수집 및 이용에 동의해주세요.'); return; }
-      const payload = { name, phone, address: '', subjects: [mf.dataset.subject || ''].filter(Boolean), message: (f['message'] ? f['message'].value.trim() : ''), hp: f['hp'] ? f['hp'].value : '', page: location.pathname };
-      send(payload, mf.querySelector('button[type="submit"]'), () => {
-        mf.querySelector('.mini-fields').style.display = 'none';
-        mf.querySelector('.mini-done').classList.add('show');
-      });
+        if (success) { success.classList.add('show'); success.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' }); }
+      } catch (err) {
+        alert('전송 중 문제가 발생했어요. ' + err.message);
+        btn.disabled = false; btn.textContent = label;
+      }
     });
   });
 </script>

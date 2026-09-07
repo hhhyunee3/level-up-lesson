@@ -90,64 +90,6 @@
       <h2>레벨업 과외 상담 신청</h2>
       <p>학생의 현재 상황과 목표를 남겨주시면, 확인 후 빠르게 연락드립니다.</p>
     </div>
-    <div class="form-card anim" data-anim="fadeInUp" style="animation-delay:.1s">
-      <form id="inquiryForm" novalidate>
-        <div class="form-row">
-          <div class="field"><label for="name">학생 이름 <span class="req">*</span></label><input id="name" name="name" type="text" placeholder="학생 이름" required autocomplete="off" /></div>
-          <div class="field"><label for="phone1">학부모 연락처 <span class="req">*</span></label>
-            <div class="phone-3">
-              <input id="phone1" type="tel" inputmode="numeric" maxlength="3" placeholder="010" />
-              <span class="phone-sep">-</span>
-              <input id="phone2" type="tel" inputmode="numeric" maxlength="4" placeholder="0000" />
-              <span class="phone-sep">-</span>
-              <input id="phone3" type="tel" inputmode="numeric" maxlength="4" placeholder="0000" />
-            </div>
-          </div>
-        </div>
-        <div class="field">
-          <label for="grade">학생 학년</label>
-          <select id="grade" name="grade">
-            <option value="">선택해주세요</option>
-            <optgroup label="초등"><option>초1</option><option>초2</option><option>초3</option><option>초4</option><option>초5</option><option>초6</option></optgroup>
-            <optgroup label="중등"><option>중1</option><option>중2</option><option>중3</option></optgroup>
-            <optgroup label="고등"><option>고1</option><option>고2</option><option>고3</option><option>재수·N수</option></optgroup>
-            <optgroup label="기타"><option>성인</option></optgroup>
-          </select>
-        </div>
-        <div class="field">
-          <label>희망 과목</label>
-          <div class="subj-pick">
-            <label><input type="checkbox" name="subject" value="국어">국어</label>
-            <label><input type="checkbox" name="subject" value="영어">영어</label>
-            <label><input type="checkbox" name="subject" value="수학">수학</label>
-            <label><input type="checkbox" name="subject" value="사회">사회</label>
-            <label><input type="checkbox" name="subject" value="과학">과학</label>
-            <label><input type="checkbox" name="subject" value="선택·탐구">선택·탐구</label>
-            <label><input type="checkbox" name="subject" value="코딩">코딩</label>
-            <label><input type="checkbox" name="subject" value="검정고시">검정고시</label>
-            <label><input type="checkbox" name="subject" value="외국어">외국어</label>
-          </div>
-        </div>
-        <div class="field full">
-          <label for="postcode">주소 <span class="req">*</span></label>
-          <div class="addr-row">
-            <input id="postcode" name="postcode" type="text" placeholder="우편번호" readonly />
-            <button type="button" id="addrSearch" class="addr-btn">주소 찾기</button>
-          </div>
-          <input id="addrRoad" name="addrRoad" type="text" placeholder="도로명 주소" readonly />
-          <input id="addrDetail" name="addrDetail" type="text" placeholder="상세주소 (동·호수 등)" required />
-        </div>
-        <div class="field full"><label for="message">문의 내용</label><textarea id="message" name="message" placeholder="현재 성적, 고민, 원하는 수업 방식 등을 자유롭게 적어주세요."></textarea></div>
-        <!-- 스팸 방지용 숨김 칸 (사람은 채우지 않음) -->
-        <div class="hp-field" aria-hidden="true"><label for="hp">홈페이지</label><input id="hp" name="hp" type="text" tabindex="-1" autocomplete="off" /></div>
-        <button type="submit" class="btn-submit">상담 신청하기</button>
-        <p class="form-note">남겨주신 정보는 상담 안내 목적으로만 사용됩니다.</p>
-      </form>
-      <div class="form-success" id="formSuccess">
-        <div class="ok"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 13 4 4L19 7"/></svg></div>
-        <h3>신청이 접수되었어요!</h3>
-        <p>확인 후 빠르게 연락드리겠습니다. 감사합니다.</p>
-      </div>
-    </div>
+    <!--FORM subject="" grade="1" card="light"-->
   </div>
 </section>
