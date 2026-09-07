@@ -1,10 +1,10 @@
-<!-- 상담 신청 폼 공통 조각. 페이지에서는 <!--FORM subject="검정고시" grade="1" card="light"--> 로 넣습니다.
+<!-- 상담 신청 폼 공통 조각. 페이지에서는 <!--FORM subject="검정고시" grade="1" card="light" labels="adult"--> 로 넣습니다. labels="adult" 이면 성함·연락처로 표시.
      {{P}} = 페이지별 id 접두어, {{GRADE}} = 학년 선택(홈만), {{SUBJECTS}} = 희망 과목 체크박스, {{CARD}} = 카드 색상 클래스 -->
 <div class="form-card {{CARD}} anim" data-anim="fadeInUp">
   <form class="inq-form" data-subject="{{SUBJECT}}" novalidate>
     <div class="form-row">
-      <div class="field"><label for="{{P}}name">학생 이름 <span class="req">*</span></label><input id="{{P}}name" name="name" type="text" placeholder="학생 이름" required autocomplete="off" /></div>
-      <div class="field"><label for="{{P}}phone1">학부모 연락처 <span class="req">*</span></label>
+      <div class="field"><label for="{{P}}name">{{L_NAME}} <span class="req">*</span></label><input id="{{P}}name" name="name" type="text" placeholder="{{L_NAME}}" required autocomplete="off" /></div>
+      <div class="field"><label for="{{P}}phone1">{{L_PHONE}} <span class="req">*</span></label>
         <div class="phone-3">
           <input id="{{P}}phone1" data-phone type="tel" inputmode="numeric" maxlength="3" placeholder="010" />
           <span class="phone-sep">-</span>

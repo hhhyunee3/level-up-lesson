@@ -528,11 +528,13 @@
       e.preventDefault();
       const f = form.elements;
       const name = f['name'].value.trim();
-      if (!name){ f['name'].focus(); alert('학생 이름을 입력해주세요.'); return; }
+      const nameLabel = (form.querySelector('label[for$="name"]') || {}).textContent || '학생 이름';
+      const phoneLabel = (form.querySelector('label[for$="phone1"]') || {}).textContent || '학부모 연락처';
+      if (!name){ f['name'].focus(); alert(nameLabel.replace('*','').trim() + '을(를) 입력해주세요.'); return; }
       const v = parts.map((el) => el.value);
       if (v[0].length !== 3 || v[1].length !== 4 || v[2].length !== 4){
         (v[0].length !== 3 ? parts[0] : v[1].length !== 4 ? parts[1] : parts[2]).focus();
-        alert('학부모 연락처를 정확히 입력해주세요. (예: 010-1234-5678)'); return;
+        alert(phoneLabel.replace('*','').trim() + '를 정확히 입력해주세요. (예: 010-1234-5678)'); return;
       }
       const road = $('[name="addrRoad"]').value.trim(), detail = $('[name="addrDetail"]').value.trim();
       if (!road){ addrBtn.focus(); alert('주소 찾기로 도로명 주소를 선택해주세요.'); return; }

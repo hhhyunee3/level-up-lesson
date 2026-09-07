@@ -20,12 +20,13 @@ function injectForm(body, slug) {
   return body.replace(/<!--FORM([^>]*)-->/g, (m, attrs) => {
     const get = (k) => { const mm = attrs.match(new RegExp(k + '="([^"]*)"')); return mm ? mm[1] : ""; };
     const subject = get("subject"), grade = get("grade") === "1", card = get("card") === "light" ? "on-light" : "on-blue";
+    const adult = get("labels") === "adult"; // 성인 대상 페이지: 성함·연락처
     const P = "f_" + slug.replace(/[^a-z0-9]/g, "") + "_";
     const gradeHtml = grade ? `<div class="field"><label for="${P}grade">학생 학년</label><select id="${P}grade" name="grade"><option value="">선택해주세요</option><optgroup label="초등"><option>초1</option><option>초2</option><option>초3</option><option>초4</option><option>초5</option><option>초6</option></optgroup><optgroup label="중등"><option>중1</option><option>중2</option><option>중3</option></optgroup><optgroup label="고등"><option>고1</option><option>고2</option><option>고3</option><option>재수·N수</option></optgroup><optgroup label="기타"><option>성인</option></optgroup></select></div>` : "";
     // 페이지 과목을 체크박스 항목에 맞춘다 (예: "성인 영어회화" → 외국어, "코딩수업" → 코딩)
     const pick = (s) => s === subject || (s === "외국어" && /영어|일본어|중국어|외국어|JLPT|HSK|토익|아이엘츠|파닉스|면접/.test(subject)) || (s === "코딩" && /코딩/.test(subject)) || (s === "한글" && /한글/.test(subject)) || (s === "검정고시" && /검정고시/.test(subject));
     const subjects = SUBJECT_OPTS.map((s) => `<label><input type="checkbox" name="subject" value="${s}"${pick(s) ? " checked" : ""}>${s}</label>`).join("");
-    return formPartial.replaceAll("{{P}}", P).replace("{{GRADE}}", gradeHtml).replace("{{SUBJECTS}}", subjects).replace("{{CARD}}", card).replace("{{SUBJECT}}", subject);
+    return formPartial.replaceAll("{{P}}", P).replace("{{GRADE}}", gradeHtml).replace("{{SUBJECTS}}", subjects).replace("{{CARD}}", card).replace("{{SUBJECT}}", subject).replaceAll("{{L_NAME}}", adult ? "성함" : "학생 이름").replace("{{L_PHONE}}", adult ? "연락처" : "학부모 연락처");
   });
 }
 
