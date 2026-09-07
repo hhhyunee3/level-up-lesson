@@ -322,7 +322,7 @@ export default {
       });
     }
     // 옛 주소(program-…, languages…)는 새 주소로 영구 이동
-    const LEGACY = { "/program-coding": "/howcoding", "/program-ged": "/geomjeong", "/program-hangeul": "/hangeul", "/program-camp": "/camp", "/languages": "/conversation", "/languages-japanese": "/japanese", "/languages-chinese": "/chinese" };
+    const LEGACY = { "/program-coding": "/howcoding", "/program-ged": "/geomjeong", "/program-hangeul": "/hangeul", "/program-camp": "/camp", "/languages": "/english-conversation", "/conversation": "/english-conversation", "/languages-japanese": "/japanese", "/languages-chinese": "/chinese" };
     {
       const lp = path.endsWith("/") && path.length > 1 ? path.slice(0, -1) : path;
       if (LEGACY[lp]) return Response.redirect(url.origin + LEGACY[lp] + url.search, 301);
