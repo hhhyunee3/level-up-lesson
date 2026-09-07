@@ -38,7 +38,7 @@ PAGES = [
         ("비즈니스 영어는 어떤 자료로 하나요?","본인의 실제 업무 메일, 발표 자료, 회의 안건을 가져오시면 그걸로 연습합니다. 없으면 업종별 상황 자료를 제공합니다."),
         ("얼마나 하면 효과가 나나요?","주 2회 기준 3개월이면 대부분 짧은 회의와 일상 대화가 편해집니다. 첫 달에 녹음을 남겨 비교해 드립니다.")]),
 
- dict(slug="english-kids", lang="en", subject="유·초등 영어회화",
+ dict(slug="english-kids", lang="en", kids=True, subject="유·초등 영어회화",
   title="유아·초등 영어회화 과외 | 어린이 화상영어 1:1 - 레벨업과외",
   desc="유아·초등 어린이 화상영어 1:1 과외. 말하기·듣기·읽기·쓰기 4영역을 놀이와 그림책으로 균형 있게. 파닉스부터 문장 말하기까지 아이 성향에 맞춘 수업, 30분 무료 체험.",
   kicker="Kids Conversation", h1="유아·초등 <em>영어회화 과외</em>",
@@ -59,7 +59,7 @@ PAGES = [
         ("준비물이 있나요?","태블릿이나 컴퓨터, 그리고 아이가 그릴 종이와 색연필이면 됩니다. 교재는 수업에 맞춰 안내드립니다."),
         ("형제가 같이 들을 수 있나요?","가능하지만 1:1 효과를 위해 각각 수업을 권합니다. 형제 동시 등록 시 상담에서 안내드립니다.")]),
 
- dict(slug="english-teen", lang="en", subject="중·고등 영어회화",
+ dict(slug="english-teen", lang="en", kids=True, subject="중·고등 영어회화",
   title="중학생·고등학생 영어회화 과외 | 내신·듣기평가 대비 1:1 - 레벨업과외",
   desc="중·고등 영어회화 1:1 과외. 교과서 본문을 말하기로 익혀 내신 서술형·수행평가·듣기평가까지 한 번에. 수능 듣기와 스피킹 수행평가 대비, 30분 무료 체험수업.",
   kicker="Teen Conversation", h1="중학생·고등학생 <em>영어회화 과외</em>",
@@ -143,7 +143,7 @@ PAGES = [
         ("아이 국제학교 인터뷰도 되나요?","초등 저학년부터 가능합니다. 부모 인터뷰가 있는 학교는 부모님 답변도 함께 준비해 드립니다."),
         ("녹화 피드백은 어떻게 받나요?","수업 중 녹화한 영상과 선생님 코멘트를 수업 후 전달합니다. 본인이 보면서 고치는 게 가장 빠릅니다.")]),
 
- dict(slug="english-phonics", lang="en", subject="파닉스",
+ dict(slug="english-phonics", lang="en", kids=True, subject="파닉스",
   title="파닉스 과외 | 영어 첫걸음 1:1 화상 수업 - 레벨업과외",
   desc="파닉스 1:1 화상 과외. 알파벳 소리부터 단모음·장모음·이중자음, 사이트워드까지 아이가 스스로 영어를 읽게 하는 첫 단계. 그림책·노래로 재미있게, 30분 무료 체험.",
   kicker="Phonics", h1="파닉스 <em>과외</em>",
@@ -292,7 +292,7 @@ PAGES = [
         ("회사 자료로 수업할 수 있나요?","네. 실제 메일·자료를 가져오시면 그걸로 연습합니다. 대외비는 가려서 주시면 됩니다."),
         ("BCT(비즈니스 중국어 시험) 대비도 하나요?","네. BCT 목표 등급에 맞춘 듣기·독해 과정이 있습니다.")]),
 
- dict(slug="chinese-kids", lang="cn", subject="어린이 중국어",
+ dict(slug="chinese-kids", lang="cn", kids=True, subject="어린이 중국어",
   title="어린이·초등 중국어 과외 | 1:1 화상 중국어 첫걸음 - 레벨업과외",
   desc="유아·초등 어린이 중국어 1:1 화상 과외. 병음·성조를 노래와 놀이로, 그림책과 역할놀이로 말하기 중심. 어린이 중국어 지도사 선생님, 아이 성향에 맞춘 수업, 무료 체험.",
   kicker="Kids Chinese", h1="어린이·초등 <em>중국어 과외</em>",
@@ -336,6 +336,7 @@ def render(p):
               "provider": {"@type": "EducationalOrganization", "name": "레벨업과외", "url": BASE + "/", "telephone": "+82-10-3038-8978"}}
     head = "\n".join('<script type="application/ld+json">%s</script>' % json.dumps(x, ensure_ascii=False) for x in (ld_bc, ld_faq, ld_svc))
     fid = p["slug"].replace("-", "")
+    labels = "" if p.get("kids") else ' labels="adult"'  # 성인 대상 페이지는 성함·연락처
     return f'''<!-- title: {p["title"]} -->
 <!-- desc: {p["desc"]} -->
 <!-- path: /{p["slug"]} -->
@@ -410,7 +411,7 @@ def render(p):
   <div class="wrap">
     <h2 class="anim" data-anim="slideInUp">무료 체험수업 &amp; 상담 신청</h2>
     <a class="tel anim" data-anim="slideInUp" style="animation-delay:.1s" href="tel:010-3038-8978">010-3038-8978</a>
-    <!--FORM subject="{esc(p["subject"])}"-->
+    <!--FORM subject="{esc(p["subject"])}"{labels}-->
   </div>
 </section>
 '''
