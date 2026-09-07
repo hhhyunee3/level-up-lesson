@@ -347,7 +347,7 @@ function idxShell(o){
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&display=swap" />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
 <style>${CSS}body{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;}input,textarea,select,[contenteditable]{-webkit-user-select:text;-moz-user-select:text;-ms-user-select:text;user-select:text;}</style></head><body>
-<header><div class="wrap bar"><a class="brand" href="${BASE}"><img src="${LOGO}" alt="레벨업과외" />레벨업 과외</a>
+<header><div class="wrap bar"><a class="brand" href="${BASE}"><img src="${LOGO}" alt="레벨업과외" />레벨업과외</a>
 <nav class="nav">${navMenu()}<a href="${BASE}">홈</a><a href="${BASE}/#contact">상담</a></nav>
 <a class="btn btn-pri" href="${BASE}/#contact">무료 상담 신청</a></div></header>
 <section class="hero"><div class="wrap"><div class="crumb">${o.crumb}</div><h1>${esc(o.h1)}</h1><p class="lede">${esc(o.sub)}</p></div></section>
@@ -585,7 +585,7 @@ const ld3={"@context":"https://schema.org","@type":"BreadcrumbList","itemListEle
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&display=swap" />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
 <style>${CSS}body{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;}input,textarea,select,[contenteditable]{-webkit-user-select:text;-moz-user-select:text;-ms-user-select:text;user-select:text;}</style></head><body>
-<header><div class="wrap bar"><a class="brand" href="${BASE}"><img src="${LOGO}" alt="레벨업과외" />레벨업 과외</a>
+<header><div class="wrap bar"><a class="brand" href="${BASE}"><img src="${LOGO}" alt="레벨업과외" />레벨업과외</a>
 <nav class="nav">${navMenu()}<a href="${BASE}">홈</a><a href="#faq">FAQ</a><a href="#contact">상담</a></nav>
 <a class="btn btn-pri" href="${BASE}/#contact">무료 상담 신청</a></div></header>
 <section class="hero"><div class="wrap"><div class="crumb">${o.crumb}</div>
