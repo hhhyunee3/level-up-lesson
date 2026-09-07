@@ -503,6 +503,8 @@
   if (track) track.innerHTML += track.innerHTML;
 
   // ── 상담 신청 폼 (모든 페이지 공통, src/pages/_form.html)
+  // 타고 온 페이지 이름: 제목 앞부분 (메일·시트의 '유입 페이지'에 표시)
+  const pageName = () => (document.title || '').split(/\s[|·-]\s/)[0].trim() || (location.pathname === '/' ? '홈' : location.pathname);
   const onlyDigits = (el) => { el.value = el.value.replace(/\D/g, '').slice(0, el.maxLength); };
   document.querySelectorAll('form.inq-form').forEach((form) => {
     const $ = (sel) => form.querySelector(sel);
@@ -542,7 +544,7 @@
       const address = '[' + ($('[name="postcode"]').value.trim() || '-') + '] ' + road + ', ' + detail;
       const subjects = [...form.querySelectorAll('input[name="subject"]:checked')].map((c) => c.value);
       if (!subjects.length && form.dataset.subject) subjects.push(form.dataset.subject);
-      const payload = { name, phone: v.join('-'), grade: f['grade'] ? f['grade'].value : '', subjects, address, message: f['message'].value.trim(), hp: f['hp'].value, page: location.pathname };
+      const payload = { name, phone: v.join('-'), grade: f['grade'] ? f['grade'].value : '', subjects, address, message: f['message'].value.trim(), hp: f['hp'].value, page: pageName() + ' · ' + location.pathname };
       const btn = form.querySelector('button[type="submit"]');
       const label = btn.textContent; btn.disabled = true; btn.textContent = '보내는 중...';
       try {
