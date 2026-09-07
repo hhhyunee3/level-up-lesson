@@ -538,7 +538,7 @@ function codingCta(R){
   return '<div class="coding-cta" style="margin:0 0 22px;padding:22px 24px;border-radius:16px;background:linear-gradient(135deg,#F2EEF9,#E9F5FE);border:1px solid #DCD3F0;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap">'
    +'<div style="flex:1 1 260px"><div style="font-weight:800;font-size:17px;color:#0E3550;margin-bottom:6px">'+who+'코딩 과외, 커리큘럼이 궁금하신가요?</div>'
    +'<div style="font-size:14px;line-height:1.6;color:#2E5269">자바스크립트 앱창작 5레벨 60회차 · 파이썬 데이터사이언스 5레벨 48회차. 단계별 커리큘럼과 소개 영상, 수업 방식을 코딩 메인 페이지에서 확인하세요.</div></div>'
-   +'<a href="/program-coding" style="flex:0 0 auto;display:inline-flex;align-items:center;gap:8px;padding:13px 22px;border-radius:999px;background:linear-gradient(180deg,#9575CD,#7E57C2);color:#fff;font-weight:800;font-size:15px;text-decoration:none;box-shadow:0 10px 24px -12px rgba(126,87,194,.6)">코딩 커리큘럼 보기 <span aria-hidden="true">→</span></a></div>';
+   +'<a href="/howcoding" style="flex:0 0 auto;display:inline-flex;align-items:center;gap:8px;padding:13px 22px;border-radius:999px;background:linear-gradient(180deg,#9575CD,#7E57C2);color:#fff;font-weight:800;font-size:15px;text-decoration:none;box-shadow:0 10px 24px -12px rgba(126,87,194,.6)">코딩 커리큘럼 보기 <span aria-hidden="true">→</span></a></div>';
 }
 function renderCore(o){
   const J=o.jOver||subKo(o.subj), Jb=subKo(o.subj), R=o.R, url=BASE+o.path, h=hashStr(o.path);

@@ -321,6 +321,12 @@ export default {
         headers: { "content-type": "application/xml; charset=utf-8", "cache-control": "public, max-age=86400" },
       });
     }
+    // 옛 주소(program-…, languages…)는 새 주소로 영구 이동
+    const LEGACY = { "/program-coding": "/howcoding", "/program-ged": "/geomjeong", "/program-hangeul": "/hangeul", "/program-camp": "/camp", "/languages": "/conversation", "/languages-japanese": "/japanese", "/languages-chinese": "/chinese" };
+    {
+      const lp = path.endsWith("/") && path.length > 1 ? path.slice(0, -1) : path;
+      if (LEGACY[lp]) return Response.redirect(url.origin + LEGACY[lp] + url.search, 301);
+    }
     // 홈·하위 페이지 (site_pages.js). 끝에 슬래시가 붙은 주소는 정식 주소로 돌린다.
     {
       const p = path === "/index.html" ? "/" : path;
