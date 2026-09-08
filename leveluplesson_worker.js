@@ -246,7 +246,10 @@ export default {
     }
     if (path === "/robots.txt") {
       let body = "User-agent: GPTBot\nAllow: /\n\nUser-agent: OAI-SearchBot\nAllow: /\n\nUser-agent: ChatGPT-User\nAllow: /\n\nUser-agent: PerplexityBot\nAllow: /\n\nUser-agent: Perplexity-User\nAllow: /\n\nUser-agent: ClaudeBot\nAllow: /\n\nUser-agent: anthropic-ai\nAllow: /\n\nUser-agent: Claude-Web\nAllow: /\n\nUser-agent: Google-Extended\nAllow: /\n\nUser-agent: Applebot-Extended\nAllow: /\n\nUser-agent: Amazonbot\nAllow: /\n\nUser-agent: CCBot\nAllow: /\n\nUser-agent: Bytespider\nAllow: /\n\nUser-agent: Yeti\nAllow: /\n\nUser-agent: NaverBot\nAllow: /\n\nUser-agent: *\nAllow: /\n\nSitemap: https://level-up-lesson.com/sitemap.xml\n";
-      if (env.DAUM_VERIFY) body += "\n" + env.DAUM_VERIFY + "\n"; // 다음 웹마스터도구 PIN 코드 줄
+      // 다음 웹마스터도구 소유 확인 PIN (2026-09-08 재발급). 대시보드 변수 DAUM_VERIFY 가 다른 값이면 함께 출력.
+      const DAUM_PIN = "#DaumWebMasterTool:21e3da1a1df84c98aa468c9ef0c941ce3a7edc7056a45d1b30e7969c442c1da6:FreFgz7Szjm9AAoTfEznAQ==";
+      body += "\n" + DAUM_PIN + "\n";
+      if (env.DAUM_VERIFY && env.DAUM_VERIFY !== DAUM_PIN) body += env.DAUM_VERIFY + "\n";
       return new Response(body, {
         headers: { "content-type": "text/plain; charset=utf-8", "cache-control": "public, max-age=86400" },
       });
