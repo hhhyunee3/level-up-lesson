@@ -1,0 +1,6 @@
+# Cloudflare Workers 정적 자산 캐시 규칙 (wrangler 4 이상)
+# 이미지는 파일명이 고정이라 30일 캐시. 교체 시 파일명을 바꾸면 즉시 반영된다.
+/img/*
+  Cache-Control: public, max-age=2592000
+/logo.png
+  Cache-Control: public, max-age=2592000
