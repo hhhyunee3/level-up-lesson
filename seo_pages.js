@@ -49,6 +49,58 @@ const TITLE_SUBS={math:"미적분·기하·확통",science:"물리·화학·생�
 // 색인률이 올라오면 true 로 바꿔 단계적으로 넓힌다.
 const SITEMAP_ALL_SUBJECTS_ON_DONG = false;  // 동 페이지를 심화 과목까지 낼지 (약 60,700개)
 const SUBJ_BY_LEN=Object.keys(SUBJECTS).slice().sort((a,b)=>b.length-a.length);
+// 데스크톱 전화 안내창 (shell.html 과 같은 블록)
+const CALLMODAL = `<!-- 데스크톱 전화 안내창: 컴퓨터에서 전화 링크를 누르면 번호를 크게 보여주고 전화 걸기/번호 복사를 고르게 한다. 휴대폰은 바로 전화. -->
+<style>
+.callmodal{position:fixed;inset:0;z-index:300;display:none;align-items:center;justify-content:center;background:rgba(14,53,80,.55);padding:24px}
+.callmodal.on{display:flex}
+.callmodal .box{background:#fff;color:#222;width:100%;max-width:400px;padding:30px 26px 24px;border-radius:24px;box-shadow:0 30px 60px -20px rgba(8,70,120,.45);text-align:left;font-family:inherit}
+.callmodal .box small{display:block;font-size:13px;font-weight:800;color:#2196F3}
+.callmodal .num{display:block;margin:8px 0 6px;font-size:36px;font-weight:900;letter-spacing:-.03em;line-height:1.1;color:#222}
+.callmodal .who{font-size:14.5px;color:#555;margin:0 0 20px;line-height:1.6}
+.callmodal .acts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.callmodal .acts a,.callmodal .acts button{display:flex;align-items:center;justify-content:center;height:50px;font:inherit;font-weight:800;font-size:15px;border:0;border-radius:999px;cursor:pointer;text-decoration:none}
+.callmodal .acts a.go{background:#2196F3;color:#fff}
+.callmodal .acts button.copy{background:#E9F5FE;color:#0F5FA8}
+.callmodal .acts .close{grid-column:1/-1;background:#F3F5F7;color:#777;height:44px}
+.callmodal .copied{font-size:13px;color:#2196F3;font-weight:700;margin-top:10px;min-height:16px}
+</style>
+<div class="callmodal" id="callmodal" role="dialog" aria-modal="true" aria-labelledby="callmodal-num">
+  <div class="box">
+    <small>레벨업과외 상담 전화</small>
+    <b class="num" id="callmodal-num">010-3038-8978</b>
+    <p class="who">학년과 과목을 말씀해 주시면 맞는 선생님을 바로 안내해 드려요. 통화가 어려우면 상담 신청을 남겨주세요.</p>
+    <div class="acts">
+      <a class="go" href="tel:010-3038-8978" data-direct="1">전화 걸기</a>
+      <button type="button" class="copy" id="callmodal-copy">번호 복사</button>
+      <button type="button" class="close" id="callmodal-close">닫기</button>
+    </div>
+    <div class="copied" id="callmodal-msg"></div>
+  </div>
+</div>
+<script>
+(function(){
+  var m=document.getElementById('callmodal'); if(!m) return;
+  var isMobile=/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent)||(window.matchMedia&&matchMedia('(pointer:coarse)').matches&&innerWidth<900);
+  function open(){ m.classList.add('on'); document.getElementById('callmodal-msg').textContent=''; }
+  function close(){ m.classList.remove('on'); }
+  document.addEventListener('click',function(e){
+    var a=e.target.closest&&e.target.closest('a[href^="tel:"]'); if(!a) return;
+    if(a.getAttribute('data-direct')||isMobile) return;
+    e.preventDefault(); open();
+  });
+  document.getElementById('callmodal-close').addEventListener('click',close);
+  m.addEventListener('click',function(e){ if(e.target===m) close(); });
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape') close(); });
+  document.getElementById('callmodal-copy').addEventListener('click',function(){
+    var msg=document.getElementById('callmodal-msg');
+    function done(){ msg.textContent='번호를 복사했어요. 010-3038-8978'; }
+    if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText('010-3038-8978').then(done,function(){ msg.textContent='010-3038-8978 을 직접 입력해 주세요.'; }); }
+    else { msg.textContent='010-3038-8978 을 직접 입력해 주세요.'; }
+  });
+})();
+</script>`;
+
 function subKo(k){return SUBJECTS[k].ko;}
 function subPools(k){return SUBJECTS[k];}
 const GRADES=[
@@ -354,6 +406,7 @@ function idxShell(o){
 <div class="wrap" style="padding:30px 24px 56px">${o.body}</div>
 <div class="wrap final" id="contact" style="padding-bottom:56px">${inlineForm({area:o.formArea||"전국",subject:o.formSubject||"",region:o.formRegion||o.h1||"전국"})}</div>
 <footer><div class="wrap foot"><span>© 2026 레벨업과외 · 전국 1:1 맞춤 과외</span><span><a href="/guides" style="color:inherit;text-decoration:underline">학습 가이드</a> · <a href="/tools" style="color:inherit;text-decoration:underline">무료 도구</a> · <a href="/regions" style="color:inherit;text-decoration:underline">전국 지역</a></span><span>전화 010-3038-8978</span></div></footer>
+${CALLMODAL}
 <script>(function(){var ok=function(e){var t=e.target;return t&&/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName);};document.addEventListener('contextmenu',function(e){if(!ok(e))e.preventDefault();});document.addEventListener('dragstart',function(e){if(!ok(e))e.preventDefault();});document.addEventListener('copy',function(e){if(!ok(e))e.preventDefault();});document.addEventListener('keydown',function(e){var k=(e.key||'').toLowerCase();if(e.key==='F12'){e.preventDefault();return;}if(e.ctrlKey&&e.shiftKey&&['i','j','c'].indexOf(k)>-1){e.preventDefault();return;}if(e.ctrlKey&&!ok(e)&&['u','s'].indexOf(k)>-1){e.preventDefault();return;}});})();</script></body></html>`;
 }
 function regionsPage(){
@@ -605,6 +658,7 @@ ${o.related}
 <script type="application/ld+json">${JSON.stringify(ld1)}</script>
 <script type="application/ld+json">${JSON.stringify(ld2)}</script>
 <script type="application/ld+json">${JSON.stringify(ld3)}</script>
+${CALLMODAL}
 <script>(function(){var ok=function(e){var t=e.target;return t&&/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName);};document.addEventListener('contextmenu',function(e){if(!ok(e))e.preventDefault();});document.addEventListener('dragstart',function(e){if(!ok(e))e.preventDefault();});document.addEventListener('copy',function(e){if(!ok(e))e.preventDefault();});document.addEventListener('keydown',function(e){var k=(e.key||'').toLowerCase();if(e.key==='F12'){e.preventDefault();return;}if(e.ctrlKey&&e.shiftKey&&['i','j','c'].indexOf(k)>-1){e.preventDefault();return;}if(e.ctrlKey&&!ok(e)&&['u','s'].indexOf(k)>-1){e.preventDefault();return;}});})();</script></body></html>`;
 }
 function nbPick(arr,h,n){ if(!arr||!arr.length) return []; const out=[],L=arr.length,st=Math.abs(h)%L; for(let i=0;i<Math.min(n,L);i++) out.push(arr[(st+i*7)%L]); return [...new Set(out)]; }
