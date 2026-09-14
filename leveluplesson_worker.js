@@ -223,6 +223,59 @@ function buildMime({ from, fromName, to, subject, html }) {
   return headers.join("\r\n") + "\r\n\r\n" + wrapped + "\r\n";
 }
 
+/* ── 전화·문자 클릭 알림 ───────────────────────────────────────────
+ * 방문자가 전화번호나 문자 링크를 누르면 그 사실을 텔레그램으로 보낸다.
+ * 통화가 오기 전에 어느 페이지에서 눌렀는지 먼저 알 수 있다.
+ *
+ * 토큰은 워커 시크릿 TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID 를 쓴다.
+ * (Cloudflare → Workers → level-up-lesson → Settings → Variables)
+ * 둘 중 하나라도 없으면 조용히 넘어간다. 알림이 안 오는 것뿐 페이지는 멀쩡하다.
+ *
+ * 예전에는 이 기능이 저장소 밖에만 있어서, 저장소에서 배포할 때마다 사라지고
+ * 반대로 이 기능을 배포하면 public/ 정적 파일이 통째로 날아갔다(2026-09-14).
+ * 그래서 코드로 옮겨 둔다.
+ */
+const CALL_PING = `<script>(function(){var last=0;document.addEventListener("click",function(e){var a=e.target&&e.target.closest?e.target.closest('a[href^="tel:"],a[href^="sms:"]'):null;if(!a)return;var now=Date.now();if(now-last<8000)return;last=now;try{var body=JSON.stringify({type:a.getAttribute("href").indexOf("sms:")===0?"sms":"tel",page:location.href,title:document.title,ref:document.referrer,label:(a.textContent||"").trim().slice(0,40),mobile:/Mobi|Android|iPhone/i.test(navigator.userAgent)});if(navigator.sendBeacon){navigator.sendBeacon("/api/call-click",body);}else{fetch("/api/call-click",{method:"POST",body:body,keepalive:true});}}catch(err){}},true);})();</script>`;
+
+/** HTML 끝에 클릭 알림 스크립트를 붙인다. */
+function withCallPing(html) {
+  if (!html || html.indexOf("/api/call-click") !== -1) return html;
+  return html.indexOf("</body>") !== -1 ? html.replace("</body>", CALL_PING + "</body>") : html + CALL_PING;
+}
+
+function esc4tg(v) {
+  return String(v == null ? "" : v).replace(/[<>&]/g, (c) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;" })[c]).slice(0, 300);
+}
+
+async function handleCallClick(request, env) {
+  // 알림이 실패해도 방문자 화면에는 아무 영향이 없어야 한다. 항상 ok 로 답한다.
+  try {
+    const token = env.TELEGRAM_BOT_TOKEN, chat = env.TELEGRAM_CHAT_ID;
+    if (!token || !chat) return new Response("ok");
+    const d = await request.json().catch(() => ({}));
+    const at = new Date(Date.now() + 9 * 3600 * 1000).toISOString().slice(0, 16).replace("T", " ");
+    let ref = "";
+    try { ref = d.ref ? new URL(d.ref).hostname : ""; } catch (e) { ref = ""; }
+    let page = "";
+    try { page = d.page ? decodeURIComponent(new URL(d.page).pathname) : ""; } catch (e) { page = ""; }
+    const lines = [
+      d.type === "sms" ? "문자 버튼 눌림" : "전화 버튼 눌림",
+      "시각: " + at,
+      "페이지: " + esc4tg(d.title || page),
+      page ? "주소: " + esc4tg(page) : "",
+      d.label ? "버튼: " + esc4tg(d.label) : "",
+      "기기: " + (d.mobile ? "모바일" : "PC"),
+      ref ? "유입: " + esc4tg(ref) : "",
+    ].filter(Boolean);
+    await fetch("https://api.telegram.org/bot" + token + "/sendMessage", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ chat_id: chat, text: lines.join("\n"), disable_web_page_preview: true }),
+    });
+  } catch (e) { /* 알림 실패는 무시 */ }
+  return new Response("ok");
+}
+
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
@@ -230,6 +283,9 @@ export default {
 
     if (request.method === "POST" && path === "/api/inquiry") {
       return handleInquiry(request, env);
+    }
+    if (request.method === "POST" && path === "/api/call-click") {
+      return handleCallClick(request, env);
     }
     if (path === "/favicon.ico") {
       return new Response(b64ToBytes(FAVICON_ICO), {
@@ -338,14 +394,14 @@ export default {
       }
       const sitePage = renderSitePage(p, env);
       if (sitePage) {
-        return new Response(sitePage, {
+        return new Response(withCallPing(sitePage), {
           headers: { "content-type": "text/html; charset=utf-8", "cache-control": p === "/" ? "no-cache" : "public, max-age=600" },
         });
       }
     }
     const seoPage = tryRenderSeoPage(path);
     if (seoPage) {
-      return new Response(seoPage, {
+      return new Response(withCallPing(seoPage), {
         headers: { "content-type": "text/html; charset=utf-8", "cache-control": "public, max-age=3600" },
       });
     }
