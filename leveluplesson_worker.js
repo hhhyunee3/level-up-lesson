@@ -4,7 +4,7 @@
 
 // 상담 신청 시 이메일 알림 발송용 (Cloudflare Email Routing)
 import { EmailMessage } from "cloudflare:email";
-import { tryRenderSeoPage, seoSitemapPaths, seoCoreSitemapPaths, seoLongTailPaths, seoLastmod, DEPLOY_DATE } from "./seo_pages.js";
+import { tryRenderSeoPage, seoSitemapPaths, seoCoreSitemapPaths, seoLongTailPaths, seoLastmod, seoGuideMeta, DEPLOY_DATE } from "./seo_pages.js";
 import { PAGES, PAGE_PATHS } from "./site_pages.js";
 
 // IndexNow 키 (네이버·빙 자동 색인 제출용). 이 값은 /키.txt 로도 응답해야 합니다.
@@ -334,8 +334,11 @@ export default {
       const sido = core.filter((p) => p.split("-").length === 2);
       const picked = guides.concat(hubs).concat(sido).slice(0, 300);
       // 최신 날짜순 정렬 (lastmod 기준)
-      const items = picked.map((p) => ({ loc: HOST + p, lm: seoLastmod(p) }));
-      items.sort((a, b) => (a.lm < b.lm ? 1 : -1));
+      const meta = new Map(seoGuideMeta().map((g) => [g.path, g]));
+      const items = picked.map((p) => { const g = meta.get(p); return { loc: HOST + p, lm: seoLastmod(p), title: g ? g.title : "", desc: g ? g.desc : "", guide: !!g }; });
+      // 가이드(정보글)를 앞에, 그다음 최신 날짜순
+      items.sort((a, b) => (a.guide !== b.guide ? (a.guide ? -1 : 1) : (a.lm < b.lm ? 1 : a.lm > b.lm ? -1 : 0)));
+      const xe = (x) => String(x).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
       const now = new Date().toUTCString();
       let body = '<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0"><channel>';
       body += '<title>레벨업과외 — 과목별 1:1 맞춤 과외</title>';
@@ -344,7 +347,7 @@ export default {
       body += '<language>ko</language><lastBuildDate>' + now + '</lastBuildDate>';
       for (const it of items) {
         const d = new Date(it.lm + "T09:00:00+09:00").toUTCString();
-        body += '<item><link>' + it.loc + '</link><guid>' + it.loc + '</guid><pubDate>' + d + '</pubDate></item>';
+        body += '<item>' + (it.title ? '<title>' + xe(it.title) + '</title>' : '') + '<link>' + it.loc + '</link><guid>' + it.loc + '</guid>' + (it.desc ? '<description>' + xe(it.desc) + '</description>' : '') + '<pubDate>' + d + '</pubDate></item>';
       }
       body += '</channel></rss>';
       return new Response(body, { headers: { "content-type": "application/rss+xml; charset=utf-8", "cache-control": "public, max-age=3600" } });

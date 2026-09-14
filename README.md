@@ -5,6 +5,7 @@
 
 ## 구성
 - `레벨업과외_worker.js` — 워커 본체 (사이트 HTML + 로고·파비콘 + 상담 API 전부 포함)
+- `guide_posts.js` — 학습 가이드(정보글) 데이터. 항목만 추가하면 /guides 목록·/guides-<slug> 페이지·sitemap-core·RSS 에 자동 반영
 - `wrangler.toml` — 배포 설정 (`main = 레벨업과외_worker.js`, `name = level-up-lesson`)
 - `.github/workflows/deploy.yml` — `main`에 push하면 자동 배포 (GitHub Actions)
 - `.gitignore`
