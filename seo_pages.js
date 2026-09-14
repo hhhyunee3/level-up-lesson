@@ -409,23 +409,63 @@ function idxShell(o){
 ${CALLMODAL}
 <script>(function(){var ok=function(e){var t=e.target;return t&&/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName);};document.addEventListener('contextmenu',function(e){if(!ok(e))e.preventDefault();});document.addEventListener('dragstart',function(e){if(!ok(e))e.preventDefault();});document.addEventListener('copy',function(e){if(!ok(e))e.preventDefault();});document.addEventListener('keydown',function(e){var k=(e.key||'').toLowerCase();if(e.key==='F12'){e.preventDefault();return;}if(e.ctrlKey&&e.shiftKey&&['i','j','c'].indexOf(k)>-1){e.preventDefault();return;}if(e.ctrlKey&&!ok(e)&&['u','s'].indexOf(k)>-1){e.preventDefault();return;}});})();</script></body></html>`;
 }
+const REGION_CARDS=[{"ko":"서울","href":"/regions-seoul","img":"/img/regions/seoul.jpg"},{"ko":"세종","href":"/regions-sejong","img":"/img/regions/sejong.jpg"},{"ko":"인천","href":"/regions-incheon","img":"/img/regions/incheon.jpg"},{"ko":"전라도 광주","href":"/regions-gwangju","img":"/img/regions/gwangju.jpg"},{"ko":"대구","href":"/regions-daegu","img":"/img/regions/daegu.jpg"},{"ko":"대전","href":"/regions-daejeon","img":"/img/regions/daejeon.jpg"},{"ko":"부산","href":"/regions-busan","img":"/img/regions/busan.jpg"},{"ko":"울산","href":"/regions-ulsan","img":"/img/regions/ulsan.jpg"},{"ko":"강원","href":"/regions-gangwon","img":"/img/regions/gangwon.jpg"},{"ko":"제주","href":"/regions-jeju","img":"/img/regions/jeju.jpg"},{"ko":"고양","href":"/regions-gyeonggi#gyeonggi-goyangsi-deokyanggu","img":"/img/regions/gyeonggi-goyangsi-deokyanggu.jpg"},{"ko":"과천","href":"/regions-gyeonggi#gyeonggi-gwacheonsi","img":"/img/regions/gyeonggi-gwacheonsi.jpg"},{"ko":"광명","href":"/regions-gyeonggi#gyeonggi-gwangmyeongsi","img":"/img/regions/gyeonggi-gwangmyeongsi.jpg"},{"ko":"경기도 광주","href":"/regions-gyeonggi#gyeonggi-gwangjusi","img":"/img/regions/gyeonggi-gwangjusi.jpg"},{"ko":"구리","href":"/regions-gyeonggi#gyeonggi-gurisi","img":"/img/regions/gyeonggi-gurisi.jpg"},{"ko":"군포","href":"/regions-gyeonggi#gyeonggi-gunposi","img":"/img/regions/gyeonggi-gunposi.jpg"},{"ko":"김포","href":"/regions-gyeonggi#gyeonggi-gimposi","img":"/img/regions/gyeonggi-gimposi.jpg"},{"ko":"남양주","href":"/regions-gyeonggi#gyeonggi-namyangjusi","img":"/img/regions/gyeonggi-namyangjusi.jpg"},{"ko":"동두천(포천/양주)","href":"/regions-gyeonggi#gyeonggi-dongducheonsi","img":"/img/regions/gyeonggi-dongducheonsi.jpg"},{"ko":"부천","href":"/regions-gyeonggi#gyeonggi-bucheonsi-sosagu","img":"/img/regions/gyeonggi-bucheonsi-sosagu.jpg"},{"ko":"성남","href":"/regions-gyeonggi#gyeonggi-seongnamsi-bundanggu","img":"/img/regions/gyeonggi-seongnamsi-bundanggu.jpg"},{"ko":"수원","href":"/regions-gyeonggi#gyeonggi-suwonsi-gwonseongu","img":"/img/regions/gyeonggi-suwonsi-gwonseongu.jpg"},{"ko":"시흥","href":"/regions-gyeonggi#gyeonggi-siheungsi","img":"/img/regions/gyeonggi-siheungsi.jpg"},{"ko":"안산","href":"/regions-gyeonggi#gyeonggi-ansansi-danwongu","img":"/img/regions/gyeonggi-ansansi-danwongu.jpg"},{"ko":"안양","href":"/regions-gyeonggi#gyeonggi-anyangsi-dongangu","img":"/img/regions/gyeonggi-anyangsi-dongangu.jpg"},{"ko":"여주/이천","href":"/regions-gyeonggi#gyeonggi-yeojusi","img":"/img/regions/gyeonggi-yeojusi.jpg"},{"ko":"오산","href":"/regions-gyeonggi#gyeonggi-osansi","img":"/img/regions/gyeonggi-osansi.jpg"},{"ko":"용인","href":"/regions-gyeonggi#gyeonggi-yonginsi-giheunggu","img":"/img/regions/gyeonggi-yonginsi-giheunggu.jpg"},{"ko":"의왕","href":"/regions-gyeonggi#gyeonggi-uiwangsi","img":"/img/regions/gyeonggi-uiwangsi.jpg"},{"ko":"의정부","href":"/regions-gyeonggi#gyeonggi-uijeongbusi","img":"/img/regions/gyeonggi-uijeongbusi.jpg"},{"ko":"파주","href":"/regions-gyeonggi#gyeonggi-pajusi","img":"/img/regions/gyeonggi-pajusi.jpg"},{"ko":"평택","href":"/regions-gyeonggi#gyeonggi-pyeongtaeksi","img":"/img/regions/gyeonggi-pyeongtaeksi.jpg"},{"ko":"하남","href":"/regions-gyeonggi#gyeonggi-hanamsi","img":"/img/regions/gyeonggi-hanamsi.jpg"},{"ko":"화성","href":"/regions-gyeonggi#gyeonggi-hwaseongsi-dongtangu","img":"/img/regions/gyeonggi-hwaseongsi-dongtangu.jpg"},{"ko":"김해","href":"/regions-gyeongnam#gyeongnam-gimhaesi","img":"/img/regions/gyeongnam-gimhaesi.jpg"},{"ko":"창원","href":"/regions-gyeongnam#gyeongnam-changwonsi-masanhappogu","img":"/img/regions/gyeongnam-changwonsi-masanhappogu.jpg"},{"ko":"경산","href":"/regions-gyeongbuk#gyeongbuk-gyeongsansi","img":"/img/regions/gyeongbuk-gyeongsansi.jpg"},{"ko":"구미/김천","href":"/regions-gyeongbuk#gyeongbuk-gumisi","img":"/img/regions/gyeongbuk-gumisi.jpg"},{"ko":"포항","href":"/regions-gyeongbuk#gyeongbuk-pohangsi-namgu","img":"/img/regions/gyeongbuk-pohangsi-namgu.jpg"},{"ko":"전주/익산","href":"/regions-jeonbuk#jeonbuk-jeonjusi-deokjingu","img":"/img/regions/jeonbuk-jeonjusi-deokjingu.jpg"},{"ko":"청주","href":"/regions-chungbuk#chungbuk-cheongjusi-sangdanggu","img":"/img/regions/chungbuk-cheongjusi-sangdanggu.jpg"},{"ko":"충주","href":"/regions-chungbuk#chungbuk-chungjusi","img":"/img/regions/chungbuk-chungjusi.jpg"},{"ko":"당진","href":"/regions-chungnam#chungnam-dangjinsi","img":"/img/regions/chungnam-dangjinsi.jpg"},{"ko":"서산","href":"/regions-chungnam#chungnam-seosansi","img":"/img/regions/chungnam-seosansi.jpg"},{"ko":"천안/아산","href":"/regions-chungnam#chungnam-cheonansi-dongnamgu","img":"/img/regions/chungnam-cheonansi-dongnamgu.jpg"}];
+/*
+ * 지역별 수업 — 아임웹 원본(level-up-lesson.imweb.me/24)의 사진 카드 갤러리를 그대로 옮겼다.
+ * 카드 43장, 사진은 public/img/regions/ 에 받아 두었다(아임웹 CDN 은 언제 끊길지 모른다).
+ * 링크는 아임웹 내부 번호(/42, /43 …) 대신 지금 사이트의 시·도 페이지로 보내고,
+ * 시 단위는 그 시의 동 목록 위치(#시군구슬러그)로 내려가게 했다.
+ * 카드에 없는 강원·제주가 고아가 되지 않도록 아래에 시·도 17개 줄을 남겨 둔다.
+ */
 function regionsPage(){
   const totSg=DATA.sigungu.length; let totD=0; for(const g of DONG) totD+=g.d.length;
-  let cards="";
-  for(const sd of DATA.sido){
+  const cards=REGION_CARDS.map(c=>
+    `<a class="rgcard" href="${c.href}" aria-label="${esc(c.ko)}에서 레벨업하기">`+
+    `<span class="rgimg" style="background-image:url('${c.img}')"></span>`+
+    `<span class="rgveil"></span>`+
+    `<span class="rgtitle">${esc(c.ko)}에서 레벨업하기</span></a>`).join("");
+  const sidoLinks=DATA.sido.map(sd=>{
     const gs=DONG.filter(g=>g.s===sd.s); let dc=0; for(const g of gs) dc+=g.d.length;
-    cards+=`<a href="/regions-${sd.slug}" style="display:block;background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px 18px;box-shadow:var(--sh);text-decoration:none"><div style="font-weight:800;font-size:17px;color:var(--ink)">${esc(sd.ko)}</div><div style="color:var(--muted);font-size:13px;margin-top:4px">${gs.length}개 시·군·구 · ${dc}개 동·읍·면</div></a>`;
-  }
+    return `<a href="/regions-${sd.slug}" style="display:inline-flex;align-items:baseline;gap:6px;padding:9px 15px;background:#fff;border:1px solid var(--line);border-radius:999px;color:var(--ink);text-decoration:none;font-size:14.5px;font-weight:700">${esc(sd.s)}<span style="color:var(--muted);font-weight:600;font-size:12.5px">${gs.length}개 시·군·구</span></a>`;
+  }).join("");
   const sjc=SUBJ_KEYS.map(k=>`<a href="/${k}" style="display:inline-block;padding:8px 14px;background:var(--sky-tint);border:1px solid var(--sky-edge);border-radius:999px;color:var(--sky-deep);text-decoration:none;font-size:14px;font-weight:700">${esc(subKo(k))} 과외</a>`).join("");
-  return idxShell({title:"지역별 1:1 과외 안내 | 레벨업과외", desc:`레벨업과외는 초·중·고 전과목 1:1 과외 전문입니다. 서울·경기·부산 등 전국 17개 시·도, ${totSg}개 시·군·구, ${totD}개 동·읍·면까지 방문·화상 과외로 찾아갑니다. 국어·영어·수학·사회·과학부터 코딩·검정고시까지, 레벨 진단 후 학생에게 맞춘 수업을 우리 동네에서 시작하세요.`, path:"/regions", h1:"지역별 1:1 과외 안내", sub:`우리 동네에서 시작하는 1:1 맞춤 과외. 방문 수업과 화상 수업 모두 가능하고, 무료 체험수업으로 먼저 확인할 수 있습니다.`, crumb:bc([["홈",BASE],["전국 지역",null]]), body:`<div class="tldr" style="background:var(--sky-tint);border:1px solid var(--sky-edge);border-radius:14px;padding:16px 18px;margin:0 0 26px;line-height:1.7"><p style="margin:0 0 8px;font-weight:700;color:var(--sky-deep)">레벨업과외는 초·중·고 전과목 1:1 과외 전문입니다</p><p style="margin:0">학생 한 명의 현재 레벨을 진단하고 거기서부터 시작하는 맞춤 과외를 전국 어디서나 만날 수 있습니다. 서울·경기·부산을 비롯한 전국 17개 시·도, ${totSg}개 시·군·구, ${totD}개 동·읍·면까지 선생님이 직접 찾아가는 방문 과외와 어디서든 듣는 화상 과외를 운영합니다. 국어·영어·수학·사회·과학은 물론 고등 선택·탐구과목, 코딩, 검정고시, 논술까지 과목별 전문 선생님이 레벨 진단 후 학생 한 명에게 맞춘 수업을 진행합니다. 아래에서 과목이나 지역을 고르면 우리 동네 과외 안내 페이지로 이동합니다.</p></div><div style="margin-bottom:28px"><div style="font-weight:800;font-size:16px;color:var(--ink);margin-bottom:12px">과목별 과외</div><div style="display:flex;flex-wrap:wrap;gap:9px">${sjc}</div></div><div style="font-weight:800;font-size:16px;color:var(--ink);margin-bottom:12px">지역별 과외</div><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px">${cards}</div>`});
+  const css=`<style>
+.rggrid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin:0 0 34px}
+.rgcard{position:relative;display:block;aspect-ratio:516/194;border:1px solid #eee;border-radius:12px;overflow:hidden;background:#EFF6FB;text-decoration:none;isolation:isolate}
+.rgimg{position:absolute;inset:0;background-size:cover;background-position:center;transition:transform .5s ease}
+.rgveil{position:absolute;inset:0;background:#2196F3;opacity:0;transition:opacity .25s ease}
+.rgtitle{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:10px;color:#fff;font-size:20px;font-weight:700;letter-spacing:-.02em;text-align:center;opacity:0;transition:opacity .25s ease}
+.rgcard:hover .rgimg{transform:scale(1.04)}
+.rgcard:hover .rgveil{opacity:1}
+.rgcard:hover .rgtitle,.rgcard:focus-visible .rgtitle{opacity:1}
+.rgcard:focus-visible{outline:3px solid var(--sky-deep);outline-offset:2px}
+.rgcard:focus-visible .rgveil{opacity:1}
+/* hover 가 없는 기기(손가락)와 좁은 화면에서는 제목을 아래에 붙여 늘 보이게 둔다.
+   원본은 hover 로만 보여주는데, 그대로 두면 휴대폰에서 도시 이름이 아예 안 보인다. */
+@media(hover:none),(max-width:720px){
+  .rgveil{display:none}
+  .rgtitle{top:auto;bottom:0;height:auto;opacity:1;background:#2196F3;font-size:16px;padding:9px 10px;border-radius:0}
+  .rgcard:hover .rgimg{transform:none}
 }
+@media(max-width:720px){.rggrid{grid-template-columns:1fr;gap:12px}}
+@media(prefers-reduced-motion:reduce){.rgimg,.rgveil,.rgtitle{transition:none}.rgcard:hover .rgimg{transform:none}}
+</style>`;
+  return idxShell({title:"지역별 수업 · 1:1 과외 안내 | 레벨업과외", desc:`레벨업과외는 초·중·고 전과목 1:1 과외 전문입니다. 서울·경기·부산 등 전국 17개 시·도, ${totSg}개 시·군·구, ${totD}개 동·읍·면까지 방문·화상 과외로 찾아갑니다. 국어·영어·수학·사회·과학부터 코딩·검정고시까지, 레벨 진단 후 학생에게 맞춘 수업을 우리 동네에서 시작하세요.`, path:"/regions", h1:"지역별 수업", sub:`우리 동네에서 시작하는 1:1 맞춤 과외. 방문 수업과 화상 수업 모두 가능하고, 무료 체험수업으로 먼저 확인할 수 있습니다.`, crumb:bc([["홈",BASE],["전국 지역",null]]), body:css+`<div class="tldr" style="background:var(--sky-tint);border:1px solid var(--sky-edge);border-radius:14px;padding:16px 18px;margin:0 0 26px;line-height:1.7"><p style="margin:0 0 8px;font-weight:700;color:var(--sky-deep)">레벨업과외는 초·중·고 전과목 1:1 과외 전문입니다</p><p style="margin:0">학생 한 명의 현재 레벨을 진단하고 거기서부터 시작하는 맞춤 과외를 전국 ${totSg}개 시·군·구에서 진행합니다. 아래에서 지역을 고르시면 그 지역 안내로 이어집니다.</p></div>
+<h2 style="font-size:26px;font-weight:800;letter-spacing:-.02em;margin:0 0 18px">전국 주요 도시</h2>
+<div class="rggrid">${cards}</div>
+<h2 style="font-size:20px;font-weight:800;letter-spacing:-.02em;margin:0 0 14px">시·도 전체 보기</h2>
+<div style="display:flex;flex-wrap:wrap;gap:9px;margin:0 0 34px">${sidoLinks}</div>
+<h2 style="font-size:20px;font-weight:800;letter-spacing:-.02em;margin:0 0 14px">과목별 안내</h2>
+<div style="display:flex;flex-wrap:wrap;gap:9px">${sjc}</div>`});
+}
+
 function sidoPage(sd){
   const gs=DONG.filter(g=>g.s===sd.s); let totD=0; for(const g of gs) totD+=g.d.length;
   let blocks="";
   for(const g of gs){
     let dongs="";
     for(const d of g.d) dongs+=`<a href="/${g.sgs}-${d[1]}-math" style="color:var(--ink);text-decoration:none;font-size:14.5px">${esc(d[0])}</a>`;
-    blocks+=`<div style="padding:15px 0;border-top:1px solid var(--line)"><h3 style="margin:0 0 9px;font-size:16px"><a href="/${g.sgs}-math" style="color:var(--sky-deep);text-decoration:none">${esc(g.sgk)}</a> <span style="color:var(--muted);font-weight:600;font-size:13px">${g.d.length}개</span></h3><div style="display:flex;flex-wrap:wrap;gap:9px 18px">${dongs}</div></div>`;
+    blocks+=`<div id="${g.sgs}" style="padding:15px 0;border-top:1px solid var(--line);scroll-margin-top:90px"><h3 style="margin:0 0 9px;font-size:16px"><a href="/${g.sgs}-math" style="color:var(--sky-deep);text-decoration:none">${esc(g.sgk)}</a> <span style="color:var(--muted);font-weight:600;font-size:13px">${g.d.length}개</span></h3><div style="display:flex;flex-wrap:wrap;gap:9px 18px">${dongs}</div></div>`;
   }
   const sjc=SUBJ_KEYS.map(k=>`<a href="/${sd.slug}-${k}" style="display:inline-block;padding:8px 14px;background:var(--sky-tint);border:1px solid var(--sky-edge);border-radius:999px;color:var(--sky-deep);text-decoration:none;font-size:14px;font-weight:700">${esc(sd.s)} ${esc(subKo(k))} 과외</a>`).join("");
   return idxShell({title:`${sd.ko} 1:1 과외 안내 | 레벨업과외`, desc:`레벨업과외는 초·중·고 전과목 1:1 과외 전문입니다. ${sd.ko} 전 지역(${gs.length}개 시·군·구, ${totD}개 동·읍·면)에서 만나는 방문·화상 과외. 국어·영어·수학·사회·과학부터 코딩·검정고시까지, 레벨 진단 후 학생에게 맞춘 수업을 시작하세요.`, path:"/regions-"+sd.slug, h1:`${sd.ko} 1:1 과외 안내`, sub:`${sd.ko} ${gs.length}개 시·군·구, ${totD}개 동·읍·면 어디서나 방문·화상 1:1 과외가 가능합니다. 무료 체험수업으로 먼저 확인해 보세요.`, crumb:bc([["홈",BASE],["전국 지역","/regions"],[sd.s,null]]), body:`<div style="background:#0E2A40;color:#fff;border-radius:14px;padding:15px 20px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:4px"><span style="font-weight:800;font-size:18px">${esc(sd.ko)}</span><span style="opacity:.85;font-size:14px">${gs.length}개 시·군·구 · ${totD}개 동·읍·면</span></div><div style="margin:18px 0 8px"><div style="font-weight:800;font-size:15.5px;color:var(--ink);margin-bottom:11px">${esc(sd.s)} 과목별 과외</div><div style="display:flex;flex-wrap:wrap;gap:9px">${sjc}</div></div>${blocks}`});
