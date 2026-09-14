@@ -331,4 +331,18 @@ const posts = [
   },
 ];
 
-export default posts;
+// 글마다 관련 수업 페이지 링크. 본문 중간(세 번째 소제목 앞)에 상담 안내 상자를, 마지막에 수업·상담 링크 문단을 붙인다.
+const LINKS = {"middle-first-exam": [["중학교 수학 1:1 과외", "/math"], ["학습코칭 안내", "/coaching"]], "high-grade-5level": [["고등 수학 과외", "/math"], ["국어 과외", "/korean"]], "math-not-improving": [["수학 과외 안내", "/math"]], "english-written-test": [["영어 과외 안내", "/english"]], "korean-nonfiction": [["국어 과외 안내", "/korean"]], "exam-4week-plan": [["학습코칭 안내", "/coaching"], ["수학 과외", "/math"]], "performance-assessment": [["학습코칭 안내", "/coaching"], ["과학 과외", "/science"]], "online-tutoring": [["화상 영어회화 안내", "/english-conversation"], ["수학 과외", "/math"]], "adult-english-restart": [["성인·직장인 영어회화", "/english-adult"], ["영어회화 안내", "/english-conversation"]], "toeic-vs-opic": [["토익·오픽 1:1 과외", "/english-toeic-opic"]], "jlpt-roadmap": [["JLPT 1:1 과외", "/japanese-jlpt"], ["일본어 회화", "/japanese"]], "chinese-start": [["중국어 회화·HSK 과외", "/chinese"]], "coding-start-age": [["코딩 과외 안내", "/coding"]], "elementary-to-middle": [["초등 영어 과외", "/english-kids"], ["수학 과외", "/math"]], "tutoring-vs-academy": [["지역별 과외 찾기", "/regions"], ["수학 과외", "/math"]], "phonics-start": [["파닉스 1:1 과외", "/english-phonics"], ["초등 영어 과외", "/english-kids"]]};
+const A = (l) => `<a href="${l[1]}" style="color:var(--sky-deep);font-weight:700;text-decoration:underline">${esc(l[0])}</a>`;
+function finalize(post) {
+  const ls = LINKS[post.slug] || [];
+  const linkStr = ls.map(A).concat(`<a href="#contact" style="color:var(--sky-deep);font-weight:700;text-decoration:underline">무료 상담 신청</a>`).join(" · ");
+  const mid = `<div style="margin:22px 0 26px;padding:18px 20px;background:var(--sky-tint);border:1px solid var(--sky-edge);border-radius:14px"><div style="font-weight:800;color:var(--ink);margin-bottom:6px">이 주제로 바로 상담해 보세요</div><div style="color:var(--ink-2);font-size:14.5px;line-height:1.75">상담에서 현재 상태를 듣고 맞는 선생님을 연결해 드립니다. 첫 수업은 무료 체험으로 확인할 수 있습니다.<br>${linkStr}</div></div>`;
+  let body = post.body, idx = -1, n = 0;
+  while (n < 3) { idx = body.indexOf("<h2", idx + 1); if (idx < 0) break; n++; }
+  if (n === 3 && idx > 0) body = body.slice(0, idx) + mid + body.slice(idx);
+  body += `<p style="line-height:1.85;color:var(--ink-2);margin:14px 0 0;padding-top:14px;border-top:1px dashed var(--line)"><strong style="color:var(--ink)">관련 수업</strong> · ${linkStr}</p>`;
+  return { ...post, body };
+}
+
+export default posts.map(finalize);
