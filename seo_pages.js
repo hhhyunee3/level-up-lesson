@@ -469,8 +469,64 @@ function sidoPage(sd){
     for(const d of g.d) dongs+=`<a href="/${g.sgs}-${d[1]}-math" style="color:var(--ink);text-decoration:none;font-size:14.5px">${esc(d[0])}</a>`;
     blocks+=`<div id="${g.sgs}" style="padding:15px 0;border-top:1px solid var(--line);scroll-margin-top:90px"><h3 style="margin:0 0 9px;font-size:16px"><a href="/${g.sgs}-math" style="color:var(--sky-deep);text-decoration:none">${esc(g.sgk)}</a> <span style="color:var(--muted);font-weight:600;font-size:13px">${g.d.length}개</span></h3><div style="display:flex;flex-wrap:wrap;gap:9px 18px">${dongs}</div></div>`;
   }
+  /*
+   * 시·도 페이지가 동 이름 나열만 있어 설명이 없었다. 안내글을 붙인다.
+   * 문구는 시·도마다 고르는 자리를 두어 17개가 똑같아지지 않게 한다.
+   * 지어낸 수치는 쓰지 않는다 — 시·군·구 수, 동 수처럼 자료에 있는 값만 쓴다.
+   */
+  const sdSeed = hashStr("sido:" + sd.slug);
+  const sdNm = esc(sd.s), sdFull = esc(sd.ko);
+  const intro = pick1([
+    `${sdFull}에서 과외를 알아보실 때 가장 먼저 부딪히는 건 "우리 아이한테 맞는 선생님인가"입니다. 같은 학년이어도 어디서 막혀 있는지가 다르고, 그래서 같은 교재로 같은 진도를 나가면 한쪽은 지루하고 한쪽은 못 따라갑니다. 레벨업과외는 수업을 시작하기 전에 현재 레벨을 먼저 확인하고, 거기서부터 시작합니다.`,
+    `${sdFull}은 ${gs.length}개 시·군·구, ${totD}개 동·읍·면으로 이뤄져 있습니다. 지역마다 학교 진도와 시험 출제 경향이 조금씩 다르고, 학원 사정도 다릅니다. 그래서 어느 동네인지 먼저 여쭙고, 그 지역 사정을 아는 선생님으로 연결해 드립니다.`,
+    `학년이 올라갈수록 "공부를 안 해서"가 아니라 "어디서 막혔는지 몰라서" 성적이 안 오르는 경우가 많습니다. ${sdFull}에서 상담 주시면 먼저 그 지점을 찾습니다. 무료 체험수업에서 확인하고, 맞겠다 싶으실 때 시작하시면 됩니다.`,
+  ], sdSeed);
+
+  const howTitle = pick1([
+    `${sdNm}에서 수업은 이렇게 진행됩니다`,
+    `${sdNm} 과외, 시작부터 수업까지`,
+    `${sdNm}에서 과외를 시작하실 때`,
+  ], sdSeed + 1);
+
+  const steps = [
+    ["상담", `전화나 신청서로 학년·과목·지역을 알려주시면 됩니다. ${sdNm} 어느 동네인지, 방문과 화상 중 무엇이 편하신지까지 여쭙습니다.`],
+    ["레벨 진단", "현재 어디까지 알고 어디서 막혀 있는지 확인합니다. 점수보다 막힌 지점을 찾는 것이 목적입니다."],
+    ["무료 체험수업", "선생님과 한 번 수업해 보시고 결정하셔도 됩니다. 체험 후에 안 하셔도 괜찮습니다."],
+    ["수업 시작", "진단 결과에 맞춰 교재와 진도를 정하고 시작합니다. 진행 상황은 수업마다 알려드립니다."],
+  ];
+  const stepHtml = steps.map(([t, d], n) =>
+    `<div style="display:flex;gap:14px;padding:16px 0;border-top:1px solid var(--line)"><div style="flex:0 0 26px;height:26px;border-radius:8px;background:var(--sky-deep);color:#fff;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center">${n + 1}</div><div><div style="font-weight:800;color:var(--ink);margin-bottom:4px">${t}</div><div style="color:var(--muted);font-size:14.5px;line-height:1.75">${d}</div></div></div>`
+  ).join("");
+
+  const visitHtml = `<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px">
+<div style="background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px 20px"><div style="font-weight:800;color:var(--sky-deep);margin-bottom:7px">방문 수업</div><div style="color:var(--muted);font-size:14.5px;line-height:1.75">선생님이 댁으로 갑니다. 저학년이거나 혼자 앉아 있는 시간이 아직 짧은 학생에게 맞습니다. ${sdNm} 안에서 이동 시간이 되는 곳으로 연결해 드립니다.</div></div>
+<div style="background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px 20px"><div style="font-weight:800;color:var(--sky-deep);margin-bottom:7px">화상 수업</div><div style="color:var(--muted);font-size:14.5px;line-height:1.75">집에서 화면으로 합니다. 이동 시간이 없어 늦은 시간이나 주말에도 잡기 쉽고, 특정 과목 선생님을 지역과 상관없이 고를 수 있습니다.</div></div></div>`;
+
+  const gradeHtml = `<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:14px">
+<div style="background:var(--sky-tint);border:1px solid var(--sky-edge);border-radius:14px;padding:18px 20px"><div style="font-weight:800;color:var(--sky-deep);margin-bottom:7px">초등</div><div style="color:var(--ink-2);font-size:14.5px;line-height:1.75">앉아서 공부하는 습관과 연산·어휘 같은 기초를 다집니다. 분량을 늘리기보다 매일 지킬 수 있는 약속을 만듭니다.</div></div>
+<div style="background:var(--sky-tint);border:1px solid var(--sky-edge);border-radius:14px;padding:18px 20px"><div style="font-weight:800;color:var(--sky-deep);margin-bottom:7px">중등</div><div style="color:var(--ink-2);font-size:14.5px;line-height:1.75">중간·기말 대비와 함께 약한 단원을 메웁니다. 시험 범위만 쫓다 보면 다음 학년에 또 막히기 때문입니다.</div></div>
+<div style="background:var(--sky-tint);border:1px solid var(--sky-edge);border-radius:14px;padding:18px 20px"><div style="font-weight:800;color:var(--sky-deep);margin-bottom:7px">고등</div><div style="color:var(--ink-2);font-size:14.5px;line-height:1.75">내신과 모의고사를 같이 봐야 합니다. 목표를 먼저 정하고 남은 시간을 과목별로 나누는 것부터 잡습니다.</div></div></div>`;
+
+  const faq = [
+    [`${sdNm} 어디까지 방문이 되나요?`, `${sdFull} ${gs.length}개 시·군·구 전 지역에서 진행합니다. 다만 방문은 선생님 이동 시간이 있어, 동네에 따라 가능한 시간대가 달라질 수 있습니다. 주소를 알려주시면 바로 확인해 드립니다.`],
+    ["무료 체험수업은 정말 비용이 없나요?", "네. 체험수업 후에 시작하지 않으셔도 비용은 없습니다. 맞는지 먼저 보시라고 두는 과정입니다."],
+    ["선생님이 안 맞으면 바꿀 수 있나요?", "가능합니다. 수업 방식이나 성향이 안 맞는 건 흔한 일이라, 말씀 주시면 다시 찾아 연결해 드립니다."],
+    ["과목을 여러 개 해도 되나요?", "됩니다. 한 선생님이 여러 과목을 보기도 하고, 과목별로 나누기도 합니다. 학생 상황에 맞춰 정하시면 됩니다."],
+  ];
+  const faqHtml = faq.map(([q, a]) =>
+    `<details style="border:1px solid var(--line);border-radius:14px;background:#fff;padding:16px 20px;margin-bottom:10px"><summary style="cursor:pointer;font-weight:800;color:var(--ink);font-size:15.5px">${q}</summary><p style="margin:12px 0 0;color:var(--muted);font-size:14.5px;line-height:1.8">${a}</p></details>`
+  ).join("");
+
+  const H2 = (t) => `<h2 style="font-size:20px;font-weight:800;letter-spacing:-.02em;color:var(--ink);margin:34px 0 12px">${t}</h2>`;
+  const guide =
+    `<p style="margin:20px 0 0;font-size:15.5px;line-height:1.85;color:var(--ink-2)">${intro}</p>` +
+    H2(howTitle) + `<div style="margin-top:6px">${stepHtml}</div>` +
+    H2(`방문 수업과 화상 수업, 무엇이 맞을까요`) + visitHtml +
+    H2(`${sdNm} 학년별로 무엇부터 보나요`) + gradeHtml +
+    H2(`${sdNm} 과외 자주 묻는 질문`) + faqHtml;
+
   const sjc=SUBJ_KEYS.map(k=>`<a href="/${sd.slug}-${k}" style="display:inline-block;padding:8px 14px;background:var(--sky-tint);border:1px solid var(--sky-edge);border-radius:999px;color:var(--sky-deep);text-decoration:none;font-size:14px;font-weight:700">${esc(sd.s)} ${esc(subKo(k))} 과외</a>`).join("");
-  return idxShell({title:`${sd.ko} 1:1 과외 안내 | 레벨업과외`, desc:`레벨업과외는 초·중·고 전과목 1:1 과외 전문입니다. ${sd.ko} 전 지역(${gs.length}개 시·군·구, ${totD}개 동·읍·면)에서 만나는 방문·화상 과외. 국어·영어·수학·사회·과학부터 코딩·검정고시까지, 레벨 진단 후 학생에게 맞춘 수업을 시작하세요.`, path:"/regions-"+sd.slug, h1:`${sd.ko} 1:1 과외 안내`, sub:`${sd.ko} ${gs.length}개 시·군·구, ${totD}개 동·읍·면 어디서나 방문·화상 1:1 과외가 가능합니다. 무료 체험수업으로 먼저 확인해 보세요.`, crumb:bc([["홈",BASE],["전국 지역","/regions"],[sd.s,null]]), body:`<div style="background:#0E2A40;color:#fff;border-radius:14px;padding:15px 20px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:4px"><span style="font-weight:800;font-size:18px">${esc(sd.ko)}</span><span style="opacity:.85;font-size:14px">${gs.length}개 시·군·구 · ${totD}개 동·읍·면</span></div><div style="margin:18px 0 8px"><div style="font-weight:800;font-size:15.5px;color:var(--ink);margin-bottom:11px">${esc(sd.s)} 과목별 과외</div><div style="display:flex;flex-wrap:wrap;gap:9px">${sjc}</div></div>${blocks}`});
+  return idxShell({title:`${sd.ko} 1:1 과외 안내 | 레벨업과외`, desc:`레벨업과외는 초·중·고 전과목 1:1 과외 전문입니다. ${sd.ko} 전 지역(${gs.length}개 시·군·구, ${totD}개 동·읍·면)에서 만나는 방문·화상 과외. 국어·영어·수학·사회·과학부터 코딩·검정고시까지, 레벨 진단 후 학생에게 맞춘 수업을 시작하세요.`, path:"/regions-"+sd.slug, h1:`${sd.ko} 1:1 과외 안내`, sub:`${sd.ko} ${gs.length}개 시·군·구, ${totD}개 동·읍·면 어디서나 방문·화상 1:1 과외가 가능합니다. 무료 체험수업으로 먼저 확인해 보세요.`, crumb:bc([["홈",BASE],["전국 지역","/regions"],[sd.s,null]]), body:`<div style="background:#0E2A40;color:#fff;border-radius:14px;padding:15px 20px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:4px"><span style="font-weight:800;font-size:18px">${esc(sd.ko)}</span><span style="opacity:.85;font-size:14px">${gs.length}개 시·군·구 · ${totD}개 동·읍·면</span></div>${guide}<div style="margin:18px 0 8px"><div style="font-weight:800;font-size:15.5px;color:var(--ink);margin-bottom:11px">${esc(sd.s)} 과목별 과외</div><div style="display:flex;flex-wrap:wrap;gap:9px">${sjc}</div></div>${blocks}`});
 }
 function dongListBlock(r, subj, J){
   const dg = DONG.find(g=>g.sgs===r.slug);
