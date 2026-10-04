@@ -188,7 +188,10 @@ ROUTES.set("/tools-ged",{type:"tool_ged"}); REGION_SM.push("/tools-ged");
 for(const sd of DATA.sido){ROUTES.set("/regions-"+sd.slug,{type:"sido_index",sd}); REGION_SM.push("/regions-"+sd.slug);}
 const dongIndex=new Map(); const DONG_SM=[];
 const DONG_SM_KEYS = SITEMAP_ALL_SUBJECTS_ON_DONG ? SUBJ_KEYS : BASE_KEYS;
-for(const g of DONG) for(const d of g.d){const key=g.sgs+"-"+d[1]; dongIndex.set(key,{g:g,ko:d[0],rom:d[1]}); for(const sk of DONG_SM_KEYS) DONG_SM.push("/"+key+"-"+sk);}
+// 동 + 학년 + 과목 페이지 (약 54,800개). 페이지와 링크는 살아 있고, 사이트맵 노출만 이 값으로 정한다.
+const SITEMAP_DONG_GRADE = false;
+const DONG_GRADE_SM=[];
+for(const g of DONG) for(const d of g.d){const key=g.sgs+"-"+d[1]; dongIndex.set(key,{g:g,ko:d[0],rom:d[1]}); for(const sk of DONG_SM_KEYS) DONG_SM.push("/"+key+"-"+sk); for(const gr of GRADES) for(const sk of BASE_KEYS) DONG_GRADE_SM.push("/"+key+"-"+gr.slug+"-"+sk);}
 
 const HEAD={worries:["{R} 학생들이 가장 많이 하는 공부 고민","이런 고민, 혼자만의 문제가 아닙니다","{R}에서 자주 듣는 {J} 고민"],helps:["{R} {J} 과외로 도움받을 수 있는 부분","1:1 수업에서 이런 것을 해결합니다","{R} {J} 과외가 채워주는 부분"],localenv:["{R} 학습 환경 안내","{R} 인근 {J} 과외 안내","{R}{wa} 인근 지역 안내"],study:["{J} 공부법, 이렇게 하세요","{R} 학생을 위한 {J} 공부법","{J} 성적을 올리는 학습 전략","혼자서도 되는 {J} 공부법","{R}에서 통하는 {J} 공부법","{R} {J} 성적을 올리는 학습 전략"],s1:["{R} {J} 과외, 왜 1:1 맞춤일까요?","{R}에서 {J} 과외를 시작하기 전에","{R} {J} 과외, 이렇게 다릅니다"],curri:["학년별 {J} 커리큘럼","{R} {J}, 학년별 학습 로드맵","{J} 학년별 수업 설계","{R} {J} 과외 커리큘럼","{R} 학년별 {J} 커리큘럼"],trait:["{J} 학습의 핵심","{J}, 이렇게 접근합니다","{J} 점수를 가르는 포인트","{R} {J} 학습의 핵심","{R}에서 {J} 점수를 가르는 포인트","{R} {J}, 이렇게 접근합니다"],stuck:["{R} 학생들이 {J}에서 자주 막히는 지점","{J} 성적이 정체되는 이유","이런 학생일수록 1:1이 필요합니다"],method:["레벨업과외 {J} 학습 4단계","수업은 이렇게 진행돼요","{J} 과외 진행 4단계","{R} {J} 과외 진행 4단계","{R} 학생을 위한 {J} 학습 4단계","{R} {J} 수업은 이렇게 진행됩니다"],why:["학원 대신 1:1 과외를 선택하는 이유","{R}에서 학원과 1:1 과외, 무엇이 다를까","왜 1:1 과외일까요?"],faq:["{R} {J} 과외 자주 묻는 질문","자주 묻는 질문 (FAQ)"],close:["{R}에서 {J} 성적, 지금부터 바꿔보세요","{R} {J}, 무료 상담부터 시작하세요"]};
 
@@ -833,17 +836,25 @@ function gradeLinkBlock(base, subj, rko, J){
   const chips=GRADES.map(gr=>`<a href="/${base}-${gr.slug}-${subj}" style="display:inline-block;padding:7px 13px;background:var(--sky-tint);border:1px solid var(--sky-edge);border-radius:999px;color:var(--sky-deep);text-decoration:none;font-size:14px;font-weight:600">${esc(rko)} ${esc(gr.ko)} ${esc(J)} 과외</a>`).join("");
   return `<div class="wrap" style="margin-top:10px"><div style="background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px 24px;box-shadow:var(--sh)"><h2 style="margin:0 0 12px;font-size:18px">${esc(rko)} 학년별 ${esc(J)} 과외</h2><div style="display:flex;flex-wrap:wrap;gap:9px 10px">${chips}</div></div></div>`;
 }
+function dongGradeBlock(g,rec,subj,J){
+  const chip=(href,label)=>`<a href="${href}" style="display:inline-block;padding:7px 13px;background:var(--sky-tint);border:1px solid var(--sky-edge);border-radius:999px;color:var(--sky-deep);text-decoration:none;font-size:14px;font-weight:600">${esc(label)}</a>`;
+  const mine=GRADES.map(gr=>chip(`/${g.sgs}-${rec.rom}-${gr.slug}-${subj}`,`${rec.ko} ${gr.ko} ${J} 과외`)).join("");
+  const area=GRADES.map(gr=>chip(`/${g.sgs}-${gr.slug}-${subj}`,`${g.sgk} ${gr.ko} ${J} 과외`)).join("");
+  return `<div class="wrap" style="margin-top:10px"><div style="background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px 24px;box-shadow:var(--sh)"><h2 style="margin:0 0 12px;font-size:18px">${esc(rec.ko)} 학년별 ${esc(J)} 과외</h2><div style="display:flex;flex-wrap:wrap;gap:9px 10px;margin-bottom:12px">${mine}</div><div style="display:flex;flex-wrap:wrap;gap:9px 10px">${area}</div></div></div>`;
+}
 function renderDong(rec,subj,grade){
   const g=rec.g, J=SUBJECTS[subj].ko;
   const dongBase="/"+g.sgs+"-"+rec.rom+"-"+subj;
   if(grade){
     const JG=grade.ko+" "+J;
-    return renderCore({R:rec.ko,S:g.s,subj:subj,jOver:JG,g:grade,path:"/"+g.sgs+"-"+rec.rom+"-"+grade.slug+"-"+subj,h1:g.sgk+" "+rec.ko+" "+JG+" 과외",d1:g.s+" "+g.sgk+" "+rec.ko+" "+JG+" 과외 — 무료 체험수업으로 시작하는 1:1 맞춤 수업입니다.",
+    const lvk={elementary:"초",middle:"중",high:"고"}[grade.slug];
+    const gpath="/"+g.sgs+"-"+rec.rom+"-"+grade.slug+"-"+subj;
+    return renderCore({R:rec.ko,S:g.s,subj:subj,jOver:JG,g:grade,path:gpath,extra:schoolListBlock(g.sgs,rec.ko,rec.ko,lvk),nearby:nbDong(g,rec.ko,hashStr(gpath),4),h1:g.sgk+" "+rec.ko+" "+JG+" 과외",d1:g.s+" "+g.sgk+" "+rec.ko+" "+JG+" 과외 — 무료 체험수업으로 시작하는 1:1 맞춤 수업입니다.",
       crumb:bc([["홈",BASE],[J+" 과외","/"+subj],[g.s,"/"+g.sgs.split("-")[0]+"-"+subj],[g.sgk,"/"+g.sgs+"-"+subj],[rec.ko,dongBase],[grade.ko,null]]),
       tag:`${g.sgk} · ${rec.ko} · ${grade.ko} · ${J}`,titleSub:g.sgk,areaServed:g.s+" "+g.sgk+" "+rec.ko,
       related:relatedDong(rec,subj,grade)});
   }
-  const extra=(BASE_KEYS.includes(subj)?gradeLinkBlock(g.sgs,subj,g.sgk,J):"")+schoolListBlock(g.sgs,rec.ko,rec.ko);
+  const extra=(BASE_KEYS.includes(subj)?dongGradeBlock(g,rec,subj,J):"")+schoolListBlock(g.sgs,rec.ko,rec.ko);
   const nearby=nbDong(g,rec.ko,hashStr(dongBase),4);
   return renderCore({R:rec.ko,S:g.s,subj:subj,path:dongBase,extra:extra,nearby:nearby,h1:g.sgk+" "+rec.ko+" "+J+" 과외",d1:g.s+" "+g.sgk+" "+rec.ko+" "+J+" 과외를 찾으신다면. "+g.sgk+" "+rec.ko+" 학생을 위한 1:1 맞춤 수업으로 레벨 진단 후 내신·수능을 함께 대비합니다. 방문·화상 가능, 무료 체험수업으로 확인하세요.",
     crumb:bc([["홈",BASE],[J+" 과외","/"+subj],[g.s,"/"+g.sgs.split("-")[0]+"-"+subj],[g.sgk,"/"+g.sgs+"-"+subj],[rec.ko,null]]),
@@ -919,9 +930,9 @@ const SCHOOL_SUBJECT_KEYS=["korean","english","math","social","science"];
 const SITEMAP_SCHOOL_SUBJECT=false;  // 약 47,000개
 for(const sgs in SCHOOL_PAGES){for(let i=0;i<SCHOOL_PAGES[sgs].length;i++){const r=SCHOOL_PAGES[sgs][i];const slug="/"+sgs+"-"+romanKo(r[0]);SCHOOL_ROUTES.set(slug,{sgs:sgs,idx:i});SCHOOL_SM.push(slug);for(const sk of SCHOOL_SUBJECT_KEYS) SCHOOL_SUBJ_SM.push(slug+"-"+sk);}}
 function schoolChip(href,label){return `<a href="${href}" style="display:inline-block;padding:7px 13px;background:var(--sky-tint);border:1px solid var(--sky-edge);border-radius:999px;color:var(--sky-deep);text-decoration:none;font-size:13.5px;font-weight:600;margin:0 7px 8px 0">${esc(label)}</a>`;}
-function schoolListBlock(sgs,areaKo,dongKo){
+function schoolListBlock(sgs,areaKo,dongKo,lv){
   const lst=SCHOOL_PAGES[sgs]||[]; if(!lst.length) return "";
-  const items=lst.map((r,i)=>dongKo&&r[1]!==dongKo?null:schoolChip("/"+sgs+"-"+romanKo(r[0]),r[0])).filter(Boolean);
+  const items=lst.map((r,i)=>(dongKo&&r[1]!==dongKo)||(lv&&r[2]!==lv)?null:schoolChip("/"+sgs+"-"+romanKo(r[0]),r[0])).filter(Boolean);
   if(!items.length) return "";
   return `<div class="wrap" style="margin-top:34px"><h2 style="font-size:20px;margin:0 0 12px">${esc(areaKo)} 학교별 과외</h2><div>${items.join("")}</div><p style="margin-top:10px"><a href="/schools-${sgs}" style="color:var(--sky-deep);font-weight:700">학교 목록 전체 보기 →</a></p></div>`;
 }
@@ -1084,6 +1095,9 @@ export function tryRenderSeoPage(path){
       const base=path.slice(0, path.length-sk.length-1);
       const rec=dongIndex.get(base.slice(1));
       if(rec) return renderDong(rec,sk);
+      // 동 + 학년 + 과목 (예: /seoul-gangnamgu-daechidong-middle-math). 기본 5과목만.
+      const gm=base.match(/^\/(.+)-(elementary|middle|high)$/);
+      if(gm && BASE_KEYS.indexOf(sk)>=0){ const r2=dongIndex.get(gm[1]); if(r2) return renderDong(r2,sk,GRADES.find(x=>x.slug===gm[2])); }
       const sc2=SCHOOL_ROUTES.get(base);
       if(sc2 && SCHOOL_SUBJECT_KEYS.indexOf(sk)>=0) return renderSchoolSubject(sc2,sk);
     }
@@ -1094,7 +1108,7 @@ export function seoSitemapPaths(){ return REGION_SM.concat(DONG_SM).concat(SCHOO
 export function seoCoreSitemapPaths(){ return REGION_SM; }
 // 분할 사이트맵용. 코어는 sitemap-core.xml 이 따로 내므로 여기서 뺀다.
 // 이전에는 코어 7,270개가 sitemap-1.xml 에도 중복 수록됐다.
-export function seoLongTailPaths(){ return DONG_SM.concat(SCHOOL_SM).concat(SITEMAP_SCHOOL_SUBJECT?SCHOOL_SUBJ_SM:[]); }
+export function seoLongTailPaths(){ return DONG_SM.concat(SCHOOL_SM).concat(SITEMAP_SCHOOL_SUBJECT?SCHOOL_SUBJ_SM:[]).concat(SITEMAP_DONG_GRADE?DONG_GRADE_SM:[]); }
 // 실제 배포일 고정 — 콘텐츠를 실제로 변경해 배포할 때만 이 날짜를 갱신하세요 (YYYY-MM-DD)
 export const DEPLOY_DATE = "2026-09-14";
 export function seoGuideMeta(){ return GUIDES.map(g=>({path:"/guides-"+g.slug,title:g.h1,desc:g.desc,date:g.date||DEPLOY_DATE})); }
