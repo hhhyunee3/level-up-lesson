@@ -1122,6 +1122,6 @@ export function seoCoreSitemapPaths(){ return REGION_SM; }
 // 이전에는 코어 7,270개가 sitemap-1.xml 에도 중복 수록됐다.
 export function seoLongTailPaths(){ return DONG_SM.concat(SCHOOL_SM).concat(SITEMAP_SCHOOL_SUBJECT?SCHOOL_SUBJ_SM:[]).concat(SITEMAP_DONG_GRADE?DONG_GRADE_SM:[]); }
 // 실제 배포일 고정 — 콘텐츠를 실제로 변경해 배포할 때만 이 날짜를 갱신하세요 (YYYY-MM-DD)
-export const DEPLOY_DATE = "2026-09-14";
+export const DEPLOY_DATE = "2026-10-06";
 export function seoGuideMeta(){ return GUIDES.map(g=>({path:"/guides-"+g.slug,title:g.h1,desc:g.desc,date:g.date||DEPLOY_DATE})); }
 export function seoLastmod(path){ const m=path.match(/^\/guides-(.+)$/); if(m){ const g=GUIDES.find(x=>x.slug===m[1]); if(g&&g.date) return g.date; } return DEPLOY_DATE; }
