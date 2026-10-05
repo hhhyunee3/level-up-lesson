@@ -1121,7 +1121,8 @@ export function seoCoreSitemapPaths(){ return REGION_SM; }
 // 분할 사이트맵용. 코어는 sitemap-core.xml 이 따로 내므로 여기서 뺀다.
 // 이전에는 코어 7,270개가 sitemap-1.xml 에도 중복 수록됐다.
 export function seoLongTailPaths(){ return DONG_SM.concat(SCHOOL_SM).concat(SITEMAP_SCHOOL_SUBJECT?SCHOOL_SUBJ_SM:[]).concat(SITEMAP_DONG_GRADE?DONG_GRADE_SM:[]); }
-// 실제 배포일 고정 — 콘텐츠를 실제로 변경해 배포할 때만 이 날짜를 갱신하세요 (YYYY-MM-DD)
-export const DEPLOY_DATE = "2026-10-06";
+// 사이트맵 lastmod. 손으로 고치지 않는다 — ~/projects/deploy.sh 가 git 에서 본문이 마지막으로 바뀐 날을 읽어
+// CONTENT_DATE 로 넣는다(wrangler --define). 아래 값은 로컬 개발에서만 쓰이는 기본값.
+export const DEPLOY_DATE = typeof CONTENT_DATE !== "undefined" ? CONTENT_DATE : "2026-10-06";
 export function seoGuideMeta(){ return GUIDES.map(g=>({path:"/guides-"+g.slug,title:g.h1,desc:g.desc,date:g.date||DEPLOY_DATE})); }
 export function seoLastmod(path){ const m=path.match(/^\/guides-(.+)$/); if(m){ const g=GUIDES.find(x=>x.slug===m[1]); if(g&&g.date) return g.date; } return DEPLOY_DATE; }
