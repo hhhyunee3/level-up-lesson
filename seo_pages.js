@@ -37,6 +37,18 @@ const CSS=B.CSS+`
 .form-note{font-size:13px;color:#5E7E92;text-align:center;margin:14px 0 0}
 .lf-ok{display:none;padding:18px;border-radius:16px;background:#E8FBF1;border:1.5px solid #A9E5C6;color:#12603A;font-weight:700;text-align:center}
 .lf-ok.on{display:block}
+
+/* 신뢰 배지: ".trust div" 가 안쪽 글자 칸(div.k, div.v)에도 걸려 여백·테두리가 이중으로 들어갔다.
+   휴대폰에서 4칸이 첫 화면 대부분을 차지하던 원인. 안쪽 칸의 여백과 테두리를 지운다. */
+.trust div div{padding:0!important;border:0!important}
+/* 모바일 가독성: 입력칸 16px(아이폰이 15px 이하 입력칸을 누르면 화면을 확대한다), 작은 링크 터치 높이 */
+@media(max-width:720px){
+.field input,.field select,.field textarea{font-size:16px}
+input:not([type=checkbox]):not([type=radio]),select,textarea{font-size:16px!important}
+.crumb{font-size:13.5px}.crumb a{display:inline-block;padding:8px 0}
+footer a{display:inline-block;padding:8px 0}
+.trust .v{font-size:14px}.trust>div{padding:14px 16px}
+}
 `;
 const SUBJ_KEYS=Object.keys(SUBJECTS);
 const BASE_KEYS=["math","english","korean","social","science"];
