@@ -1,3 +1,4 @@
+import { guardResponse } from './telguard.js'; // 전화번호: 푸터에서 삭제, PC 너비에서 숨김 (2026-10-10)
 // 레벨업과외 — Cloudflare Worker
 // 요청마다 페이지를 동적으로 생성·서빙하고, 상담 신청(/api/inquiry)을 처리합니다.
 // 배포:  npx wrangler deploy   (자세한 내용은 README.md / wrangler.toml 참고)
@@ -138,7 +139,7 @@ async function handleInquiry(request, env) {
     console.log("상담 신청 저장 실패 — 사유:", lastError);
     return json({
       ok: false,
-      error: "접수 중 문제가 발생했습니다. 번거로우시겠지만 010-3038-8978 로 전화 주시면 바로 도와드리겠습니다.",
+      error: "접수 중 문제가 발생했습니다. 잠시 후 다시 시도해 주세요.",
     }, 500);
   }
   return json({ ok: true });
@@ -276,7 +277,7 @@ async function handleCallClick(request, env) {
   return new Response("ok");
 }
 
-export default {
+const __APP = {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
     const path = url.pathname;
@@ -444,3 +445,6 @@ export default {
     }
   },
 };
+
+// 모든 HTML 응답을 telguard 로 한 번 거친다 (fetch 만 감싸고 scheduled 등 나머지는 그대로)
+export default { ...__APP, fetch: (req, env, ctx) => guardResponse(__APP.fetch(req, env, ctx)) };
