@@ -62,8 +62,9 @@ async function handleInquiry(request, env) {
     hour: "2-digit", minute: "2-digit", hour12: true,
   });
 
-  // 사람에게 보이지 않는 칸이 채워져 있으면 봇이다. 접수한 척하고 버린다.
-  if (String(data.hp || "").trim()) return json({ ok: true });
+  // 보이지 않는 칸이 채워졌으면 봇 의심. 사람을 놓치지 않도록 버리지 않고 메일·텔레그램·KV 모두 보내되,
+  // 제목에 [봇 의심]을 붙이고 KV 키에 suspect 를 넣는다. 구글 시트에는 넣지 않는다(2026-11-05).
+  const hp = String(data.hp || "").trim();
 
   const record = {
     site: env.SITE_NAME || "레벨업과외",
@@ -79,6 +80,20 @@ async function handleInquiry(request, env) {
     at: new Date().toISOString(),
     atDisplay,
   };
+  if (hp) Object.assign(record, { flag: "봇 의심", hp: hp.slice(0, 200) });
+
+  // 2026-11-05 알림 이중화: KV 보관을 맨 먼저 한다. "접수 완료"는 KV 저장이 성공했을 때만.
+  // KV 가 실패하면 전화 안내 오류를 돌려준다. 메일·시트·텔레그램은 그 뒤에, 실패해도 접수 결과에 영향 없음.
+  try {
+    if (!env.INQUIRY) throw new Error("INQUIRY 바인딩 없음");
+    const t = new Date().toISOString().replace(/[-:T.]/g, "").slice(0, 14);
+    await env.INQUIRY.put(t + "-level-up-lesson.com-" + (record.flag ? "suspect-" : "") + Math.random().toString(36).slice(2, 8),
+      JSON.stringify({ domain: "level-up-lesson.com", ...record }), { expirationTtl: 60 * 60 * 24 * 365 });
+  } catch (e) {
+    console.log("KV 보관 실패:", e && e.message ? e.message : e);
+    return json({ ok: false, error: "접수 중 문제가 생겼습니다. 번거로우시겠지만 010-3038-8978 로 전화나 문자 주시면 바로 상담 도와드리겠습니다." }, 500);
+  }
+  const tgPromise = sendInquiryTelegram(env, record).then((v) => (v ? "성공" : "건너뜀"), (e) => { console.log("텔레그램 실패:", e && e.message ? e.message : e); return "실패"; });
 
   // 상담 신청은 이 사이트의 유일한 전환 지점이다.
   // 이전에는 메일·시트가 모두 실패해도 ok:true 를 돌려줘서, 학부모에게는
@@ -96,7 +111,7 @@ async function handleInquiry(request, env) {
       const to = env.NOTIFY_TO || NOTIFY_TO_DEFAULT;
       const from = env.NOTIFY_FROM || "noreply@level-up-lesson.com";
       const subjLabel = record.subjects.length ? record.subjects.join("·") + " " : "";
-      const subject = "[레벨업과외] " + subjLabel + "상담 신청 - " + name;
+      const subject = (record.flag ? "[봇 의심] " : "") + "[레벨업과외] " + subjLabel + "상담 신청 - " + name;
       const raw = buildMime({ from, fromName: "레벨업과외", to, subject, html: renderEmailHtml(record) });
       // 런타임에 따라 EmailMessage 생성자 대신 객체 형태만 받는 경우가 있다.
       // 한쪽이 막히면 다른 쪽으로 한 번 더 시도한다.
@@ -119,10 +134,11 @@ async function handleInquiry(request, env) {
 
   // ───────── 2) 구글 시트 기록 (Apps Script 웹앱) ─────────
   try {
-    if (env.SHEET_WEBHOOK_URL) {
+    if (env.SHEET_WEBHOOK_URL && !record.flag) {
       const r = await fetch(env.SHEET_WEBHOOK_URL, {
         method: "POST",
         headers: { "content-type": "application/json" },
+        signal: AbortSignal.timeout(5000),
         body: JSON.stringify(record),
       });
       sheetOk = r.ok;
@@ -132,17 +148,24 @@ async function handleInquiry(request, env) {
     console.log("구글 시트 기록 실패:", e && e.message ? e.message : e);
   }
 
-  console.log("새 상담 신청:", JSON.stringify(record), "| 메일:", mailOk, "| 시트:", sheetOk);
-
-  if (!mailOk && !sheetOk) {
-    // 어디에도 남지 않았다. 완료라고 말하면 신청이 그대로 사라진다.
-    console.log("상담 신청 저장 실패 — 사유:", lastError);
-    return json({
-      ok: false,
-      error: "접수 중 문제가 발생했습니다. 잠시 후 다시 시도해 주세요.",
-    }, 500);
-  }
+  const tgOk = await tgPromise;
+  console.log((record.flag ? "상담 신청(봇 의심)" : "상담 신청") + " 레벨업과외 | 보관: 성공 | 메일:", mailOk, "| 시트:", sheetOk, "| 텔레그램:", tgOk, "| 페이지:", record.page, lastError ? "| 메일 오류: " + lastError : "");
   return json({ ok: true });
+}
+
+// 상담 신청 텔레그램 알림: 첫 줄 [레벨업과외]. 5초 넘으면 끊는다. 실패해도 접수에는 영향 없음.
+async function sendInquiryTelegram(env, r) {
+  const token = env.TELEGRAM_BOT_TOKEN, chat = env.TELEGRAM_CHAT_ID;
+  if (!token || !chat) return false;
+  const lines = [(r.flag ? "⚠️ [봇 의심] " : "") + "[레벨업과외] 새 상담 신청", r.flag ? "숨은 칸 값: " + r.hp : "",
+    "학생: " + r.name + (r.grade ? " · " + r.grade : "") + (r.subjects.length ? " · " + r.subjects.join("·") : ""),
+    "연락처: " + r.phone, "주소: " + (r.address || "-"), "내용: " + (r.message || "-"), "유입: " + (r.page || "-"), r.atDisplay];
+  const res = await fetch("https://api.telegram.org/bot" + token + "/sendMessage", {
+    method: "POST", headers: { "content-type": "application/json" }, signal: AbortSignal.timeout(5000),
+    body: JSON.stringify({ chat_id: chat, text: lines.join("\n"), disable_web_page_preview: true }),
+  });
+  if (!res.ok) throw new Error("텔레그램 응답 " + res.status);
+  return true;
 }
 
 // UTF-8 문자열을 RFC 2047 인코딩 워드(=?UTF-8?B?...?=)로 변환 — 한글 제목/이름용
@@ -217,6 +240,9 @@ function buildMime({ from, fromName, to, subject, html }) {
     "From: " + fromHeader,
     "To: " + to,
     "Subject: " + encodeWord(subject),
+    // 2026-11-05: Date·Message-ID 가 없으면 Cloudflare 스팸 점수 5점(기준 5)으로 거부된다(10월 4건 유실).
+    "Date: " + new Date().toUTCString().replace("GMT", "+0000"),
+    "Message-ID: <" + crypto.randomUUID() + "@" + from.split("@")[1] + ">",
     "MIME-Version: 1.0",
     "Content-Type: text/html; charset=utf-8",
     "Content-Transfer-Encoding: base64",
