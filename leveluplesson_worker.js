@@ -1,3 +1,4 @@
+import { withCapture, inquirySource, describeRef, pageUrl, tgPayload, tgPreview } from './inqsrc.js'; // 신청 페이지·처음 들어온 페이지·유입 (2026-11-05)
 import { guardResponse } from './telguard.js'; // 전화번호: 푸터에서 삭제, PC 너비에서 숨김 (2026-10-10)
 // 레벨업과외 — Cloudflare Worker
 // 요청마다 페이지를 동적으로 생성·서빙하고, 상담 신청(/api/inquiry)을 처리합니다.
@@ -81,6 +82,8 @@ async function handleInquiry(request, env) {
     atDisplay,
   };
   if (hp) Object.assign(record, { flag: "봇 의심", hp: hp.slice(0, 200) });
+  record.agree = data.agree === true ? "Y" : ""; // 개인정보 수집·이용 동의 체크 (2026-11-08)
+  Object.assign(record, inquirySource(data, "https://level-up-lesson.com", record.page)); // 신청 페이지·처음 들어온 페이지(전체 URL)·유입
 
   // 2026-11-05 알림 이중화: KV 보관을 맨 먼저 한다. "접수 완료"는 KV 저장이 성공했을 때만.
   // KV 가 실패하면 전화 안내 오류를 돌려준다. 메일·시트·텔레그램은 그 뒤에, 실패해도 접수 결과에 영향 없음.
@@ -155,14 +158,19 @@ async function handleInquiry(request, env) {
 
 // 상담 신청 텔레그램 알림: 첫 줄 [레벨업과외]. 5초 넘으면 끊는다. 실패해도 접수에는 영향 없음.
 async function sendInquiryTelegram(env, r) {
+  // 이모티콘 없이 항목 이름으로 구분(2026-11-05). TG_PREVIEW(로컬 --var)면 보낼 내용을 로그로 남긴다.
+  const lines = ["[레벨업과외]" + (r.flag ? " [봇 의심]" : "") + " 새 상담 신청", r.flag ? "숨은 칸 값: " + r.hp : "", "",
+    "학생: " + r.name, "연락처: " + r.phone,
+    r.grade ? "학년: " + r.grade : "", r.subjects.length ? "과목: " + r.subjects.join("·") : "",
+    "주소: " + (r.address || "-"), "내용: " + (r.message || "-"),
+    "신청 페이지: " + (r.pageUrl || "-"), "처음 들어온 페이지: " + (r.firstUrl || "-"), "유입: " + (r.source || "-"),
+    "접수: " + r.atDisplay].filter((x, i) => x || i === 2);
+  if (env.TG_PREVIEW) console.log("[텔레그램 미리보기]\n" + tgPreview(lines.join("\n")));
   const token = env.TELEGRAM_BOT_TOKEN, chat = env.TELEGRAM_CHAT_ID;
   if (!token || !chat) return false;
-  const lines = [(r.flag ? "⚠️ [봇 의심] " : "") + "[레벨업과외] 새 상담 신청", r.flag ? "숨은 칸 값: " + r.hp : "",
-    "학생: " + r.name + (r.grade ? " · " + r.grade : "") + (r.subjects.length ? " · " + r.subjects.join("·") : ""),
-    "연락처: " + r.phone, "주소: " + (r.address || "-"), "내용: " + (r.message || "-"), "유입: " + (r.page || "-"), r.atDisplay];
   const res = await fetch("https://api.telegram.org/bot" + token + "/sendMessage", {
     method: "POST", headers: { "content-type": "application/json" }, signal: AbortSignal.timeout(5000),
-    body: JSON.stringify({ chat_id: chat, text: lines.join("\n"), disable_web_page_preview: true }),
+    body: JSON.stringify(tgPayload(chat, lines.join("\n"))),
   });
   if (!res.ok) throw new Error("텔레그램 응답 " + res.status);
   return true;
@@ -209,8 +217,9 @@ function renderEmailHtml(r) {
   rows += '<tr><td style="' + cell + '">문의 내용</td>' +
     '<td style="padding:14px 0;font-size:15px;line-height:1.6;color:' + ink + ';border-bottom:1px solid ' + line + ';">' + message + '</td></tr>';
 
-  rows += '<tr><td style="' + cell + '">유입 페이지</td>' +
-    '<td style="padding:14px 0;font-size:13.5px;color:#7C8A99;">' + escapeHtml(r.page || "-") + '</td></tr>';
+  const link = (k, u) => '<tr><td style="' + cell + '">' + k + '</td><td style="padding:14px 0;font-size:13.5px;border-bottom:1px solid ' + line + ';">' + (u ? '<a href="' + escapeHtml(u) + '" style="color:#2563EB;word-break:break-all;">' + escapeHtml(decodeURI(u)) + '</a>' : '-') + '</td></tr>';
+  rows += link("신청 페이지", r.pageUrl) + link("처음 들어온 페이지", r.firstUrl) +
+    '<tr><td style="' + cell + '">유입</td><td style="padding:14px 0;font-size:13.5px;color:#7C8A99;">' + escapeHtml(r.source || "-") + '</td></tr>';
 
   return '<!doctype html><html><body style="margin:0;padding:24px 12px;background:#F3F7FA;' +
     'font-family:-apple-system,BlinkMacSystemFont,Apple SD Gothic Neo,Malgun Gothic,sans-serif;">' +
@@ -278,7 +287,7 @@ async function handleCallClick(request, env) {
   // 알림이 실패해도 방문자 화면에는 아무 영향이 없어야 한다. 항상 ok 로 답한다.
   try {
     const token = env.TELEGRAM_BOT_TOKEN, chat = env.TELEGRAM_CHAT_ID;
-    if (!token || !chat) return new Response("ok");
+    if ((!token || !chat) && !env.TG_PREVIEW) return new Response("ok");
     const d = await request.json().catch(() => ({}));
     const at = new Date(Date.now() + 9 * 3600 * 1000).toISOString().slice(0, 16).replace("T", " ");
     let ref = "";
@@ -286,18 +295,19 @@ async function handleCallClick(request, env) {
     let page = "";
     try { page = d.page ? decodeURIComponent(new URL(d.page).pathname) : ""; } catch (e) { page = ""; }
     const lines = [
-      d.type === "sms" ? "문자 버튼 눌림" : "전화 버튼 눌림",
-      "시각: " + at,
-      "페이지: " + esc4tg(d.title || page),
-      page ? "주소: " + esc4tg(page) : "",
+      "[레벨업과외] " + (d.type === "sms" ? "문자 버튼 눌림" : "전화 버튼 눌림"),
+      "지금 페이지: " + (pageUrl("https://level-up-lesson.com", (() => { try { return new URL(d.page).pathname; } catch (e) { return ""; } })()) || "-"),
       d.label ? "버튼: " + esc4tg(d.label) : "",
+      "유입: " + (d.ref ? describeRef(d.ref, "level-up-lesson.com") : "직접 (주소 입력·즐겨찾기·앱 등)"),
       "기기: " + (d.mobile ? "모바일" : "PC"),
-      ref ? "유입: " + esc4tg(ref) : "",
+      "시각: " + at + " (KST)",
     ].filter(Boolean);
+    if (env.TG_PREVIEW) console.log("[텔레그램 미리보기]\n" + tgPreview(lines.join("\n")));
+    if (!token || !chat) return new Response("ok");
     await fetch("https://api.telegram.org/bot" + token + "/sendMessage", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ chat_id: chat, text: lines.join("\n"), disable_web_page_preview: true }),
+      body: JSON.stringify(tgPayload(chat, lines.join("\n"))),
     });
   } catch (e) { /* 알림 실패는 무시 */ }
   return new Response("ok");
@@ -473,4 +483,4 @@ const __APP = {
 };
 
 // 모든 HTML 응답을 telguard 로 한 번 거친다 (fetch 만 감싸고 scheduled 등 나머지는 그대로)
-export default { ...__APP, fetch: (req, env, ctx) => guardResponse(__APP.fetch(req, env, ctx)) };
+export default { ...__APP, fetch: (req, env, ctx) => withCapture(guardResponse(__APP.fetch(req, env, ctx))) };

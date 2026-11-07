@@ -208,6 +208,10 @@
   .btn-submit:hover{background:var(--blue-2);transform:translateY(-1px)}
   .btn-submit:disabled{opacity:.6;cursor:default;transform:none}
   .form-note{font-size:13px;color:#888;text-align:center;margin-top:14px}
+  .privacy-agree{display:flex;align-items:flex-start;gap:10px;margin:4px 0 14px;font-size:13.5px;line-height:1.6;color:var(--ink-2);cursor:pointer}
+  .privacy-agree input{width:18px;height:18px;flex:0 0 18px;margin:2px 0 0;accent-color:var(--blue)}
+  .privacy-agree small{display:block;font-size:12.5px;color:#888}
+  .privacy-agree a{color:var(--blue);text-decoration:underline}
   .hp-field{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
   .form-success{display:none;text-align:center;padding:30px 0}
   .form-success.show{display:block;animation:fadeInUp .6s both}
@@ -455,6 +459,7 @@
 
 <main>
 {{MAIN}}</main>
+{{FOOTER}}
 
 <!-- ───────── 플로팅 버튼 ───────── -->
 <div class="flo-pc" aria-label="빠른 상담">
@@ -544,10 +549,12 @@
       const road = $('[name="addrRoad"]').value.trim(), detail = $('[name="addrDetail"]').value.trim();
       if (!road){ addrBtn.focus(); alert('주소 찾기로 도로명 주소를 선택해주세요.'); return; }
       if (!detail){ $('[name="addrDetail"]').focus(); alert('상세주소를 입력해주세요.'); return; }
+      const agree = f['privacy_agree'];
+      if (agree && !agree.checked){ agree.focus(); alert('개인정보 수집·이용에 동의해주세요.'); return; }
       const address = '[' + ($('[name="postcode"]').value.trim() || '-') + '] ' + road + ', ' + detail;
       const subjects = [...form.querySelectorAll('input[name="subject"]:checked')].map((c) => c.value);
       if (!subjects.length && form.dataset.subject) subjects.push(form.dataset.subject);
-      const payload = { name, phone: v.join('-'), grade: f['grade'] ? f['grade'].value : '', subjects, address, message: f['message'].value.trim(), hp: f['hp'].value, page: pageName() + ' · ' + location.pathname };
+      const payload = { name, phone: v.join('-'), grade: f['grade'] ? f['grade'].value : '', subjects, address, message: f['message'].value.trim(), hp: f['hp'].value, agree: !!(agree && agree.checked), page: pageName() + ' · ' + location.pathname, ctx_p: location.pathname + location.search, ctx_f: (function(k){try{return sessionStorage.getItem(k)||''}catch(e){return ''}})('cn_f'), ctx_r: (function(k){try{return sessionStorage.getItem(k)||''}catch(e){return ''}})('cn_r') };
       const btn = form.querySelector('button[type="submit"]');
       const label = btn.textContent; btn.disabled = true; btn.textContent = '보내는 중...';
       try {

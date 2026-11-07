@@ -31,6 +31,10 @@
     <div class="field full"><label for="{{P}}message">문의 내용</label><textarea id="{{P}}message" name="message" placeholder="현재 성적, 고민, 원하는 수업 방식 등을 자유롭게 적어주세요."></textarea></div>
     <!-- 스팸 방지용 숨김 칸 (사람은 채우지 않음) -->
     <div class="hp-field" aria-hidden="true"><label for="{{P}}hp">홈페이지</label><input id="{{P}}hp" name="hp" type="text" tabindex="-1" autocomplete="off" /></div>
+    <label class="privacy-agree" for="{{P}}agree">
+      <input id="{{P}}agree" name="privacy_agree" type="checkbox" required />
+      <span><strong>[필수]</strong> 개인정보 수집·이용에 동의합니다.<small>수집 항목: 이름, 연락처, 학년, 희망 과목, 주소, 문의 내용 / 목적: 과외 상담 및 수업 안내 / 보유 기간: 상담 완료 후 1년 · <a href="/privacy" target="_blank" rel="noopener">전문 보기</a></small></span>
+    </label>
     <button type="submit" class="btn-submit">상담 신청하기</button>
     <p class="form-note">남겨주신 정보는 상담 안내 목적으로만 사용됩니다.</p>
   </form>

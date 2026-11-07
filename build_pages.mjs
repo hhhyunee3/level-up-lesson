@@ -9,6 +9,7 @@
 //   실행:  node build_pages.mjs   →  site_pages.js 가 다시 만들어진다 (이 파일을 커밋)
 import { readFileSync, writeFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
+import { siteFooter } from "./footer.js"; // 공통 푸터(사업자 정보). {{YEAR}} 는 워커가 응답 때 채운다
 
 const DIR = "src/pages";
 const BASE = "https://level-up-lesson.com";
@@ -54,6 +55,7 @@ for (const f of readdirSync(DIR).sort()) {
     .replace("{{EXTRA_HEAD}}", head)
     .replace("{{EXTRA_CSS}}", css ? "<style>\n" + css + "\n</style>" : "")
     .replace("{{BODY_CLASS}}", path === "/" ? "page-home" : "page-sub")
+    .replace("{{FOOTER}}", () => siteFooter({ year: "{{YEAR}}" }))
     .replace("{{MAIN}}", body);
   pages[path] = { title, html };
   console.log("built", path, "←", f, "(" + html.length + " chars)");

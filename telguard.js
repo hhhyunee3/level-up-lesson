@@ -5,17 +5,20 @@
 //  head 의 meta·JSON-LD(검색엔진용)와 script·style 안은 건드리지 않는다.
 const TEL = '010-3038-8978';
 const TEL_RE = /010[-.\s]?3038[-.\s]?8978/g;
-const CSS = '<style id="pc-tel">@media (min-width:901px){.pc-hide,a[href^="tel:"],.callmodal,#callmodal{display:none!important}}</style>';
+// 2026-11-08: 사업자 정보 푸터(<footer class="site-footer">, a.biz-tel)는 비즈채널 검수용이라 번호를 그대로 두고 PC 에서도 보인다.
+const CSS = '<style id="pc-tel">@media (min-width:901px){.pc-hide,a[href^="tel:"]:not(.biz-tel),.callmodal,#callmodal{display:none!important}}</style>';
 
 function wrapText(seg) {
   // 태그 바깥 텍스트에만 번호 감싸기. script/style/textarea/title/noscript 블록은 먼저 빼 두었다가 되돌린다
   // (스크립트 안의 '<' 때문에 태그 경계를 잘못 읽는 일을 막는다).
   const keep = [];
   let x = seg.replace(/<(script|style|textarea|title|noscript)\b[\s\S]*?<\/\1>/gi, m => `\u0000${keep.push(m) - 1}\u0000`);
+  x = x.replace(/<footer\b[^>]*\bsite-footer\b[\s\S]*?<\/footer>/gi, m => `\u0000${keep.push(m) - 1}\u0000`); // 사업자 정보 푸터는 그대로
   x = x.split(/(<[^>]+>)/).map(p => p.startsWith('<') ? p : p.replace(TEL_RE, s => `<span class="pc-hide">${s}</span>`)).join('');
   return x.replace(/\u0000(\d+)\u0000/g, (_, i) => keep[+i]);
 }
 function cleanFooter(f) {
+  if (/^<footer\b[^>]*\bsite-footer\b/i.test(f)) return f; // 사업자 정보 푸터는 그대로
   let x = f.replace(/<a\b[^>]*href="tel:[^"]*"[^>]*>[\s\S]*?<\/a>/gi, '');
   x = x.replace(/(\s*[·|ㆍ]\s*)?(대표\s*)?(상담|전화|문의|번호|연락처|Tel\.?|TEL|☎|📞)?\s*[:：]?\s*010[-.\s]?3038[-.\s]?8978(\s*[·|ㆍ]\s*(문자\s*상담|문자|카톡)?)?/g, '');
   x = x.replace(/<(span|p|div|li|strong|b|em)\b[^>]*>\s*<\/\1>/gi, '');
