@@ -8,7 +8,7 @@ import html, json, os
 BASE = "https://level-up-lesson.com"
 LANG = {
     "en": {"name": "영어", "main": "/english-conversation", "mainLabel": "영어 회화 메인", "hero": "/img/lang/hero-1.jpg",
-           "teachers": [("/img/lang/tutor-%d.jpg" % i, 480, 713) for i in (1, 2, 3, 4)], "tcap": "검증된 영어 강사진 (일부)"},
+           "teachers": [("/img/lang/tutor-%d.jpg" % i, 480, 713) for i in (1, 2, 3, 4)], "tcap": "영어 강사진 소개 (일부)"},
     "jp": {"name": "일본어", "main": "/japanese", "mainLabel": "일본어 회화 메인", "hero": "/img/jp/hero.jpg",
            "teachers": [("/img/jp/teacher-%d.png" % i, 144, 194) for i in (1, 2, 3, 4)], "tcap": "일본어 강사진 (일부)"},
     "cn": {"name": "중국어", "main": "/chinese", "mainLabel": "중국어 회화 메인", "hero": "/img/cn/hero-1.jpg",
