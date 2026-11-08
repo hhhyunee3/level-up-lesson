@@ -3,7 +3,7 @@
 //   · 홈·하위 페이지(src/pages/*.html) → build_pages.mjs 가 shell.html 의 {{FOOTER}} 자리에 넣는다 (site_pages.js 다시 빌드)
 //   · 지역·학교·가이드 등 자동 생성 페이지 → seo_pages.js 가 응답 때 siteFooter() 를 부른다
 // 전화번호는 telguard.js 가 <footer class="site-footer"> 안은 지우지 않고, a.biz-tel 은 PC 에서도 보이게 둔다.
-// 사업자등록번호·교습자 신고번호는 없으므로 넣지 않는다. 이용약관·수업료 안내 링크는 페이지가 생긴 뒤 넣는다.
+// 사업자등록번호(bizNo)·교습자 신고번호(tutorNo)는 아직 없다. 값이 비어 있으면 그 줄을 화면에 내지 않는다 — 생기면 아래에 채우기만 하면 된다. 이용약관·수업료 안내 링크는 페이지가 생긴 뒤 넣는다.
 
 export const BIZ = {
   name: "레벨업과외",
@@ -11,6 +11,8 @@ export const BIZ = {
   address: "서울특별시 금천구 디지털로 178",
   tel: "010-3038-8978",
   email: "hhhyunee3@naver.com",
+  bizNo: "",    // 사업자등록번호 (예: "123-45-67890")
+  tutorNo: "",  // 개인과외교습자 신고번호
 };
 
 export const FOOTER_CSS = `<style id="site-footer-css">
@@ -40,7 +42,7 @@ export function siteFooter(opts = {}) {
   <div class="footer-inner">
     <p class="footer-brand">${esc(BIZ.name)}${note}</p>
     <p>
-      상호: ${esc(BIZ.name)} | 대표: ${esc(BIZ.owner)}<br>
+      상호: ${esc(BIZ.name)} | 대표: ${esc(BIZ.owner)}${BIZ.bizNo ? " | 사업자등록번호: " + esc(BIZ.bizNo) : ""}${BIZ.tutorNo ? " | 교습자 신고번호: " + esc(BIZ.tutorNo) : ""}<br>
       주소: ${esc(BIZ.address)}<br>
       전화: <a class="biz-tel" href="tel:${BIZ.tel}">${BIZ.tel}</a> | 이메일: <a href="mailto:${BIZ.email}">${BIZ.email}</a>
     </p>

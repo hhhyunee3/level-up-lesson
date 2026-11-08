@@ -542,7 +542,11 @@ function regionsPage(){
 <h2 style="font-size:20px;font-weight:800;letter-spacing:-.02em;margin:0 0 14px">학교 이름으로 찾기</h2>
 <div style="display:flex;flex-wrap:wrap;gap:9px;margin:0 0 34px"><a href="/schools" style="display:inline-block;padding:9px 15px;background:var(--sky-tint);border:1px solid var(--sky-edge);border-radius:999px;color:var(--sky-deep);text-decoration:none;font-size:14.5px;font-weight:700">학교별 과외 찾기 →</a></div>
 <h2 style="font-size:20px;font-weight:800;letter-spacing:-.02em;margin:0 0 14px">과목별 안내</h2>
-<div style="display:flex;flex-wrap:wrap;gap:9px">${sjc}</div>`});
+<div style="display:flex;flex-wrap:wrap;gap:9px">${sjc}</div>
+<h2 style="font-size:20px;font-weight:800;letter-spacing:-.02em;margin:34px 0 12px">지역별 수업, 이렇게 진행됩니다</h2>
+<p style="line-height:1.85;color:var(--ink-2)"><b>대상</b> — 초등학생부터 고등학생·재수생, 검정고시 준비생과 외국어를 배우려는 성인까지 1:1로 수업합니다. 시·도를 고르면 그 지역 시·군·구와 동별 안내가 이어집니다.</p>
+<p style="line-height:1.85;color:var(--ink-2)"><b>수업 방식</b> — 선생님이 댁으로 가는 방문 수업과, 집에서 화면으로 하는 화상 수업 중에서 고릅니다. 방문은 지역과 이동 거리에 따라 가능한 시간대가 달라질 수 있고, 화상은 지역과 상관없이 연결됩니다.</p>
+<p style="line-height:1.85;color:var(--ink-2)"><b>커리큘럼</b> — 첫 수업에서 레벨을 진단해 막힌 지점을 찾고, 학생이 다니는 학교의 진도와 시험 일정에 맞춰 단원 순서와 분량을 정합니다. 시작 전 30분 무료 체험수업으로 선생님과 맞는지 먼저 확인할 수 있습니다.</p>`});
 }
 
 function sidoPage(sd){
@@ -592,7 +596,7 @@ function sidoPage(sd){
 <div style="background:var(--sky-tint);border:1px solid var(--sky-edge);border-radius:14px;padding:18px 20px"><div style="font-weight:800;color:var(--sky-deep);margin-bottom:7px">고등</div><div style="color:var(--ink-2);font-size:14.5px;line-height:1.75">내신과 모의고사를 같이 봐야 합니다. 목표를 먼저 정하고 남은 시간을 과목별로 나누는 것부터 잡습니다.</div></div></div>`;
 
   const faq = [
-    [`${sdNm} 어디까지 방문이 되나요?`, `${sdFull} ${gs.length}개 시·군·구 전 지역에서 진행합니다. 다만 방문은 선생님 이동 시간이 있어, 동네에 따라 가능한 시간대가 달라질 수 있습니다. 주소를 알려주시면 바로 확인해 드립니다.`],
+    [`${sdNm} 어디까지 방문이 되나요?`, `${sdFull} ${gs.length}개 시·군·구 전 지역에서 진행합니다. 다만 방문은 선생님 이동 시간이 있어, 동네에 따라 가능한 시간대가 달라질 수 있습니다. 동네를 알려주시면 바로 확인해 드립니다.`],
     ["무료 체험수업은 정말 비용이 없나요?", "네. 체험수업 후에 시작하지 않으셔도 비용은 없습니다. 맞는지 먼저 보시라고 두는 과정입니다."],
     ["선생님이 안 맞으면 바꿀 수 있나요?", "가능합니다. 수업 방식이나 성향이 안 맞는 건 흔한 일이라, 말씀 주시면 다시 찾아 연결해 드립니다."],
     ["과목을 여러 개 해도 되나요?", "됩니다. 한 선생님이 여러 과목을 보기도 하고, 과목별로 나누기도 합니다. 학생 상황에 맞춰 정하시면 됩니다."],
@@ -695,6 +699,9 @@ function inlineForm(x){
   const inPick=PICK.includes(subjOnly);
   const preSubj=inPick?subjOnly:"";
   const preEtc=(!inPick&&subjOnly)?subjOnly:"";
+  // 희망 지역(선택): 페이지 지역으로 미리 채운다. area 예 "서울 강남구 역삼동"
+  const lfSido=(area.match(/^(서울|부산|대구|인천|광주|대전|울산|세종|경기|강원|충북|충남|전북|전남|경북|경남|제주)/)||[])[1]||"";
+  const lfDetail=lfSido?area.slice(lfSido.length).trim():"";
   const GRP=[["초등",["초1","초2","초3","초4","초5","초6"]],["중등",["중1","중2","중3"]],["고등",["고1","고2","고3","재수·N수"]],["기타",["성인"]]];
   return `<div class="lf-panel">
 <h3>${esc(x.region||area)}${esc(msgSubj)}, 무료 상담부터</h3>
@@ -711,44 +718,31 @@ function inlineForm(x){
 <div class="field"><label for="lf-g">학생 학년</label><select id="lf-g"><option value="">선택해주세요</option>${GRP.map(([lab,vs])=>`<optgroup label="${lab}">${vs.map(v=>`<option${v===preG?" selected":""}>${v}</option>`).join("")}</optgroup>`).join("")}</select></div>
 <div class="field"><label>희망 과목</label><div class="subj-pick">${PICK.map(v=>`<label><input type="checkbox" name="lf-subj" value="${v}"${v===preSubj?" checked":""}>${v}</label>`).join("")}<label><input type="checkbox" id="lf-etc-on"${preEtc?" checked":""}>직접 입력</label></div>
 <input id="lf-etc" type="text" placeholder="예: 미적분, 확률과통계, 생활과윤리" value="${esc(preEtc)}" style="margin-top:10px${preEtc?"":";display:none"}" /></div>
-<div class="field full"><label for="lf-pc">주소 <span class="req">*</span></label>
-<div class="addr-row"><input id="lf-pc" type="text" placeholder="우편번호" readonly /><button type="button" id="lf-addr" class="addr-btn">주소 찾기</button></div>
-<input id="lf-rd" type="text" placeholder="도로명 주소" readonly />
-<input id="lf-dt" type="text" placeholder="상세주소 (동·호수 등)" required />
+<div class="field full"><label for="lf-rg">희망 지역 <span style="font-weight:500;color:var(--muted)">(선택)</span></label>
+<div style="display:grid;grid-template-columns:minmax(0,180px) 1fr;gap:8px"><select id="lf-rg"><option value="">시·도 선택</option>${["서울", "부산", "대구", "인천", "광주", "대전", "울산", "세종", "경기", "강원", "충북", "충남", "전북", "전남", "경북", "경남", "제주"].map(v=>`<option${lfSido===v?" selected":""}>${v}</option>`).join("")}<option value="화상 수업">화상 수업 (지역 무관)</option></select>
+<input id="lf-dt" type="text" placeholder="시·군·구, 동 (예: 금천구 가산동)" value="${esc(lfDetail)}" autocomplete="off" /></div>
 </div>
 <div class="field full"><label for="lf-m">문의 내용</label><textarea id="lf-m" placeholder="현재 성적, 고민, 원하는 수업 방식 등을 자유롭게 적어주세요.">${esc(msg)}</textarea></div>
 <input id="lf-hp" type="text" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px" />
-<label class="privacy-agree" for="lf-agree"><input id="lf-agree" type="checkbox" required /><span><strong>[필수]</strong> 개인정보 수집·이용에 동의합니다.<small>수집 항목: 이름, 연락처, 학년, 희망 과목, 주소, 문의 내용 / 목적: 과외 상담 및 수업 안내 / 보유 기간: 상담 완료 후 1년 · <a href="/privacy" target="_blank" rel="noopener">전문 보기</a></small></span></label>
+<label class="privacy-agree" for="lf-agree"><input id="lf-agree" type="checkbox" required /><span><strong>[필수]</strong> 개인정보 수집·이용에 동의합니다.<small>수집 항목: 이름, 연락처, 학년, 희망 과목, 희망 지역(선택), 문의 내용 / 목적: 과외 상담 및 수업 안내 / 보유 기간: 상담 완료 후 1년 · <a href="/privacy" target="_blank" rel="noopener">전문 보기</a></small></span></label>
 <button type="submit" class="lf-submit">상담 신청하기</button>
 <p class="form-note">남겨주신 정보는 상담 안내 목적으로만 사용됩니다.</p>
 </form>
 <div class="lf-ok" id="lf-ok">신청이 접수되었습니다. 확인 후 빠르게 연락드리겠습니다.</div>
 </div>
 </div>
-<script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <script>(function(){
 var f=document.getElementById("lf");if(!f)return;
 var ok=document.getElementById("lf-ok"),card=f.parentNode,b=f.querySelector(".lf-submit");
 var g=function(i){var e=document.getElementById(i);return e?(e.value||"").trim():""};
-var ab=document.getElementById("lf-addr");
-ab.addEventListener("click",function(){
-  if(!window.daum||!daum.Postcode){alert("주소 검색을 불러오지 못했습니다. 상세주소에 직접 입력해 주세요.");return}
-  new daum.Postcode({oncomplete:function(d){
-    document.getElementById("lf-pc").value=d.zonecode;
-    document.getElementById("lf-rd").value=d.roadAddress||d.jibunAddress;
-    document.getElementById("lf-dt").focus();
-  }}).open();
-});
 var etcOn=document.getElementById("lf-etc-on"),etc=document.getElementById("lf-etc");
 etcOn.addEventListener("change",function(){etc.style.display=etcOn.checked?"":"none";if(etcOn.checked)etc.focus()});
 f.addEventListener("submit",function(e){e.preventDefault();
   var n=g("lf-n"),p=[g("lf-p1"),g("lf-p2"),g("lf-p3")].filter(Boolean).join("-");
-  var rd=g("lf-rd"),dt=g("lf-dt");
   if(!n){alert("학생 이름을 입력해주세요.");return}
   if(!/^\\d{2,3}-\\d{3,4}-\\d{4}$/.test(p)){alert("학부모 연락처를 정확히 입력해주세요.");return}
-  if(!dt){alert("주소를 입력해주세요.");return}
   var ag=document.getElementById("lf-agree");if(ag&&!ag.checked){ag.focus();alert("개인정보 수집·이용에 동의해주세요.");return}
-  var addr="["+(g("lf-pc")||"-")+"] "+(rd||"${esc(area)}")+", "+dt;
+  var addr=[g("lf-rg"),g("lf-dt")].filter(Boolean).join(" ");
   // 사람에게는 보이지 않는 칸. 채워져 있으면 봇이므로 조용히 접수한 척한다.
   var hp=(document.getElementById("lf-hp").value||"").trim();
   if(hp){f.style.display="none";ok.classList.add("on");return}
@@ -1067,6 +1061,34 @@ function countLine(c){return LV_ORDER.filter(l=>c[l]).map(l=>`${LVKO[l]} ${c[l]}
 const pillA=(href,label,sub)=>`<a href="${href}" style="display:inline-flex;align-items:baseline;gap:6px;padding:9px 15px;background:#fff;border:1px solid var(--line);border-radius:999px;color:var(--ink);text-decoration:none;font-size:14.5px;font-weight:700">${esc(label)}${sub?`<span style="color:var(--muted);font-weight:600;font-size:12.5px">${esc(sub)}</span>`:""}</a>`;
 const H2S='style="font-size:20px;font-weight:800;letter-spacing:-.02em;margin:28px 0 14px"';
 const ROWS='style="display:flex;flex-wrap:wrap;gap:9px"';
+/*
+ * 학교별 목록 페이지(/schools, /schools-시도, /schools-시군구)는 학교 이름 나열뿐이라 본문이 400~800자였다 (2026-11-08).
+ * 대상·수업 방식·커리큘럼 안내를 붙인다. 지어낸 수치는 쓰지 않고 자료에 있는 값(학교 수, 학교·지역 이름)만 쓴다.
+ * 문구는 지역마다 고르는 자리를 두어 페이지끼리 똑같아지지 않게 한다.
+ */
+function schoolGuide(areaKo, c, names, seed){
+  const A=esc(areaKo), P='style="line-height:1.85;color:var(--ink-2);margin:0 0 12px"';
+  const ex=(l)=>{const n=(names[l]||[]).slice(0,3).map(esc); return n.length?` (${n.join(", ")} 등)`:"";};
+  const who=LV_ORDER.filter(l=>c[l]).map(l=>`${LVKO[l]} ${c[l]}곳${ex(l)}`).join(", ");
+  const intro=pick1([
+    `${A}에서 안내하는 학교는 ${who}입니다. 같은 학년이라도 학교마다 교과서 출판사, 시험 범위, 서술형 비중이 다르기 때문에 레벨업과외는 학생이 다니는 학교를 먼저 여쭙고 그 학교 기준으로 수업을 준비합니다.`,
+    `이 페이지는 ${A} ${who}의 학생과 학부모님을 위한 안내입니다. 학교 시험은 학교마다 출제 방식이 달라, 수업은 학생이 다니는 학교의 교과서·프린트·지난 시험지를 기준으로 짭니다.`,
+    `${A} 학생이라면 아래 목록에서 학교를 찾아 보세요. 지금 정리된 학교는 ${who}입니다. 학교마다 진도와 시험 형식이 달라서, 상담 때 학교 이름과 최근 시험 결과부터 확인합니다.`],seed);
+  const lv={
+    초:`<b>초등</b> — 교과 개념과 연산·어휘 같은 기초, 매일 정해진 분량을 지키는 공부 습관을 먼저 잡습니다. 단원평가와 수행평가 일정에 맞춰 복습합니다.`,
+    중:`<b>중등</b> — 학교 진도에 맞춰 개념을 정리하고, 시험 4주 전부터는 학교 교과서·프린트와 지난 기출로 중간·기말고사를 대비합니다. 서술형 답안 쓰기도 함께 연습합니다.`,
+    고:`<b>고등</b> — 학교 내신 범위 대비와 모의고사 대비를 함께 봅니다. 목표 대학·전형을 먼저 정하고, 남은 기간을 과목별로 나눠 진도를 짭니다.`};
+  const curri=LV_ORDER.filter(l=>c[l]).map(l=>`<li style="margin-bottom:8px">${lv[l]}</li>`).join("");
+  const how=pick1([
+    `수업은 방문과 화상 중에서 고를 수 있습니다. 방문 수업은 선생님이 댁으로 가고, 화상 수업은 지역과 상관없이 과목에 맞는 선생님과 연결됩니다. 어느 쪽이든 1:1로 진행하며, 30분 무료 체험수업으로 먼저 확인해 보실 수 있습니다.`,
+    `${A} 안에서는 방문 수업을, 이동이 어렵거나 늦은 시간에는 화상 수업을 고를 수 있습니다. 수업은 모두 1:1이고, 시작 전 30분 무료 체험수업으로 선생님과 맞는지 먼저 보실 수 있습니다.`],seed+1);
+  const H='style="font-size:18px;font-weight:800;margin:26px 0 10px"';
+  return `<h2 ${H}>누구를 위한 수업인가요</h2><p ${P}>${intro}</p>
+<h2 ${H}>수업 방식</h2><p ${P}>${how}</p>
+<h2 ${H}>학교급별 커리큘럼</h2><ul style="line-height:1.8;color:var(--ink-2);padding-left:20px;margin:0 0 12px">${curri}</ul>
+<p ${P}>커리큘럼은 첫 수업의 레벨 진단 결과에 따라 학생마다 달라집니다. 위 내용은 기본 흐름입니다.</p>`;
+}
+function namesByLv(list){const o={초:[],중:[],고:[]}; for(const r of list) if(o[r[2]]) o[r[2]].push(r[0]); return o;}
 function schoolsHubPage(){
   let tot={초:0,중:0,고:0};
   const pills=DATA.sido.map(sd=>{const c={초:0,중:0,고:0}; for(const sg of sgsOfSido(sd)){const k=schoolCounts(SCHOOL_PAGES[sg.slug]); for(const l of LV_ORDER){c[l]+=k[l];tot[l]+=k[l];}} const n=c.초+c.중+c.고; return n?pillA("/schools-"+sd.slug,sd.s,n+"곳"):"";}).join("");
@@ -1077,17 +1099,20 @@ function schoolsHubPage(){
     body:`<p style="line-height:1.8">학교 시험은 같은 학년이라도 학교마다 범위와 문제 형식이 다릅니다. 그래서 레벨업과외는 학생이 다니는 학교의 교과서와 수업 자료를 기준으로 시험을 준비합니다. 아래에서 학교를 찾으면 그 학교 학생을 위한 안내를 볼 수 있습니다.</p>
 <p style="color:var(--muted)">전체 ${countLine(tot)}</p>
 <h2 ${H2S}>시·도 고르기</h2><div ${ROWS}>${pills}</div>
-<h2 ${H2S}>지역으로 찾기</h2><div ${ROWS}>${pillA("/regions","전국 지역별 수업")}</div>`});
+<h2 ${H2S}>지역으로 찾기</h2><div ${ROWS}>${pillA("/regions","전국 지역별 수업")}</div>
+${schoolGuide("전국",tot,{},hashStr("schools"))}`});
 }
 function schoolsSidoPage(sd){
   const sgs=sgsOfSido(sd); let tot={초:0,중:0,고:0};
-  const pills=sgs.map(sg=>{const c=schoolCounts(SCHOOL_PAGES[sg.slug]); for(const l of LV_ORDER) tot[l]+=c[l]; return pillA("/schools-"+sg.slug,sg.ko,(c.초+c.중+c.고)+"곳");}).join("");
+  const sdNames={초:[],중:[],고:[]};
+  const pills=sgs.map(sg=>{const c=schoolCounts(SCHOOL_PAGES[sg.slug]); for(const l of LV_ORDER) tot[l]+=c[l]; const nm=namesByLv(SCHOOL_PAGES[sg.slug]); for(const l of LV_ORDER) if(nm[l][0]&&sdNames[l].length<3) sdNames[l].push(nm[l][0]); return pillA("/schools-"+sg.slug,sg.ko,(c.초+c.중+c.고)+"곳");}).join("");
   return idxShell({title:`${sd.s} 학교별 과외 | ${sgs.length}개 시·군·구 - 레벨업과외`, desc:`${sd.ko} ${sgs.length}개 시·군·구의 초·중·고등학교별 1:1 과외 안내. ${countLine(tot)}. 학교 진도와 시험 범위에 맞춘 방문·화상 수업, 무료 체험수업 가능.`,
     path:"/schools-"+sd.slug, h1:`${sd.s} 학교별 과외`, sub:`${sd.ko}의 시·군·구를 고르면 그 지역 학교 목록이 나옵니다.`,
     crumb:bc([["홈",BASE],["학교별 과외","/schools"],[sd.s,null]]),
     body:`<p style="line-height:1.8">${esc(sd.ko)}에서 안내하는 학교는 ${esc(countLine(tot))}입니다. 시·군·구를 고르면 초등학교·중학교·고등학교로 나눈 목록이 나옵니다.</p>
 <h2 ${H2S}>${esc(sd.s)} 시·군·구</h2><div ${ROWS}>${pills}</div>
-<h2 ${H2S}>함께 보기</h2><div ${ROWS}>${pillA("/regions-"+sd.slug,sd.s+" 지역별 수업")}${pillA("/schools","전국 학교별 과외")}</div>`});
+<h2 ${H2S}>함께 보기</h2><div ${ROWS}>${pillA("/regions-"+sd.slug,sd.s+" 지역별 수업")}${pillA("/schools","전국 학교별 과외")}</div>
+${schoolGuide(sd.ko,tot,sdNames,hashStr("schools:"+sd.slug))}`});
 }
 function schoolsSgPage(sg){
   const list=SCHOOL_PAGES[sg.slug]||[]; const c=schoolCounts(list);
@@ -1101,7 +1126,8 @@ function schoolsSgPage(sg){
     crumb:bc([["홈",BASE],["학교별 과외","/schools"],[sg.sido_s,"/schools-"+sg.sido_slug],[sg.ko,null]]),
     body:`<p style="line-height:1.8">${esc(sg.ko)} 학교 목록입니다. ${esc(countLine(c))}. 같은 지역이라도 학교마다 시험 범위와 출제 방식이 달라, 수업은 학생이 다니는 학교의 자료를 기준으로 준비합니다.</p>${groups}
 <h2 ${H2S}>${esc(sg.ko)} 과목별 과외</h2><div ${ROWS}>${subj}</div>
-<h2 ${H2S}>함께 보기</h2><div ${ROWS}>${pillA("/schools-"+sg.sido_slug,sg.sido_s+" 학교별 과외")}${pillA("/schools","전국 학교별 과외")}</div>`});
+<h2 ${H2S}>함께 보기</h2><div ${ROWS}>${pillA("/schools-"+sg.sido_slug,sg.sido_s+" 학교별 과외")}${pillA("/schools","전국 학교별 과외")}</div>
+${schoolGuide(sg.sido_s+" "+sg.ko,c,namesByLv(list),hashStr("schools:"+sg.slug))}`});
 }
 ROUTES.set("/schools",{type:"school_hub"}); REGION_SM.push("/schools");
 for(const sd of DATA.sido){ if(sgsOfSido(sd).length){ ROUTES.set("/schools-"+sd.slug,{type:"school_sido",sd}); REGION_SM.push("/schools-"+sd.slug);} }

@@ -200,9 +200,9 @@
   .subj-pick label{display:inline-flex;align-items:center;gap:6px;height:38px;padding:0 14px;border-radius:999px;background:#fff;border:1px solid #d6e6f5;font-size:14px;font-weight:600;color:var(--ink-2);cursor:pointer;user-select:none}
   .subj-pick label:has(input:checked){background:var(--blue);border-color:var(--blue);color:#fff}
   .subj-pick input{width:auto;height:auto;margin:0;accent-color:var(--blue)}
-  .addr-row{display:flex;gap:8px}
-  .addr-row input{flex:1}
-  .addr-btn{height:50px;padding:0 18px;border:0;border-radius:12px;background:var(--ink);color:#fff;font:inherit;font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap}
+  .region-row{display:grid;grid-template-columns:minmax(0,200px) 1fr;gap:8px}
+  .field label .opt{font-weight:500;color:var(--muted);font-size:.9em}
+  @media (max-width:560px){.region-row{grid-template-columns:1fr}}
   .field.full input + input{margin-top:8px}
   .btn-submit{width:100%;height:56px;border:0;border-radius:999px;background:var(--blue);color:#fff;font:inherit;font-size:17px;font-weight:800;cursor:pointer;margin-top:8px;transition:background .2s,transform .2s}
   .btn-submit:hover{background:var(--blue-2);transform:translateY(-1px)}
@@ -472,7 +472,6 @@
   <a href="#contact">상담신청</a>
 </div>
 
-<script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <script>
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const byId = (id) => document.getElementById(id);
@@ -524,16 +523,6 @@
       el.addEventListener('input', () => { onlyDigits(el); if (el.value.length >= el.maxLength && i < parts.length - 1) parts[i + 1].focus(); });
       el.addEventListener('keydown', (e) => { if (e.key === 'Backspace' && el.value === '' && i > 0) parts[i - 1].focus(); });
     });
-    // 주소 찾기 (다음 우편번호 → 도로명주소)
-    const addrBtn = $('[data-addr-search]');
-    if (addrBtn) addrBtn.addEventListener('click', () => {
-      if (typeof daum === 'undefined' || !daum.Postcode) { alert('주소 검색을 불러오지 못했어요. 잠시 후 다시 시도해주세요.'); return; }
-      new daum.Postcode({ oncomplete: (d) => {
-        $('[name="postcode"]').value = d.zonecode || '';
-        $('[name="addrRoad"]').value = d.roadAddress || d.address || '';
-        $('[name="addrDetail"]').focus();
-      } }).open();
-    });
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       const f = form.elements;
@@ -546,12 +535,10 @@
         (v[0].length !== 3 ? parts[0] : v[1].length !== 4 ? parts[1] : parts[2]).focus();
         alert(phoneLabel.replace('*','').trim() + '를 정확히 입력해주세요. (예: 010-1234-5678)'); return;
       }
-      const road = $('[name="addrRoad"]').value.trim(), detail = $('[name="addrDetail"]').value.trim();
-      if (!road){ addrBtn.focus(); alert('주소 찾기로 도로명 주소를 선택해주세요.'); return; }
-      if (!detail){ $('[name="addrDetail"]').focus(); alert('상세주소를 입력해주세요.'); return; }
       const agree = f['privacy_agree'];
       if (agree && !agree.checked){ agree.focus(); alert('개인정보 수집·이용에 동의해주세요.'); return; }
-      const address = '[' + ($('[name="postcode"]').value.trim() || '-') + '] ' + road + ', ' + detail;
+      // 희망 지역은 선택 항목 (2026-11-08 주소 필수 해제). 접수 기록의 address 칸에 '서울 금천구 가산동' 형태로 남긴다.
+      const address = [f['region'] ? f['region'].value : '', f['regionDetail'] ? f['regionDetail'].value.trim() : ''].filter(Boolean).join(' ');
       const subjects = [...form.querySelectorAll('input[name="subject"]:checked')].map((c) => c.value);
       if (!subjects.length && form.dataset.subject) subjects.push(form.dataset.subject);
       const payload = { name, phone: v.join('-'), grade: f['grade'] ? f['grade'].value : '', subjects, address, message: f['message'].value.trim(), hp: f['hp'].value, agree: !!(agree && agree.checked), page: pageName() + ' · ' + location.pathname, ctx_p: location.pathname + location.search, ctx_f: (function(k){try{return sessionStorage.getItem(k)||''}catch(e){return ''}})('cn_f'), ctx_r: (function(k){try{return sessionStorage.getItem(k)||''}catch(e){return ''}})('cn_r') };

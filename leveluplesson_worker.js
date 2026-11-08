@@ -52,7 +52,7 @@ async function handleInquiry(request, env) {
   const name = (data.name || "").toString().trim();
   const phone = (data.phone || "").toString().trim();
   const address = (data.address || "").toString().trim();
-  // 주소는 홈 상담 폼에서만 받는다. 하위 페이지의 간단 폼(이름·연락처·내용)은 주소 없이 접수한다.
+  // address 칸에는 희망 지역(선택, 예 "서울 금천구 가산동")이 온다. 2026-11-08 주소 필수 해제.
   if (!name || !phone) {
     return json({ ok: false, error: "학생 이름과 학부모 연락처를 입력해주세요." }, 400);
   }
@@ -162,7 +162,7 @@ async function sendInquiryTelegram(env, r) {
   const lines = ["[레벨업과외]" + (r.flag ? " [봇 의심]" : "") + " 새 상담 신청", r.flag ? "숨은 칸 값: " + r.hp : "", "",
     "학생: " + r.name, "연락처: " + r.phone,
     r.grade ? "학년: " + r.grade : "", r.subjects.length ? "과목: " + r.subjects.join("·") : "",
-    "주소: " + (r.address || "-"), "내용: " + (r.message || "-"),
+    "희망 지역: " + (r.address || "-"), "내용: " + (r.message || "-"),
     "신청 페이지: " + (r.pageUrl || "-"), "처음 들어온 페이지: " + (r.firstUrl || "-"), "유입: " + (r.source || "-"),
     "접수: " + r.atDisplay].filter((x, i) => x || i === 2);
   if (env.TG_PREVIEW) console.log("[텔레그램 미리보기]\n" + tgPreview(lines.join("\n")));
@@ -211,7 +211,7 @@ function renderEmailHtml(r) {
     '<td style="padding:14px 0;border-bottom:1px solid ' + line + ';">' +
     '<a href="tel:' + tel + '" style="color:' + sky + ';font-size:17px;font-weight:800;text-decoration:none;">' + escapeHtml(r.phone) + '</a></td></tr>';
 
-  rows += '<tr><td style="' + cell + '">📍 주소</td>' +
+  rows += '<tr><td style="' + cell + '">📍 희망 지역</td>' +
     '<td style="' + val + '">' + escapeHtml(r.address || "-") + '</td></tr>';
 
   rows += '<tr><td style="' + cell + '">문의 내용</td>' +
