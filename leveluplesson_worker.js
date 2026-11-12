@@ -44,7 +44,7 @@ function json(data, status = 200) {
   });
 }
 
-async function handleInquiry(request, env) {
+async function handleInquiry(request, env, ctx) {
   let data;
   try { data = await request.json(); }
   catch { return json({ ok: false, error: "요청 형식이 올바르지 않습니다." }, 400); }
@@ -96,63 +96,67 @@ async function handleInquiry(request, env) {
     console.log("KV 보관 실패:", e && e.message ? e.message : e);
     return json({ ok: false, error: "접수 중 문제가 생겼습니다. 번거로우시겠지만 010-3038-8978 로 전화나 문자 주시면 바로 상담 도와드리겠습니다." }, 500);
   }
-  const tgPromise = sendInquiryTelegram(env, record).then((v) => (v ? "성공" : "건너뜀"), (e) => { console.log("텔레그램 실패:", e && e.message ? e.message : e); return "실패"; });
+  // 2026-11-12: KV 성공 = 접수 완료를 바로 돌려주고, 알림은 응답 뒤 ctx.waitUntil 로 이어서 보낸다(손님이 창을 닫아도 끊기지 않음).
+  const job = (async () => {
+    const tgPromise = sendInquiryTelegram(env, record).then((v) => (v ? "성공" : "건너뜀"), (e) => { console.log("텔레그램 실패:", e && e.message ? e.message : e); return "실패"; });
 
-  // 상담 신청은 이 사이트의 유일한 전환 지점이다.
-  // 이전에는 메일·시트가 모두 실패해도 ok:true 를 돌려줘서, 학부모에게는
-  // "신청 완료"가 뜨고 신청은 아무 데도 남지 않았다. 한 곳이라도 기록에
-  // 성공했을 때만 성공으로 응답한다.
-  let mailOk = false, sheetOk = false;
-  let lastError = "";
+    // 상담 신청은 이 사이트의 유일한 전환 지점이다.
+    // 이전에는 메일·시트가 모두 실패해도 ok:true 를 돌려줘서, 학부모에게는
+    // "신청 완료"가 뜨고 신청은 아무 데도 남지 않았다. 한 곳이라도 기록에
+    // 성공했을 때만 성공으로 응답한다.
+    let mailOk = false, sheetOk = false;
+    let lastError = "";
 
-  // ───────── 1) 이메일 알림 발송 (Cloudflare Email Routing) ─────────
-  try {
-    // 대시보드 변수가 비어도 동작하도록 기본 수신 주소를 둔다.
-    // 설정 하나가 빠졌다고 문의가 통째로 사라지면 안 된다.
-    const NOTIFY_TO_DEFAULT = "hhhyunee3@naver.com";
-    if (env.NOTIFY) {
-      const to = env.NOTIFY_TO || NOTIFY_TO_DEFAULT;
-      const from = env.NOTIFY_FROM || "noreply@level-up-lesson.com";
-      const subjLabel = record.subjects.length ? record.subjects.join("·") + " " : "";
-      const subject = (record.flag ? "[봇 의심] " : "") + "[레벨업과외] " + subjLabel + "상담 신청 - " + name;
-      const raw = buildMime({ from, fromName: "레벨업과외", to, subject, html: renderEmailHtml(record) });
-      // 런타임에 따라 EmailMessage 생성자 대신 객체 형태만 받는 경우가 있다.
-      // 한쪽이 막히면 다른 쪽으로 한 번 더 시도한다.
-      try {
-        await env.NOTIFY.send(new EmailMessage(from, to, raw));
-      } catch (e1) {
-        console.log("EmailMessage 방식 실패, 객체 방식 재시도:", e1 && e1.message ? e1.message : e1);
-        await env.NOTIFY.send({ from, to, raw });
+    // ───────── 1) 이메일 알림 발송 (Cloudflare Email Routing) ─────────
+    try {
+      // 대시보드 변수가 비어도 동작하도록 기본 수신 주소를 둔다.
+      // 설정 하나가 빠졌다고 문의가 통째로 사라지면 안 된다.
+      const NOTIFY_TO_DEFAULT = "hhhyunee3@naver.com";
+      if (env.NOTIFY) {
+        const to = env.NOTIFY_TO || NOTIFY_TO_DEFAULT;
+        const from = env.NOTIFY_FROM || "noreply@level-up-lesson.com";
+        const subjLabel = record.subjects.length ? record.subjects.join("·") + " " : "";
+        const subject = (record.flag ? "[봇 의심] " : "") + "[레벨업과외] " + subjLabel + "상담 신청 - " + name;
+        const raw = buildMime({ from, fromName: "레벨업과외", to, subject, html: renderEmailHtml(record) });
+        // 런타임에 따라 EmailMessage 생성자 대신 객체 형태만 받는 경우가 있다.
+        // 한쪽이 막히면 다른 쪽으로 한 번 더 시도한다.
+        try {
+          await env.NOTIFY.send(new EmailMessage(from, to, raw));
+        } catch (e1) {
+          console.log("EmailMessage 방식 실패, 객체 방식 재시도:", e1 && e1.message ? e1.message : e1);
+          await env.NOTIFY.send({ from, to, raw });
+        }
+        mailOk = true;
+        console.log("상담 알림 메일 발송 성공 →", to);
+      } else {
+        lastError = "NOTIFY 바인딩 없음 (wrangler.toml 의 [[send_email]] 확인)";
+        console.log("상담 알림 메일 건너뜀 -", lastError);
       }
-      mailOk = true;
-      console.log("상담 알림 메일 발송 성공 →", to);
-    } else {
-      lastError = "NOTIFY 바인딩 없음 (wrangler.toml 의 [[send_email]] 확인)";
-      console.log("상담 알림 메일 건너뜀 -", lastError);
+    } catch (e) {
+      lastError = e && e.message ? e.message : String(e);
+      console.log("상담 알림 메일 발송 실패:", lastError);
     }
-  } catch (e) {
-    lastError = e && e.message ? e.message : String(e);
-    console.log("상담 알림 메일 발송 실패:", lastError);
-  }
 
-  // ───────── 2) 구글 시트 기록 (Apps Script 웹앱) ─────────
-  try {
-    if (env.SHEET_WEBHOOK_URL && !record.flag) {
-      const r = await fetch(env.SHEET_WEBHOOK_URL, {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        signal: AbortSignal.timeout(5000),
-        body: JSON.stringify(record),
-      });
-      sheetOk = r.ok;
-      if (!r.ok) console.log("구글 시트 기록 실패: HTTP", r.status);
+    // ───────── 2) 구글 시트 기록 (Apps Script 웹앱) ─────────
+    try {
+      if (env.SHEET_WEBHOOK_URL && !record.flag) {
+        const r = await fetch(env.SHEET_WEBHOOK_URL, {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          signal: AbortSignal.timeout(5000),
+          body: JSON.stringify(record),
+        });
+        sheetOk = r.ok;
+        if (!r.ok) console.log("구글 시트 기록 실패: HTTP", r.status);
+      }
+    } catch (e) {
+      console.log("구글 시트 기록 실패:", e && e.message ? e.message : e);
     }
-  } catch (e) {
-    console.log("구글 시트 기록 실패:", e && e.message ? e.message : e);
-  }
 
-  const tgOk = await tgPromise;
-  console.log((record.flag ? "상담 신청(봇 의심)" : "상담 신청") + " 레벨업과외 | 보관: 성공 | 메일:", mailOk, "| 시트:", sheetOk, "| 텔레그램:", tgOk, "| 페이지:", record.page, lastError ? "| 메일 오류: " + lastError : "");
+    const tgOk = await tgPromise;
+    console.log((record.flag ? "상담 신청(봇 의심)" : "상담 신청") + " 레벨업과외 | 보관: 성공 | 메일:", mailOk, "| 시트:", sheetOk, "| 텔레그램:", tgOk, "| 페이지:", record.page, lastError ? "| 메일 오류: " + lastError : "");
+  })();
+  if (ctx && typeof ctx.waitUntil === "function") ctx.waitUntil(job); else await job;
   return json({ ok: true });
 }
 
@@ -319,7 +323,7 @@ const __APP = {
     const path = url.pathname;
 
     if (request.method === "POST" && path === "/api/inquiry") {
-      return handleInquiry(request, env);
+      return handleInquiry(request, env, ctx);
     }
     if (request.method === "POST" && path === "/api/call-click") {
       return handleCallClick(request, env);
